@@ -1,0 +1,293 @@
+---
+title: "Bayesian Nonparametric (BNP) Method"
+author: "Hyejung Lee"
+date: "`r Sys.Date()`"
+summary: >
+  This note summarizes Bayesian vs. Frequentist and parametric vs. nonparametric methods for statistical modeling, to introduce why Bayesian nonparametric would be an ideal choice. 
+description: >
+  This note summarizes Bayesian vs. Frequentist and parametric vs. nonparametric methods for statistical modeling, to introduce why Bayesian nonparametric would be an ideal choice. 
+tags:
+  - bayesian
+  - nonparametric
+categories:
+  - bayesian
+  - nonparametric
+#status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+
+
+# Critiques and Misconception Bayesian Methods
+
+## Treating Bayes as "likelihood + prior" instead of "a prior on data‑generating distributions"
+
+Misconception: Bayesian modeling is mainly about choosing a likelihood
+and then tacking on a prior for the parameters.
+
+Walker’s correction: The "fundamental idea":
+
+- constructing random density functions 
+- a single prior object on a space of possible densities 
+  - i.e.) putting a probability measure on a space of densities
+
+Why it's important: 
+
+- keeping the "likelihood + prior" mindset $\rightarrow$ can miss
+that the prior is defining what kinds of data‑distributions you think
+are plausible, not just what parameter values are plausible.
+
+## Prior selection after seeing data
+
+Bad practice (in his view): 
+
+- Start with a menu of priors/models $\rightarrow$look at
+the data  $\rightarrow$  run checks/tests  $\rightarrow$  pick the one that looks best—while
+still calling the result "Bayesian posterior inference."
+
+Walker’s correction:
+
+-   post‑data prior selection = incoherent
+-   the resulting posterior is meaningless as "posterior belief,"
+    because the chosen "prior" cannot honestly represent beliefs without
+    the data.
+
+Proposed fix:
+
+-   if you suspect "additional uncertainty," 
+    - DON'T:don’t toggle between priors after seeing data
+    - DO: enlarge the prior before observing the data so it
+    already covers that uncertainty.
+
+
+## Restrictive parametric modeling
+
+Common criticism of BNP: "What if the true density is normal (or some
+simple parametric family)? BNP is inefficient because it has too many
+parameters."
+
+-   i.e., parametric models are safe default; BNP is an extravagant
+    complication
+
+Walker’s correction: "what if the model is not normal?"
+
+-   the real risk = the parametric family is wrong
+- BNP is a principled way to cover that uncertainty.
+
+
+
+## Wrong purpose about BNP
+
+
+Misconception: 
+
+- BNP models are flawed because there are "too many parameters" to learn, so inference is impossible or conceptually illegitimate.
+
+
+
+
+<details>
+<summary><strong>Walker’s correction: </strong></summary>
+
+> **Spectacularly** misses the point. 
+
+> Bayesian inference is about making your uncertainties explicit in the prior.
+
+> Your starting uncertainty is larger (as in BNP) $\rightarrow$ you should expect to need more data to overcome that uncertainty
+
+>What you should NOT do is pretend the uncertainty isn’t there (i.e., "wish it away" or deliberately understate it).
+
+>Bayes is **fundamentally** about coherent uncertainty accounting, not about keeping parameter lists small.
+
+</details>
+
+
+## Ad-hoc prior choice
+
+
+Misconception / excuse: 
+
+- Nonparametric priors are too hard to elicit 
+- so it’s acceptable to fall back on informal, data-driven prior tinkering or "model checking then picking."
+
+
+
+<details>
+<summary><strong>Walker’s correction: </strong></summary>
+
+> Sure it can be hard
+
+> But if it is hard, that is a research/methods problem to solve—not a justification to revert to incoherent practices.
+
+</details>
+
+
+<details>
+<summary><strong>For those who read his paper, he tries to demystify elicitation as follows: </strong></summary>
+
+- Pin down a nonparametric prior by specifying certain functionals (he discusses $\mu_1(x) = E[f(x)]$ and $\mu_2(x) = E[f^2(x)]$ as examples)
+- these can be matched to what a parametric prior would imply while still yielding a model with unrestricted shapes
+
+</details>
+
+
+## Incomplete priors or diffuse priors over complete prior
+
+Bad habit: 
+
+- Use incomplete priors or informal heuristics to do things like "choose the best parametric model," because BNP/posterior-on-$f$ feels too big to handle directly.
+
+
+Walker’s correction: 
+
+- If you want to pick a simpler summary/model, do it as a decision after fitting a rich model, not by jumping between priors/models in an ad hoc way.
+
+
+<details>
+<summary><strong>If you read the manuscript:</strong></summary>
+
+- decision theory: define a utility (or distance) that scores an action (e.g., selecting a parametric approximation), then maximize posterior expected utility.
+- provided special cases where this recovers familiar procedures (e.g., connections to weighted likelihood bootstrap / MLE under Bayesian bootstrap constructions). 
+
+</details>
+
+
+
+## Ignoring the fact that a Bayesian model is also a "learning model" 
+
+
+Misconception (common among subjectivist Bayesians, in his telling): 
+
+- Bayes is purely subjective 
+- asymptotics/consistency ("what happens with infinite data") aren’t important
+
+
+Walker’s correction: 
+
+- consistency is important because the prior is doing two jobs:
+  1. representing prior beliefs about the true density
+  2. fully specifying the learning model (how evidence accumulates).
+- Subjective Bayesians often neglect (2).
+
+
+<details>
+<summary><strong>If you read the manuscript:</strong></summary>
+
+- asymptotic setup (associated with Doob-style assumptions) treats the marginal
+$$ p(X_1, \cdots, X_n) = \int \Pi_{i} f(X_i) (df)$$
+as if it were literally the true data-generating distribution.
+  - this is unrealistic 
+  - but it can be a mathematically useful learning model
+
+</details>
+
+
+## Assuming the Bayes theorem is the only coherent updating rule and it is automatically consistent
+
+Misconception: 
+
+- Bayes' theorem gives the posterior; end of story.
+
+Walker's "food for thought": 
+
+- the Bayesian posterior can be viewed as one learning rule 
+- other coherent learning rules exist, and sometimes they behave better.
+
+
+<details>
+<summary><strong>If you read the manuscript:</strong></summary>
+
+- Walker shows an alternative derivation of “posterior-like” distributions via minimizing a loss function, where the standard Bayesian posterior arises naturally—but so do alternative learning rules (a "pseudo-posterior" with a power likelihood $f(X)^\alpha$). 
+- these alternatives can have advantages like stronger consistency properties in some settings, which are “not automatically” guaranteed for the usual $\alpha=1$ posterior.
+
+</details>
+
+# Applied example of BNP
+
+Proceed to Tamara's presentation on Nonparametric Bayesian methods:
+[Part I slides PDF](attachments/broderick_simons_winter2017_part_i.pdf)
+
+[Link](https://tamarabroderick.com/tutorial_2017_simons.html) to the
+bootcamp lecture video, slides, and r codes:
+
+# Relating Walker to Tamara
+
+1.  Prior is both prior density and learning model
+
+-   Walker: the prior "does two tasks":
+    i.  represent prior beliefs about the true density $f_0$ and
+    ii. "fully specify the learning model," i.e., how observations
+        provide information about $f_0$. A sequential predictive rule is
+        a learning mechanism.
+-   Tamara:
+    i.  putting prior distributions, like
+        $\mu_k \sim N(\mu_0, \Sigma_0)$ for the mean of clusters
+    ii. sequential predictive rule ("how the next observation behaves
+        given the previous ones") for cluster assignments.
+
+2.  Idea about prior
+
+-   Walker:
+
+    -   "Bayesian inference is about being willing and able to specify
+        all uncertainties into a prior distribution. If one does not
+        like the outcome, do not be a Bayesian"
+        1.  Pick a model class $\mathcal{F}$ of possible sampling
+            densities $f$. So $\mathcal{F}$ is the space of densities.
+        2.  Put a prior measure $\Pi$ on that class: $\Pi (df)$
+
+-   Tamara: specific illustration through Gaussian mixture process
+
+    -   Dirichlet process ($K \rightarrow \infty$) Gaussian mixture
+        density:
+        $$f(x) = \sum_{k=1}^{\infty} \rho_k \phi(x \mid \mu_k , \Sigma)$$
+
+    Where the whole function $f(\cdot)$ is an element of $\mathcal{F}$.
+
+3.  Coherence
+
+-   Walker: It's the Bayesian philosophy we want to follow. Model
+    (prior) selection after seeing data is incoherent because the prior
+    was chosen after viewing the data. The prior must encapsulate prior
+    beliefs and be large enough to accommodate all uncertainties.
+-   Tamara: Setting $K=\infty$ with DP, instead of using Dirichlet
+    distribution where $K$ is finite.
+
+4.  Common BNP priors
+
+-   Walker: BNP priors are often built via stochastic processes; the
+    Dirichlet process is the most common; and its sample paths are
+    (a.s.) discrete. He then immediately states the key applied role: DP
+    draws appear "most often as the mixing distribution generating
+    random density functions," i.e., the mixture of Dirichlet process
+    model (Lo, 1984).
+
+-   Tamara: develops GEM stick-breaking definition and then use it to
+    define the DP mixture model. Exercise 6 is an example illustration
+    of a Dirichlet process Gaussian mixture model.
+
+    Ex. If we fixed $K=3$, given parameters
+    $\theta=(\rho_{1:3}, \mu_{1:3})$, the sampling density is
+    $$f_\theta(x) = \sum_{k=1}^{3} \rho_k \phi(x \mid \mu_k , \Sigma).$$
+    Because $\theta$ is ranom under the prior, $f_\theta$ is a random
+    density. This is a 3-component Gaussian mixture family, which can be
+    multi-modal, skewed, and have other shapes that a single Gaussian
+    cannot. Example of enlarginig beyond normal family.
+
+5.  Exchangeability
+
+-   Walker:
+    -   i.i.d. sampling plus Bayesian learning naturally leads to
+        exchangeability (order should not matter).\
+    -   inference is captured in the posterior on $f$ and its induced
+        predictive
+    -   "learning ... in a way that the order in which they arrive does
+        not matter (exchangeability)."
+-   Tamara:
+    -   mentions that the GEM is not capturing any ordering.
+    -   This point will be addressed more in the future lectures, using
+        de Finetti.

@@ -1,0 +1,19 @@
+---
+title: "How to Read a Paper"
+author: "Hyejung Lee"
+date: today
+summary: >
+  How to effectively read research paper written by Keshav.
+description: >
+  How to effectively read research paper written by Keshav.
+tags: 
+  - soft-skill
+categories: 
+  - soft-skill
+status: draft
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+
+Please refer to S. Keshav's  [How to Read a Paper](reading-keshav-2.pdf) to learn how to effectively read a research paper.

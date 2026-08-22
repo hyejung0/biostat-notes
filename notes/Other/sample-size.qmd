@@ -1,0 +1,30 @@
+---
+title: "Sample size required for parameter"
+author: "Hyejung Lee"
+date: today
+summary: >
+  n=10 for every parameter
+description: >
+  n=10 for every parameter
+tags:
+  - sample-size
+categories:
+  - sample-size
+status: draft         # draft | published | deprecated
+#bibliography: ../../references/references.bib
+#csl: ../../references/csl/nature.csl
+editor_options: 
+  chunk_output_type: console
+---
+
+
+On Wed 2026 Feb 25th, during the the slow reading group, Nikki said we need at least N=10 for every parameter we are fitting, even for machine learning driven method (not just the traditional regression). She shared with all of us the references for this "rule of thumb."
+
+
+## References
+
+Riley, Richard D., Joie Ensor, Kym I. E. Snell, Frank E. Harrell Jr, Glen P. Martin, Johannes B. Reitsma, Karel G. M. Moons, Gary Collins, and Maarten van Smeden. 2020. “Calculating the Sample Size Required for Developing a Clinical Prediction Model.” BMJ (Clinical Research Ed.) 368 (March): m441.
+
+Riley, Richard D., Kym I. E. Snell, Joie Ensor, Danielle L. Burke, Frank E. Harrell Jr, Karel G. M. Moons, and Gary S. Collins. 2019a. “Minimum Sample Size for Developing a Multivariable Prediction Model: Part I - Continuous Outcomes.” Statistics in Medicine 38 (7): 1262–75.
+
+Riley, Richard D., Kym Ie Snell, Joie Ensor, Danielle L. Burke, Frank E. Harrell Jr, Karel Gm Moons, and Gary S. Collins. 2019b. “Minimum Sample Size for Developing a Multivariable Prediction Model: PART II - Binary and Time-to-Event Outcomes.” Statistics in Medicine 38 (7): 1276–96.

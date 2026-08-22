@@ -1,0 +1,155 @@
+---
+title: "Causal Inference and Collinearity in Regression Modeling"
+author: "Hyejung Lee"
+date: today
+summary: >
+  A note on how exploratory associational regression differs from causal
+  analysis, why collinearity matters when interpreting predictor coefficients,
+  and why confounder selection in causal inference follows different principles.
+description: >
+  A note on how exploratory associational regression differs from causal
+  analysis, why collinearity matters when interpreting predictor coefficients,
+  and why confounder selection in causal inference follows different principles.
+tags:
+  - causal-inference
+  - collinearity
+  - regression-modeling
+  - confounding
+  - variable-selection
+categories:
+  - causal-inference
+  - collinearity
+  - regression-modeling
+  - confounding
+  - variable-selection
+status: draft
+#bibliography: ../../references/references.bib
+#csl: ../../references/csl/nature.csl
+editor_options:
+  chunk_output_type: console
+---
+
+Question asked to and answered by Tom on December 16, 2020. Email communication.
+
+## Question
+
+Suppose that I want to do two types of analysis given a data set.
+
+First. I want to find out the type of association between my primary covariates of interests and the outcome. No causal inference. Then, I am going to fit a model and just explore the coefficients estimates and p-values. This was a preliminary analysis before exploring causal inference. Apparently. Okay. So I don't get why I don't dive right into causal inference, but have to do this analysis. What's the point? During the PHS 7050 class, you mentioned that for this type of analysis, I have to worry about collinearity. But I can't because I have chosen this based on clinical background so I believe that these sets of covariates are correlated to the outcome so I can't just take out the variables with high VIF. Also, This is a subset of a bigger survey! The survey questions were chosen based on the clinical knowledge, and I was asked by Matt to choose some covariates that I thought were related and conduct the analysis. So.... I don't know what I am actually doing for this analysis....
+
+Second, with the same data set, I want to do causal analysis. Now, with causal analysis, I need to worry about confounders. So I have socio-economic status variables in the data set, which I include in model fitting. I do the same analysis as in the first analysis part, but with the confounders in the model. Well, if I was going to use the first analysis as a preliminary analysis, don't have to have the same covariates in the model? But the first one only had the primary covariates of interests. So what kind of information am I taking from the first analysis?
+
+## Answer
+
+For the first analysis, where you are interested in characterizing association by exploring regression coefficients, are you and Matt interested in understanding the relationship between each of the predictor variables and the outcome, with the other predictor variables in the model held fixed? In this situation, I would argue that even though you have pre-selected relevant variables, there is no principle that requires you to keep all of these variables in the same predictive model even if they are highly collinear. If you really want to interpret the coefficients of each predictor variable, this will not be possible if some predictor variables are highly collinear, both because the collinearity will make the estimated coefficients too imprecise to say anything useful, and because the coefficients would be hard to interpret even if you could estimate them with adequate precision. So in this situation, it is standard practice to first trim down the collection of predictor variables so none are highly collinear. (There is some latitude as to what threshold to use for the VIF to determine what is "highly collinear" -- you can usually accept a higher degree of collinearity if the sample size is large than if it is small.)
+
+There are many variations on this type of associational analysis. One strategy is to just fit a single model after you have verified the predictors (which were originally selected based on subject matter considerations) do not have unacceptable collinearity. Another approach, also commonly used, is to examine the association of each individual predictor with the outcome in a series of models. Typically, one first summaries the regression coefficients relating each individual predictor to the outcome in separate univariate regressions for each predictor. Then provide coefficients relating each individual predictor to the outcome after controlling for some core demographic factors. Then expand the covariate set further to include other factors already known to be related to the outcome. You might end up with 3 or 4 sets of regression coefficients, with progressively more covariate adjustment. One appealing feature of this approach is there is more focus on models with smaller numbers of predictor variables, as more complex models with lots of predictor variables can make it harder to interpret the individual regression coefficients.
+
+Another strategy that is commonly used is to divide the predictor variables into a set of adjustment variables, which are typically nonmodifiable, and another set of variables, which are of primary interest, which are usually modifiable. The latter set is referred to as the "modifiable risk factors" or "modifiable predictor variables". Then you fit separate regression models relating each individual modifiable risk factor to the outcome after controlling for the full set of covariates in the first nonmodifiable set. Then, usually a single expanded regression model is fit that includes all the modifiable predictor variables together, again controlling for the other variables in the nonmodifiable set of predictors.
+
+Finally, one further strategy is to assess if 1 or more predictor variables are independently predictive of the outcome after controlling for the remaining predictor variables. The way you think about collinearity differs a little between each of these settings. The first setting discussed above, where you fit a single model for all the predictor variables, is the one where you need to make sure you do not have unacceptable collinearity for ANY of the predictor variables.
+
+To be honest, I personally find the associational problem to be rather boring, as there are no rigorous principles that can be used to determine the "right model". But this is what is done in the majority of analyses for publications for the medical literature and we have to do it all the time.
+
+For the causal inference problem, there are now specific principles that should be used to select the covariates based on the goal of eliminating confounding. This leads to an asymmetry between the exposure variable of interest and the covariates that you are just controlling for. And in this situation, the key issue with the covariates is that they control confounding; collinearity among the covariates is not usually considered a serious problem.
+
+We can discuss further when we talk.
+
+
+----
+
+
+I asked ChahGPT to expand or clean Tom's answer so that it's easier to digest on my end. Below is what I get:
+
+## Answer
+
+The associational analysis and the causal analysis serve different purposes.
+
+### Associational analysis
+
+In the associational analysis, the goal is to describe relationships between predictors and the outcome, not to estimate causal effects.
+
+A typical regression model might be written as:
+
+$$
+E(Y \mid X_1, X_2, \ldots, X_p)
+$$
+
+Each coefficient describes the association between one predictor and the outcome, holding the other predictors fixed.
+
+This is where collinearity matters. If two predictors are highly correlated, it becomes difficult to interpret either coefficient separately. The model is trying to answer a question like:
+
+> What is the association between $X_1$ and $Y$, holding $X_2$ fixed?
+
+But if $X_1$ and $X_2$ usually move together, then “holding $X_2$ fixed” may be unrealistic or poorly supported by the data. As a result, coefficient estimates may be unstable, standard errors may be large, and interpretation becomes weak.
+
+So even if all variables are clinically relevant, that does not necessarily mean they all need to be included in the same associational model.
+
+Possible strategies include:
+
+- Fit separate univariable models for each predictor.
+- Fit models with progressive adjustment, such as:
+
+  $$
+  Y \sim X_j
+  $$
+
+  $$
+  Y \sim X_j + \text{demographics}
+  $$
+
+  $$
+  Y \sim X_j + \text{demographics} + \text{other known predictors}
+  $$
+
+- Separate predictors into nonmodifiable factors and modifiable risk factors.
+- Fit each modifiable predictor separately while adjusting for the same core covariates.
+- Fit a full model only if the goal is to assess whether variables are independently predictive and collinearity is not too severe.
+
+### Causal analysis
+
+In the causal analysis, the goal is different. The question is not simply:
+
+> Which variables are associated with the outcome?
+
+The question is:
+
+> What is the causal effect of exposure $A$ on outcome $Y$?
+
+That is, we want to estimate a counterfactual quantity such as:
+
+$$
+E(Y^a)
+$$
+
+or a causal contrast such as:
+
+$$
+E(Y^{a = 1}) - E(Y^{a = 0})
+$$
+
+In this setting, covariates are chosen because they help control confounding, not because they are strongly associated with the outcome or because they have low VIFs.
+
+The exposure variable has a special role. The adjustment variables are included mainly to make the comparison between exposure groups more valid. Their individual coefficients are usually not the target of interpretation.
+
+Therefore, collinearity among adjustment variables is often less important in causal inference than in associational modeling, unless it causes serious numerical instability or poor estimation.
+
+### How to use the preliminary associational analysis
+
+The preliminary associational analysis should not be used mechanically to decide which covariates belong in the causal model.
+
+Instead, it can help you:
+
+- describe the data,
+- understand crude and adjusted associations,
+- identify unstable coefficient estimates,
+- see whether predictors are highly correlated,
+- communicate patterns in the data,
+- and understand how results change under different adjustment sets.
+
+But the causal model should be guided by the causal question and the confounding structure, not by the associational model alone.
+
+In short:
+
+> Associational analysis is mainly about describing and interpreting relationships among observed variables.  
+> Causal analysis is about estimating the effect of a specific exposure, using covariates selected to control confounding.

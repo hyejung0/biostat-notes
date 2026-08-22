@@ -1,0 +1,30 @@
+---
+title: "All Notes"
+description: "Search and filter the complete biostatistics notes collection."
+listing:
+  contents:
+    - "Bayesian/*.qmd"
+    - "Causal_Inference/*.qmd"
+    - "Clinical_Trials/*.qmd"
+    - "Measure_Theory/*.qmd"
+    - "Other/*.qmd"
+  type: table
+  fields: [title, categories, description]
+  field-display-names:
+    title: "Note"
+    categories: "Topics"
+    description: "Summary"
+  categories: numbered
+  sort: "title"
+  sort-ui: [title]
+  filter-ui: [title, categories, description]
+  page-size: 50
+  max-description-length: 260
+page-layout: full
+toc: false
+number-sections: false
+search: false
+code-tools: false
+---
+
+Type in **Filter** to search titles, topic tags, and summaries in this index. Choose a topic on the right to narrow the collection. To search every word inside every note, use **Search** in the navigation bar or press <kbd>/</kbd>.

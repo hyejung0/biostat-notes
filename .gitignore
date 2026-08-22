@@ -1,0 +1,18 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+__MACOSX/
+
+# Quarto local build outputs
+_site/
+.quarto/
+_freeze/
+*_cache/
+*_files/
+
+# Historical output folder from the old layout. The new workflow publishes from _site/.
+docs/
+
+/.quarto/

@@ -1,0 +1,225 @@
+---
+title: "Intention-to-treat vs. per-protocol vs. as-treated analyses in clinical trials"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Clinical trials often use different analytical approaches to evaluate the effectiveness of interventions. This article explores the differences among intention-to-treat (ITT), per-protocol (PP), and as-treated (AT) analyses, highlighting their implications for interpreting trial results and making informed decisions in clinical practice.
+description: >
+  Clinical trials often use different analytical approaches to evaluate the effectiveness of interventions. This article explores the differences among intention-to-treat (ITT), per-protocol (PP), and as-treated (AT) analyses, highlighting their implications for interpreting trial results and making informed decisions in clinical practice.
+tags:
+  - clinical-trial
+  - causal-inference
+categories:
+  - clinical-trial
+  - causal-inference
+status: draft         # draft | published | deprecated
+bibliography: ../../references/itt-ap-at-analysis-references.bib
+csl: ../../references/csl/nature.csl   # optional
+---
+
+## Background
+
+Nonadherence is a common challenge in randomized clinical trials (RCTs). It occurs when participants do not follow the randomly assigned treatment protocol — for example, by not taking trial medications, crossing over to the other intervention, or accessing treatment outside the trial [@smith2021interpreting]. When nonadherence is substantial, different analytic strategies can yield materially different estimates of treatment effect, each answering a subtly different causal question.
+
+The three most commonly used approaches are:
+
+- **Intention-to-treat (ITT)**: analyze all participants as originally randomized
+- **Per-protocol (PP)**: analyze only participants who adhered to the protocol
+- **As-treated (AT)**: analyze participants according to the treatment they actually received
+
+Understanding what each approach estimates — and where each can go wrong — is essential for interpreting trial results and translating them into clinical practice [@hernan2012beyond; @detry2014intention].
+
+---
+
+## Causal Estimands: What Are We Trying to Estimate?
+
+Before comparing the three approaches, it helps to distinguish the two causal effects we might care about [@hernan2012beyond]:
+
+**Effect of assigned treatment (Z → Y)**
+: The average causal effect of the *treatment assignment* on the outcome. This is what an ITT analysis estimates. It captures real-world effectiveness *including* any dilution due to nonadherence.
+
+**Effect of received treatment (A → Y)**
+: The average causal effect of the *treatment actually taken* on the outcome. This is what PP and AT analyses try to estimate. It reflects what would happen if all participants fully adhered.
+
+The two effects coincide only when adherence is perfect (i.e., Z = A for every participant).
+
+---
+
+## The Three Approaches: Definitions
+
+### Intention-to-Treat (ITT)
+
+In an ITT analysis, all randomized participants are included in the analysis in the groups to which they were originally assigned, regardless of what treatment they actually received [@smith2021interpreting; @detry2014intention].
+
+- **Population included**: All randomized participants
+- **Treatment variable**: Assigned treatment (Z)
+- **Handles nonadherence by**: Keeping participants in their assigned group regardless of crossover
+
+### Per-Protocol (PP)
+
+A PP analysis restricts the analytic sample to participants who adhered to the trial protocol as specified. In the time-varying setting, this typically means censoring participants at the time they deviate from their assigned treatment (e.g., 6 months after nonadherence begins) [@hernan2012beyond; @hernan2017perprotocol].
+
+- **Population included**: Adherent participants (or adherent person-time)
+- **Treatment variable**: Assigned treatment (Z) in the adherent subgroup
+- **Handles nonadherence by**: Exclusion (or censoring at deviation)
+
+### As-Treated (AT)
+
+An AT analysis classifies participants according to the treatment they actually received, ignoring their randomization assignment. It treats RCT data as if they were observational [@hernan2012beyond; @smith2021interpreting].
+
+- **Population included**: All participants
+- **Treatment variable**: Received treatment (A), possibly time-varying
+- **Handles nonadherence by**: Reclassifying participants by actual exposure
+
+---
+
+## Comparison Table
+
+| Feature | ITT | Per-Protocol (PP) | As-Treated (AT) |
+|---|---|---|---|
+| **Causal estimand** | Effect of assigned treatment (Z) | Effect of received treatment (A) | Effect of received treatment (A) |
+| **Population** | All randomized | Adherent participants/person-time | All participants |
+| **Treatment variable** | Assigned (Z) | Assigned (Z), restricted sample | Received (A) |
+| **Preserves randomization** | Yes | Partially (lost among nonadherers) | No |
+| **Main bias risk** | Dilution toward null (nonadherence) | Selection bias | Confounding |
+| **Adjustment needed?** | No (for confounding) | Yes (time-varying covariates) | Yes (time-varying covariates) |
+| **Best adjustment methods** | IP weighting for missing data | IP weighting, g-estimation | IP weighting, g-estimation, IV |
+| **Conservative for placebo-controlled trials?** | Yes (beneficial effects) | No | No |
+| **Conservative for safety/non-inferiority trials?** | No | Depends | Depends |
+| **Clinical interpretation** | Effectiveness under trial adherence | Efficacy under full adherence | Effectiveness by actual use |
+
+---
+
+## Strengths and Limitations
+
+### ITT
+
+**Strengths**
+
+- Preserves the benefits of randomization, eliminating confounding of the treatment–outcome association
+- Provides a valid test of the null hypothesis of no treatment effect in double-blind trials [@hernan2012beyond]
+- Simple to implement and interpret; no modeling assumptions required for confounding
+
+**Limitations**
+
+- Estimates the effect of *assignment*, not of *treatment*. The estimate is diluted toward null when nonadherence is substantial [@hernan2012beyond; @smith2021interpreting]
+- Anti-conservative for safety trials and non-inferiority trials: a null or small ITT effect does not rule out a true harmful or inferior treatment [@hernan2012beyond]
+- In active-comparator trials, ITT can overestimate a treatment's benefit if adherence is differential across arms (see Scenario 2 in @hernan2012beyond)
+- The estimate depends on the trial-specific adherence pattern and may not generalize to settings where adherence differs [@hernan2017perprotocol]
+- Many "ITT" analyses in practice are modified (e.g., restricted to patients who received at least one dose), which can introduce selection bias [@smith2021interpreting]
+
+### Per-Protocol (PP)
+
+**Strengths**
+
+- Targets the effect of treatment under full adherence, which is often the clinically relevant question for a patient who intends to adhere
+- Provides an upper bound on treatment effect in many placebo-controlled settings
+- Particularly useful when the trial-specific adherence pattern is not representative of clinical practice [@hernan2017perprotocol]
+
+**Limitations**
+
+- Naive PP (simple restriction to adherent participants) is subject to **selection bias**: adherence is not random, and adherers may differ systematically from nonadherers in ways that also affect the outcome [@hernan2012beyond]
+- This selection bias can go in either direction and is generally hard to predict without formal adjustment
+- Requires measurement of time-varying confounders of adherence (and of the censoring process), making data collection more demanding
+- Validity rests on untestable assumptions about unmeasured confounders [@smith2021interpreting]
+
+### As-Treated (AT)
+
+**Strengths**
+
+- Uses all available data and accounts for the actual treatment received
+- Can detect a larger treatment effect than ITT when adherence is imperfect, providing information about the "undiluted" effect [@smith2021interpreting]
+- May be informative when combined with ITT results to triangulate the range of possible effects
+
+**Limitations**
+
+- Ignores randomization entirely; effectively converts the RCT into an observational study [@hernan2012beyond]
+- Subject to **confounding**: participants who choose to take (or not take) treatment may differ prognostically from those who do not
+- Time-varying confounders that are themselves affected by prior treatment require g-methods (IP weighting or g-estimation) for valid adjustment; conventional regression is insufficient [@hernan2012beyond]
+- Assumes that all confounders have been measured and correctly modeled — an untestable assumption
+
+---
+
+## Adjustment Methods for PP and AT Analyses
+
+When using PP or AT analyses, naive restriction or reclassification is rarely valid. The following methods have been developed to address confounding and selection bias [@hernan2012beyond; @hernan2017perprotocol]:
+
+**Inverse Probability (IP) Weighting**
+: Creates a pseudo-population in which adherence is independent of confounders by weighting each participant's contribution by the inverse of the probability of their observed adherence pattern. Can handle time-varying confounders affected by prior treatment.
+
+**G-Estimation (Structural Nested Models)**
+: Estimates structural parameters that relate dose-response to the counterfactual outcome. Like IP weighting, it handles time-varying confounders appropriately.
+
+**Instrumental Variable (IV) Estimation**
+: A form of g-estimation that uses the random treatment assignment (Z) as an instrument. It does not require measuring confounders, but requires a correctly specified structural model and a valid instrument. Most credible in double-blind trials.
+
+All three approaches require untestable assumptions and careful data collection on time-varying confounders and adherence throughout follow-up. **The choice of method should be prespecified in the trial protocol.**
+
+---
+
+## Worked Example: The CABANA Trial
+
+The CABANA trial randomized patients with atrial fibrillation to either catheter ablation or conventional drug therapy [@packer2019cabana; @smith2021interpreting]. Substantial crossover occurred: 9% of those assigned to ablation did not receive the procedure, and 27% of those assigned to drug therapy ultimately underwent ablation. This created a challenging analytic situation with nonadherence in both directions.
+
+**Results under each approach** [@smith2021interpreting]:
+
+| Analysis | HR (95% CI) | Interpretation |
+|---|---|---|
+| ITT | 0.86 (0.65–1.15) | No significant reduction in primary composite outcome |
+| Per-Protocol | 0.74 (0.54–1.01) | Larger effect estimate; borderline non-significant |
+| As-Treated | 0.67 (0.50–0.89) | Statistically significant benefit of ablation |
+
+Taken together, these results suggest a possible beneficial effect of ablation when patients are able to undergo the procedure. However, the PP and AT estimates must be interpreted cautiously: patients unable to undergo ablation may have had worse post-randomization health status, which could bias results in favor of ablation [@smith2021interpreting].
+
+---
+
+## Practical Guidance for Analysts
+
+The following workflow is recommended for trials with substantial nonadherence [@hernan2012beyond; @hernan2017perprotocol]:
+
+1. **Always report an ITT analysis** as the primary analysis. It provides an unbiased estimate of the effect of treatment assignment and preserves the benefits of randomization.
+
+2. **Prespecify PP and/or AT analyses** in the protocol, including:
+   - The definition of adherence/nonadherence
+   - The time-varying confounders that will be measured and how
+   - The adjustment method (IP weighting, g-estimation, or IV estimation)
+
+3. **Collect time-varying data** on confounders and adherence throughout follow-up, not just at baseline. This is necessary for valid IP weighting and g-estimation.
+
+4. **Be explicit about estimands**: make clear whether you are estimating the effect of assigned treatment, the effect of continuous treatment, or the effect of some other clinically meaningful treatment strategy.
+
+5. **Triangulate across analyses**: discordance between ITT and PP/AT estimates is informative. Large differences suggest substantial nonadherence is biasing the ITT estimate; but large PP/AT effects may also reflect residual confounding.
+
+6. **Avoid naive PP and AT analyses** (simple restriction or reclassification without confounding adjustment). These should be treated with the same scrutiny as observational study estimates.
+
+---
+
+## Summary
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Summary of ITT, PP, and AT analysis approaches"
+#| echo: false
+#| message: false
+
+library(tibble)
+library(knitr)
+
+summary_tbl <- tribble(
+  ~Approach,         ~`Estimand`,                        ~`Key Bias Risk`,       ~`Preserves Randomization`,
+  "ITT",             "Effect of assigned treatment",     "Dilution (null bias)", "Yes",
+  "Per-Protocol",    "Effect of received treatment",     "Selection bias",       "Partially",
+  "As-Treated",      "Effect of received treatment",     "Confounding",          "No"
+)
+
+kable(summary_tbl)
+```
+
+No single analysis is universally superior. The ITT analysis is not always conservative, and PP/AT analyses are not always biased. The appropriate approach depends on the causal question of interest, the pattern of nonadherence, and the quality of confounder measurement. Ideally, all three analyses should be reported and interpreted jointly [@hernan2012beyond; @smith2021interpreting; @hernan2017perprotocol].
+
+---
+
+## References
+
+::: {#refs}
+:::

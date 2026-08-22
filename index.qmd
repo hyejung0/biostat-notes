@@ -1,0 +1,72 @@
+---
+title: "Biostatistics Notes"
+description: "A searchable personal library of biostatistics notes."
+page-layout: full
+title-block-banner: false
+toc: false
+number-sections: false
+search: false
+code-tools: false
+---
+
+::: {.notes-hero}
+::: {.hero-kicker}
+PERSONAL REFERENCE LIBRARY
+:::
+
+# Find the idea you need, when you need it.
+
+Search years of biostatistics notes by title, topic, or any word in the text. Browse the full collection, move through subject areas, and return to the exact section you were looking for.
+
+::: {.hero-actions}
+<button type="button" class="btn btn-light btn-lg hero-search-button" onclick="window.quartoOpenSearch();" aria-label="Search all notes">Search all notes</button>
+
+[Browse all notes](notes/index.qmd){.btn .btn-outline-light .btn-lg}
+:::
+
+::: {.search-hint}
+Tip: press <kbd>/</kbd> anywhere on the site to open full-text search.
+:::
+:::
+
+## Browse by subject
+
+::: {.topic-grid}
+::: {.topic-card .topic-bayesian}
+### [Bayesian methods](topics.qmd#bayesian-methods)
+
+Nonparametrics, BART, Bayesian causal forests, bootstrap methods, and foundations.
+:::
+
+::: {.topic-card .topic-causal}
+### [Causal inference](topics.qmd#causal-inference)
+
+Target trial emulation, study design, collinearity, and causal estimands.
+:::
+
+::: {.topic-card .topic-trials}
+### [Clinical trials](topics.qmd#clinical-trials)
+
+Trial analysis strategies, pilot studies, and external control designs.
+:::
+
+::: {.topic-card .topic-measure}
+### [Measure theory](topics.qmd#measure-theory)
+
+Sigma-algebras, Dynkin systems, measures, premeasures, and intuition.
+:::
+
+::: {.topic-card .topic-other}
+### [Other topics](topics.qmd#other-topics)
+
+Information measures, sample size, synthetic data, and reading workflows.
+:::
+:::
+
+::: {.home-callout}
+### Two ways to find a note
+
+Use **All notes** when you remember a title or topic tag. Use the site search when you remember only a phrase, equation term, author, or word somewhere inside a note. Search results take you directly to the matching section and highlight the term.
+:::
+
+[Learn how to add, update, or remove notes](guide.qmd) and how to publish updates.

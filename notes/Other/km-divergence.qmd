@@ -1,0 +1,218 @@
+---
+title: "Kullback-Leibler (KL) divergence"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Understanding Kullback-Leibler (KL) divergence using entopy and information theory
+description: >
+  Understanding Kullback-Leibler (KL) divergence using entopy and information theory
+tags: 
+  - distance
+  - information-theory
+categories: 
+  - distance
+  - information-theory
+status: draft
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl
+---
+  
+# Context
+
+Trying to understand the Kullback-Leibler (KL) divergence used in
+Walker's (2010) paper on Bayesian nonparmaetric methods: motivation and
+ideas
+
+# Information
+
+To understand how information is measured in information theory, please
+refer to this
+[YouTube](https://youtu.be/X40ft1Lt1f0?si=AjuXowib4VfU1WXd) video.
+
+$$ s^n = \text{all distinguishable sequence}$$
+
+where
+
+-   $n=$ number of selections
+-   $s =$ number of choices for each selection
+
+Information is proportional to the number of selections
+@hartley1928transmission.
+
+So we should bring down the power $n$. =\> use log.
+
+$$n log (s) = log(\text{all distinguishable sequence})$$ 
+
+
+Treat the $log(s)$ as fixed constant $K$. Them
+
+$$ n \cdot K = H,$$
+
+where $H$ is the amount of information
+($log(\text{all distinguishable sequence})$).
+
+
+# Entropy
+
+The KM divergence measures how much an approximating probability
+distribution $Q$ is different from a true probability distribution $P$.
+Mathematically, it is defiend as
+
+$$D_{KL} (P || Q) = \sum_{x \in \mathcal{X}} P(x) \; log \frac{P(x)}{Q(x)}.$$
+
+A simple interpretation of the KL divergence of $P$ from $Q$ is the
+expected excess "surprisal" from using the approximation $Q$ instead of
+$P$, when the actual is $P$. It is a measure of how different two
+distributions are, so a distance, but it is not actually a metric.
+
+To understand fully, we need to know "surprise" and entropy.
+
+# Surprise and Entropy
+
+This part is taken from Tsachy Weissman's information theory lecture
+notes from Stanford Univeristy.
+
+## Notation
+
+A quick summary of notation
+
+1.  Discrete Random Variable: $U$
+2.  Alphabet: $\mathcal{U} = \{u_1, u_2, \cdots , u_M\}$ (An alphabet of
+    size M)
+3.  Specific Value: $u$, $u_1$, etc.
+
+For discrete random variables, we will write (interchangeably) $P(U=u)$,
+$P_U(u)$ or most often, just $p(u)$. Similarly, for a pair of random
+variables $X$, $Y$, we write $P(X=x | Y=y)$, $P_{X|Y}(x|y)$ or $p(x|y)$.
+
+## Entropy
+
+**Definition 1.** *"Surprise" function*:
+
+$$S(u) \triangleq log \frac{1}{p(u)}$$ A lower probability of $u$
+translates to a greater "surprise" that it occurs. Note here that we use
+$log$ to mean $log_2$ by default, rather than the natural log $ln$, as
+is typical in some other contexts. This is true throughout these notes:
+$log$ is assumed to be $log_2$ unless otherwise indicated.
+
+**Definition 2. Entropy**: *Let* $U$ *a discrete random variable taking
+values in alphabet* $\mathcal{U}$. *The* **entropy** *of* $U$ *is given
+by*:
+
+$$
+H(U) \triangleq \mathbb{E}[S(U)] = 
+\mathbb{E} \left[ log\left(\frac{1}{p(U)}\right) \right] = 
+\mathbb{E} [-log(p(U))] =
+-\sum_u p(u) log(p(u))
+$$
+
+*Where* $U$ *represents all* $u$ *values possible to the variable.*
+
+The entropy is a property of the underlying distribution $P_U(u)$,
+$u \in \mathcal{U}$ that measures the amount of randomness or surprise
+in the random variable.
+
+**Lemma 3. Jensen's Inequality**: Let $Q$ denote a function on a random
+variable $X$. Jensen's inequality states that for every $Q$ that are
+convex:
+
+$$\mathbb{E} [Q(X)] \geq Q(\mathbb{E}[X]).$$
+
+Further, if $Q$ is strictly convex, equality holds iff $X$ is
+deterministic. Conversely, if $Q$ is a concave function, then
+
+$$\mathbb{E} [Q(X)] \leq Q(\mathbb{E}[X]).$$
+
+Proof:
+
+If $Q$ is a convex function then its graph
+$\{(X, Q(X)) : X\in \mathbb{R}\}$ can be seen as a n upper bound on the
+set of affine functions that lie below it. Written more concretely,
+
+$$
+Q(X) =  \underset{L \in \mathcal{L}}{\mathrm{sup}} L(X),
+$$
+
+where
+
+$$
+\mathcal{L} = \{ L : L(u) = au + b \leq Q(u) \text{ for all } -\infty < u < \infty \}.
+$$
+
+Thus, by linearity:
+
+``` math
+\begin{aligned}
+\mathbb{E} [Q(X)] 
+  &= \mathbb{E} [\underset{L \in \mathcal{L}}{\mathrm{sup}} L(x)] \\
+  &\geq \underset{L \in \mathcal{L}}{\mathrm{sup}} L(\mathbb{E} [X] ) \; \text{by monotonicity of } \mathbb{E}. \\
+  &= Q(\mathbb{E} [X])
+\end{aligned}
+```
+
+The same argument for concave functions can be done using the infimum
+instead of supremum.
+
+### Properties of Entropy
+
+Suppose $\mathcal{U} = \{u_1, u_2, \cdots, u_M \}$
+
+1.  $H(U) \leq log(M)$, with equality iff $U$ is uniformly distributed
+    i.e. $p(u)  = \frac{1}{M}$ for all $u$.
+
+    proof:
+
+    $$
+      \begin{aligned}
+        H(U)
+        &= \mathbb{E} \left[log \frac{1}{p(U)} \right] \\
+        &\leq log \mathbb{E} \left[ \frac{1}{p(U)} \right] \; \text{by Jensen's inequality because log is concave} \\
+        &= log \sum_u p(u) \cdot \frac{1}{p(u)}  \\
+        &= log M
+      \end{aligned}
+    $$
+
+2.  $H(U) \geq 0$, with equality iff $U$ is deterministic.
+
+    proof:
+
+    $$H(U) = \mathbb{E} \left[log \frac{1}{p(U)} \right] \geq 0 \; \text{ because } \; log \frac{1}{p(U)} \geq 0.$$
+
+    The equality occurs iff $log \frac{1}{p(u)} = 0$ with probability 1
+    so $U$ must be deterministic.
+
+3.  For a PMF $q$, define
+    $$H_q(U) \triangleq \mathbb{E} \left[ log \frac{1}{q(U)} \right] = \sum_{u \in \mathcal{U}} p(u) \, log \frac{1}{q(u)}.$$
+
+    Then: $$H(U) \leq H_q(U),$$ with equality iff $p=q$.
+
+    Proof:
+
+    ``` math
+      \begin{aligned}
+        H(U) - H_q(U) 
+        &= \mathbb{E} \left[log \frac{1}{p(U)} \right]  - \mathbb{E} \left[log \frac{1}{q(U)} \right] \\
+        &= \mathbb{E} \left[log \frac{q(U)}{p(U)} \right]  \\
+        &\leq log \mathbb{E}\left[ \frac{q(U)}{p(U)} \right]  \\
+        &= log \sum_u p(u) \; \cdot   \frac{q(u)}{p(u)}  \\
+        &= log \sum_u q(u)\\
+        &= log 1 \\
+        &= 0
+      \end{aligned}
+    ```
+
+    Thus, $H(U) - H_q(U) \leq 0$. Equality only holds when
+    $\frac{q(u)}{p(u)}$ is deterministic, which occurs when $q=p$.
+
+**Definition 4. Relative Entropy (a.k.a. KL divergence)**: A measure of
+distance between probability distribution is relative entropy:
+
+$$ D(p || q) \triangleq \sum_{u \in \mathcal{U}} p(u) \; log \frac{p(u)}{q(u)} = \mathbb{E} \left[ log \frac{p(u)}{q(u)} \right].$$
+
+Note that because of property 3, the relative entropy is always greater
+than or equal to 0, with equality iff $p=q$. The relative entropy can be
+thought of as a measure of discrepancy between two probability
+distributions. This is also known as **Kullback-Leibler (KL)
+divergence**.
+
+## References 

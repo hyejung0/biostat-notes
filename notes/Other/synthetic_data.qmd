@@ -1,0 +1,110 @@
+---
+title: "Workshop - Synthesizing Electronic Health Records with Trustworthy AI"
+author: "Hyejung Lee"
+date: today
+summary: >
+  workshop provided by Dr. Guang Cheng
+description: >
+  workshop provided by Dr. Guang Cheng
+tags:
+  - sample-size
+categories:
+  - sample-size
+status: draft         # draft | published | deprecated
+#bibliography: ../../references/references.bib
+#csl: ../../references/csl/nature.csl
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Day 1
+
+Rise of synthetic data rather than observing real-world data due to low cost. 
+
+- synthetic data: generated from rules. statistical modeling, and simulations. 
+- real data: constrained by high costs, complex logistics, and strict privacy regulations. 
+
+
+## Defining generative data science
+
+
+- Generative data Science (GDS) is a new research frontier devoted to the statistical principles underlying the generation, evaluation and governance of synthetic data.
+    - fidelity: statistical matching between real and synthetic distributions
+    - utility: effectiveness for downstream machine learning tasks.
+    - privacy: preventing disclosure of sensitive individual information
+    - Trust: ensuring provenance and authenticity of generated data. 
+    
+
+## Motivation 1: The Data Bottleneck
+
+
+### Scaling laws
+
+Scaling laws characterize LLM performance as a function of model capacity (N) and dataset size (D).
+
+- Either model is big or data is big. 
+- Model capacity continues to grow. But high-quality data is becoming the primary constraint. 
+
+scaling laws dictate that dataset size is a fundamental bottleneck in LLM performance.
+
+So use synthetic data
+
+
+
+
+
+## Motivation 2: Regulatory Constraints
+
+Regulatory landscape. Use synthetic tabular data as a modern solution for healthcare and banking.
+
+
+## Categories of data synthesizers
+
+
+1. Classical Staitstical Models
+    - Parametric & non-parametric: approaches grounded in traditional probability theory
+    - ex: PrivBayes for difffernetially private data release
+    - prior to 2020 pandemic
+2. Deep generative Models
+    - Neural network architectures designed for high-dimensional data synthesis
+3. Language Model Approaches:
+    - Leveraging large language models (LLMs) for data generation, especially in text and tabular domains. 
+    - ex: TabLLM, TabGPT, etc.
+
+
+
+## The fundametnal Questions
+
+
+"Can artificial data truly create 'something out of nothing'?"
+
+- From a classical information-theoric perspective, synthetic data is ultimately derived from raw data. 
+- Does it add new formation, or simply reorganize existing patterns? <- no answers
+- Empirical evidence shows synthetic data solutions have been successfully deployed for:
+    - Adversarial robustness: strengthening models against attacks
+    - Data Imputation: Filling in missing values accurately.
+    - Fairness: Mitigating bias in training sets. 
+  
+
+## Unresolved Challenges
+
+Technical reliability
+
+- training stability: Can we reliably train high-performance models using primarily synthetic data?
+- distributional drift: managing the risk of model collapse in recursive training loops
+
+
+Governance & ethics
+
+- Information leakage: How to prevent synthetic data from inadvertently revealing sensitive information about individuals in the original dataset?
+- Ownership and accountability: Who is responsible for the synthetic data, especially if it leads to harmful outcomes?
+
+
+
+## LLMS as a representative synthesizer
+
+
+
+
+

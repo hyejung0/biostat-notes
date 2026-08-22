@@ -1,0 +1,83 @@
+---
+title: "Browse by Topic"
+description: "Explore the notes collection by major subject area."
+page-layout: full
+toc: true
+toc-title: "Subjects"
+number-sections: false
+search: false
+code-tools: false
+listing:
+  - id: bayesian-list
+    contents: "notes/Bayesian/*.qmd"
+    type: grid
+    grid-columns: 2
+    fields: [title, description, categories]
+    sort: "title"
+    sort-ui: false
+    filter-ui: false
+    max-description-length: 180
+  - id: causal-list
+    contents: "notes/Causal_Inference/*.qmd"
+    type: grid
+    grid-columns: 2
+    fields: [title, description, categories]
+    sort: "title"
+    sort-ui: false
+    filter-ui: false
+    max-description-length: 180
+  - id: trials-list
+    contents: "notes/Clinical_Trials/*.qmd"
+    type: grid
+    grid-columns: 2
+    fields: [title, description, categories]
+    sort: "title"
+    sort-ui: false
+    filter-ui: false
+    max-description-length: 180
+  - id: measure-list
+    contents: "notes/Measure_Theory/*.qmd"
+    type: grid
+    grid-columns: 2
+    fields: [title, description, categories]
+    sort: "title"
+    sort-ui: false
+    filter-ui: false
+    max-description-length: 180
+  - id: other-list
+    contents: "notes/Other/*.qmd"
+    type: grid
+    grid-columns: 2
+    fields: [title, description, categories]
+    sort: "title"
+    sort-ui: false
+    filter-ui: false
+    max-description-length: 180
+---
+
+The collection is organized into five broad areas. New notes appear here automatically when they are saved in the matching folder.
+
+## Bayesian methods {#bayesian-methods}
+
+::: {#bayesian-list}
+:::
+
+## Causal inference {#causal-inference}
+
+::: {#causal-list}
+:::
+
+## Clinical trials {#clinical-trials}
+
+::: {#trials-list}
+:::
+
+## Measure theory {#measure-theory}
+
+::: {#measure-list}
+:::
+
+## Other topics {#other-topics}
+
+::: {#other-list}
+:::

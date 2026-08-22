@@ -1,0 +1,90 @@
+---
+title: "Managing Your Notes"
+description: "How to add, edit, remove, preview, and publish notes."
+toc: true
+toc-depth: 2
+number-sections: false
+search: false
+code-tools: false
+---
+
+The files ending in `.qmd` inside `notes/` are the source of truth. The website is generated from those files; do not edit anything inside `_site/`, because that folder is replaced every time the site is rendered.
+
+## Add a new note
+
+1. Choose the most appropriate subject folder inside `notes/`: `Bayesian`, `Causal_Inference`, `Clinical_Trials`, `Measure_Theory`, or `Other`.
+2. Create a lowercase, hyphenated file name such as `notes/Causal_Inference/missing-data-estimands.qmd`.
+3. Begin with the metadata template below, then write the note in Markdown beneath it.
+4. Save any note-specific images in a neighboring folder, such as `missing-data-estimands_figures/`.
+5. Preview the site and check the new note, topic listing, and search results.
+
+```yaml
+---
+title: "Missing Data and Estimands"
+author: "Hyejung Lee"
+date: 2026-08-22
+description: >
+  A one- or two-sentence summary that helps identify this note in listings.
+categories:
+  - causal-inference
+  - missing-data
+bibliography: ../../references/references.bib
+csl: ../../references/csl/nature.csl
+---
+```
+
+Use stable, descriptive categories. Existing categories are shown on the [All Notes](notes/index.qmd) page and are a good vocabulary to reuse.
+
+## Edit an existing note
+
+1. Open the matching `.qmd` file under `notes/`.
+2. Change the text, code, equations, citations, title, description, or categories.
+3. If you rename the file, update links from other notes that point to the old file name.
+4. Preview the site before publishing.
+
+The site-wide search index and all listings are rebuilt automatically. There is no separate database or manual search index to update.
+
+## Delete a note
+
+1. Delete the note's `.qmd` source file.
+2. Delete its figure or attachment folder only if no other note uses those files.
+3. Search the project for links to the deleted file and remove or replace them.
+4. Render the site. The note disappears automatically from navigation, topic pages, the title index, and full-text search.
+
+## Preview and check locally
+
+Open the R project in RStudio, open the **Terminal** tab, and run:
+
+```bash
+quarto preview
+```
+
+Quarto prints a local address and refreshes the preview when you save a file. Press `Ctrl+C` in the terminal when you are finished. For a one-time build instead, run:
+
+```bash
+quarto render
+```
+
+The finished local website is written to `_site/`. You can also use `scripts/preview_site.sh` and `scripts/render_site.sh` from a terminal at the project root.
+
+## Publish an update
+
+The included GitHub Actions workflow publishes the site to GitHub Pages whenever you push to `main` or `master`.
+
+```bash
+git add .
+git commit -m "Update biostatistics notes"
+git push
+```
+
+On the first publication, create a GitHub repository, push this project to it, then choose **Settings → Pages → Build and deployment → Source → GitHub Actions**. The **Actions** tab shows the build. If the first run started before GitHub Pages was enabled, open that run and choose **Re-run all jobs**. When it finishes, **Settings → Pages** shows the public URL.
+
+## Before each publication
+
+- Confirm `quarto render` completes without an error.
+- Open at least the changed note and check equations, figures, tables, and links.
+- Confirm the note appears under the correct subject and in **All notes**.
+- Search for one distinctive phrase from the note using the navigation-bar search.
+- Commit source files and attachments, but not `_site/`.
+
+For a compact repository-oriented version of these instructions, see `MAINTENANCE.md` in the project root.

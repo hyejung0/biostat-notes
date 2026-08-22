@@ -1,0 +1,109 @@
+---
+title: "Pilot Study"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Just gathering some information about pilot study with very small sample sizes.
+description: >
+  Just gathering some information about pilot study with very small sample sizes.
+tags:
+  - clinical-trial
+categories:
+  - clinical-trial
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/nature.csl
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Main Purpose 
+
+The main purpose of a pilot study is to assess the *feasibility* of a larger study, to identify potential *issues* in the *study design*, and to gather preliminary data that can *inform* the design of the larger study. Pilot studies are typically conducted with a small sample size and are *not* intended to provide definitive *answers* to research questions. Instead, they are used to test the *logistics* of the study, such as recruitment strategies, data collection methods, and intervention protocols. The results of a pilot study can help researchers *refine* their research questions, improve their study design, and increase the likelihood of success in the larger study.
+
+
+# Useful Papers
+
+This paper [@bowen2009we] provides a comprehensive overview of the purpose and design of pilot studies in clinical research. It discusses the various objectives of pilot studies, such as assessing feasibility, estimating recruitment rates, and testing data collection procedures. The paper also emphasizes the importance of using pilot studies to inform the design of larger studies and to avoid common pitfalls in clinical research.
+
+
+# Grant Contenet
+
+So then, as a biostatistician, what kind of stuff should I include in the grant proposal for a pilot study? We can provide the probability of observing the benchmark adherence rate in the pilot study, given the true success rate in the population. This can help justify the sample size and demonstrate the feasibility of the study.
+
+For example, if a study has N=10 and some intervention, we can say that the study is feasible if at least 70% of the participants (i.e., 7 participants) adhered to the intervention. We can calculate the probability of observing at least 7 adherent participants in a pilot study of 10 participants, given different true adherence rates in the population.
+
+How do we calculate that? We show that in the R code below. 
+
+
+```{r message=FALSE, warning=FALSE}
+
+
+# K = the benchmark number of successes (adherent participants)
+# p = the true success rate in the population
+# n = the sample size of the pilot study (10 in this case)
+
+K<-6
+n<-10
+
+prob_success<-function(p,k,n) {1 - pbinom(k - 1, size = n, prob = p)}
+
+
+true_p<-c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+
+dat<-
+data.frame(
+  "Assumed True Compliance Rate (p)"=true_p,
+  "Probability of Observing at least 6 Adherent Participants in a Pilot Study of 10 Participants"=sapply(true_p, function(p) sprintf("%0.3f",prob_success(p, K, n))),
+  check.names = FALSE
+)
+# dat$`Assumed True Compliance Rate (p)`<-as.character(dat$`Assumed True Compliance Rate (p)`)
+# dat$`Assumed True Compliance Rate (p)`[dat$`Assumed True Compliance Rate (p)`=="0.4"] <- "0.4 (Unacceptable)"
+# dat$`Assumed True Compliance Rate (p)`[dat$`Assumed True Compliance Rate (p)`=="0.8"] <- "0.8 (Desirable)"
+
+knitr::kable(dat, caption = "Probability of Observing at least 6 Adherent Participants in a Pilot Study of 10 Participants, Given Different True Adherence Rates in the Population")
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+
+
+# K = the benchmark number of successes (adherent participants)
+# p = the true success rate in the population
+# n = the sample size of the pilot study (10 in this case)
+
+K<-3
+n<-10
+
+prob_success<-function(p,k,n) {1 - pbinom(k - 1, size = n, prob = p)}
+
+
+true_p<-c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8)
+
+dat<-
+data.frame(
+  "Assumed True Enrollment Rate (p)"=true_p,
+  "Probability of Observing at least 3 enrollment Participants in a Pilot Study of 10 Participants"=sapply(true_p, function(p) sprintf("%0.3f",prob_success(p, K, n))),
+  check.names = FALSE
+)
+# dat$`Assumed True Compliance Rate (p)`<-as.character(dat$`Assumed True Compliance Rate (p)`)
+# dat$`Assumed True Compliance Rate (p)`[dat$`Assumed True Compliance Rate (p)`=="0.4"] <- "0.4 (Unacceptable)"
+# dat$`Assumed True Compliance Rate (p)`[dat$`Assumed True Compliance Rate (p)`=="0.8"] <- "0.8 (Desirable)"
+
+knitr::kable(dat, caption = "Probability of Observing at least 3 Enrollment Participants in a Pilot Study of 10 Participants, Given Different True enrollment Rates in the Population")
+```
+
+
+The interpretation of the above, which I can put in my grant, is as below:
+
+> **Statistical Design and Feasibility Endpoints** : 
+The primary feasibility endpoint is the treatment compliance rate, defined as the proportion of patients who complete the full treatment protocol. Given the pilot nature of this study (N=10), formal hypothesis testing is not planned. Instead, we have established Go/No-Go criteria based on the exact binomial probabilities of observing a given number of compliant patients.
+
+> We define a clinically unacceptable true compliance rate as 40% and a highly desirable true compliance rate as 80%. The feasibility benchmark for success is defined as observing ≥7 compliant patients out of 10.
+
+> **Operating Characteristics**:
+> As shown in the table, if the true underlying compliance rate is unacceptably low (40%), there is only a 5.5% chance that the study will falsely meet the feasibility benchmark. Conversely, if the true compliance rate is highly desirable (80%), there is an 87.9% probability of successfully meeting the benchmark and proceeding to a larger trial.
+

@@ -1,0 +1,727 @@
+---
+title: "Bayesian Nonparametric Methods: Motivation and Ideas"
+author: "Hyejung Lee"
+date: today
+summary: >
+  This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
+description: >
+  This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
+tags:
+  - bayesian
+  - nonparametric
+  - theory
+categories:
+  - bayesian
+  - nonparametric
+  - theory
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+---
+
+
+
+# Summary {.unnumbered}
+
+(Insert short summary of the paper)
+
+# Context {.unnumbered}
+
+These notes are written so that *you could teach from them*. Nothing is
+introduced without motivation, and every mathematical choice is
+justified in terms of logic, decision‑making, and statistical learning.
+
+The pedagogical principle is: At every step, the student should know
+
+1.  what problem we are solving,
+2.  why this tool is chosen, and
+3.  what would break if we chose something else.
+
+------------------------------------------------------------------------
+
+
+
+# The Core Question of Statistics (Before Any Bayesian Language)
+
+## What Are We Actually Trying to Learn?
+
+We observe data:
+
+$$
+X_1, X_2, \dots, X_n.
+$$
+
+The most fundamental assumption in statistics is:
+
+> There exists some probability distribution $F_0$ that generated these
+> data.
+
+This statement alone already contains everything:
+
+-   There is **uncertainty** (we do not know $F_0$)
+-   There is **structure** (the data are not arbitrary)
+-   There is a **learning problem** (use data to infer $F_0$)
+
+Every statistical method answers the same question:
+
+> How do we learn about the unknown data‑generating distribution?
+
+## Frequentist statistics
+
+Assume $X_1, X_2, \dots, X_n$ are independently and identically
+distributed (i.i.d) from a fixed density $f$
+
+> This constraint is not okay!
+
+> If the true data-generating process is slightly skewed or
+> heavy-tailed, the parametric model will never converge to the truth,
+> regardless of sample size. It will converge to the "closest" Normal
+> distribution.
+
+> It will forever remian biased.
+
+# Classical Approaches and Their Limitations
+
+## Parametric Models
+
+In parametric statistics, we assume:
+
+$$
+F_0 \in \{F_\theta : \theta \in \Theta \subset \mathbb{R}^d\}.
+$$
+
+This assumption is extremely strong.
+
+**What we gain:**
+
+-   Finite‑dimensional optimization
+-   Fast convergence
+-   Simple interpretation
+
+**What we lose:**
+
+-   Model correctness
+-   Robustness
+-   Ability to represent complex distributions
+-   Exchangeability for parametric Bayesian
+
+> Teaching insight: Parametric models *do not learn distributions* —
+> they learn parameters inside a rigid family.
+
+## Example of paramteric assumption
+
+Sometimes we fake as if we know the answer.
+
+e.g.) "I am certain the data generating mechanism is a Gaussian bell
+curve. I am only uncertain about its location ($\mu$) and scale
+($\sigma$) \<- Problem: Reduces the infinite complexity of the real
+world to a two-dimensional problem.
+
+> Problem?: such constraint is artificial and incohehent. Incoherent
+> means that you ..... If the true data-generating process is slightly
+> skewed or heavy-tailed, the parametric model will never converge to
+> the truth, regardless of sample size. It will converge to the
+> "closest" Normal distribution. It will forever remian biased
+
+Bayesian Nonparametrics (BNP) removes this constraint. Because instead
+of putting prior probability mass on a vector of parameters
+$\theta = (\mu , \sigma)$, it puts on the **function space** of all
+possible probability densities.
+
+Parameter = density function $f$ (can be of infinite degrees of
+freedom).
+
+Truly let the data speak for itself.
+
+## Nonparametric (Frequentist) View
+
+We drop the parametric assumption and attempt to estimate $F_0$
+directly:
+
+-   Kernel density estimators
+-   Empirical CDF
+-   Sieve methods
+
+But uncertainty quantification becomes difficult.
+
+This motivates Bayesian thinking.
+
+------------------------------------------------------------------------
+
+# Bayesian Thinking: What Is Random?
+
+## Key Bayesian Shift
+
+Bayesian statistics answers uncertainty by *randomizing the unknown*.
+
+-   In parametric Bayes: $\theta$ is random
+-   In nonparametric Bayes: **the distribution** $F$ is random
+
+This is not philosophical — it is a modeling decision.
+
+------------------------------------------------------------------------
+
+# Treating the Distribution as Unknown (The Conceptual Leap)
+
+## What Does It Mean for a Distribution to Be Random?
+
+Think operationally:
+
+1.  Nature first selects a distribution $F$
+2.  Then data are generated i.i.d. from that $F$
+
+This is written as:
+
+$$
+F \sim \pi, \quad X_i \mid F \sim F.
+$$
+
+Here:
+
+-   $\pi$ is a probability law whose outcomes are **entire
+    distributions**
+
+This answers a student’s natural question:
+
+> “How can we assign probability to something infinite‑dimensional?”
+
+Answer: The same way we assign probability to random functions or
+stochastic processes — via a probability law on a space of objects.
+
+------------------------------------------------------------------------
+
+# Bayes’ Rule When the Unknown Is a Distribution
+
+Bayes’ rule is structural:
+
+$$
+\text{posterior} \propto \text{likelihood} \times \text{prior}.
+$$
+
+Here:
+
+-   Prior: $\pi(df)$
+-   Likelihood: how well $f$ explains observed data
+
+So:
+
+$$
+\pi(df \mid X_{1}, X_2, \cdots, X_{n}) = \frac{ \text{likelihood } \cdot \text{ prior}}{ \text{marginal density of }X_i's} = \frac{ \prod_{i=1}^n f(X_i) \,  \cdot \Pi(df)}{\int \prod_{i=1}^n f(X_i) \, \Pi(df)}
+$$
+
+where
+
+-   Numerator:
+    -   Likelihood = $\prod_{i=1}^n f(X_i)$ = likelihood of the data
+        under specific density $f$.
+    -   prior = $\Pi (df)$ = prior weight of that density.
+-   Denominator:
+    -   The marginal likelihood (evidence), obtained by integrating over
+        all possible functions $f$.
+
+This equation *defines* Bayesian nonparametrics. Everything else is
+analysis of its behavior.
+
+> Please refer to notes `bayes-measure-d-concept.Rmd` file to understand
+> meaning of $d\Pi(df)$.
+
+Generalization to Function Spaces: Walker relies on the generalization
+of this theorem \@ref{hewitt1955symmetric} to general variables. It states
+that any infinitely exchangeable sequence of random variables can be
+represented as a mixture of i.i.d. sequences.
+
+$$p(x_1, \cdots , x_n) = \int \Big( \Pi_{i=1}^{n} f(x_i) \Big) d\Pi(f)$$
+
+------------------------------------------------------------------------
+
+# Learning Means Posterior Concentration
+
+## What Does “Learning the Distribution” Mean?
+
+We do **not** expect the posterior to collapse to a single point
+exactly.
+
+Instead, we want:
+
+> As $n \to \infty$, the posterior puts most of its mass near the true
+> distribution $F_0$.
+
+This raises an unavoidable question:
+
+> **What does "near" mean for probability distributions?**
+
+This question *forces* the choice of a distance or divergence.
+
+------------------------------------------------------------------------
+
+# What “Bayesian Nonparametrics” Really Means
+
+## Parametric vs Nonparametric (Bayesian View)
+
+In **parametric Bayesian statistics**, we assume:
+
+-   A *finite-dimensional* parameter
+    $\theta \in \Theta \subset \mathbb{R}^d$
+-   A likelihood $p(x \mid \theta)$
+-   A prior $\pi(\theta)$
+
+In **Bayesian nonparametrics**, the unknown object is **not
+finite-dimensional**. Instead, it is typically:
+
+-   A **probability distribution** $F$
+-   Or a **function** (density, regression function, hazard rate, etc.)
+
+So the prior is not $\pi(\theta)$, but $$
+\pi(dF)
+$$ which is a **probability measure on a space of probability
+measures**.
+
+This is the key conceptual leap.
+
+------------------------------------------------------------------------
+
+# Bayesian Choices - The Incoherence of Constraints
+
+## The "What If" Question
+
+Critics to nonparametricians: "What if the true density is normal? Won't
+your infinite-dimensional model be inefficient?"
+
+Critics to parametrician:
+
+-   "What if the model is not normal?"
+-   A parametric model (like the Normal distribution) puts probability
+    zero on any shape that isn't a bell curve.
+-   If the true data has a slight skew or heavy tails, a normal model
+    will never converge to the truth, no matter how much data you have.
+-   The KL divergence will minimize to the "closest" normal, but the
+    error will remain non-zero.
+
+## Incoherence of Post-Data Selection
+
+Selecting a prior after looking at the data (e.g., checking if data
+looks normal, then choosing a normal prior) $\rightarrow$ violates the
+axioms of probability.
+
+-   Coherence: A statistical analysis is coherent if it follows the laws
+    of probability based on information available *before* the decision.
+-   The "Big" Prior: The solution is to define a prior support that is
+    "large enough" to encompass all reasonable possibilities before
+    seeing the data. This necessitates a nonparametric prior (one with
+    support over the entire space of densities).
+
+## Specifying the Nonparametric Prior
+
+How do we define a prior $\Pi$ over infinite functions?
+
+-   use moments
+-   If we can specify expectations like $E[f(x)]$ (the mean shape) and
+    $E[f^2(x)]$ (the variance of the shape), we can construct a valid
+    nonparametric prior.
+
+Example: We might center our nonparametric prior on a Normal
+distribution. This means our "best guess" is a bell curve, but we allow
+the posterior to deviate from this shape if the data demands it. This
+creates a "random density" that fluctuates around a parametric base.
+
+| Feature | Parametric Prior (e.g., Normal) | Nonparametric Prior (e.g., Dirichlet Process) |
+|-------------------------|:---------------------------:|-----------------:|
+| Parameter space | Finite dimension ($\theta \in \mathbb{R}^k$) | Infinite dimension (Function space $\mathcal{F}$) |
+| Flexibility | Rigid; fixed shape assumption | Flexible; adapts to any shape |
+| Bias/Variance | High Bias (if model wrong), Low Variance. | Low Bias, Higher Variance (initially) |
+| Convergence | Converges to "closest" parametric fit. | Converges to true density $f_0$ (Consistency). |
+| Philosophy | "I know the shape, just not the size." | "I am uncertain about the shape itself." |
+
+: Table 1. Parametric vs. Nonparametric Priors
+
+## Common argument
+
+"It's not possible to learn about all the parameters of a nonparametric
+model."
+
+
+<details>
+<summary><strong>Walker's note</strong></summary>
+
+> **Spectacularly** misses the point. Bayesian inference is about being
+*willing* and *able* to speficy all uncertainties into a prior
+distribution. If noe does not like the outcome, do not be a Bayesian.
+
+> The "complete" (nonparametric) prior represents genuine uncertainty.
+
+</details>
+
+
+
+------------------------------------------------------------------------
+
+# Decision Theory
+
+In this section, Walker shows the complete prior framework using decision theory. 
+He also shows how maximum likelihood estimate can be viewed as a decision problem 
+within a nonparametric framework. 
+
+Example: Which specific density from a family of densities indexed 
+by a parameter that is the best approximation to the data $X_1, \cdots , X_n$? 
+
+
+
+
+
+## Setup 
+
+
+Denote:
+
+- $f(\cdot)$: State of nature. The true but unknown density which generated the data. Infinite-dimensional. Treated as random under the posterior $\Pi(df \mid X_1, \cdots, X_n)$.
+- $\theta$: Action. Decision parameter. We select a parameter $\theta$. Not random.
+- $f(\cdot; \, \theta)$: The density implied by that decision. A parametric approximation (a decision/action). A model-based candidate density chosen by the statistician. 
+    - Completely known once $\theta$ is chosen.
+    - not random
+    - not the truth
+    - lives in a parameteric family (e.g. Normal, Laplace, etc.)
+    - This is a *decision*, not a random variable
+- $\theta \in \Theta$: the specific parameter with which we can best approximate the data. e.g.) mean, variance, etc.
+- $\{f(x; \, \theta)\}$ : the parametric family of densities characterized by $\theta$. 
+
+
+choose a utility function which describes the reward in selecting $\theta$ when 
+$f$ is the true density. 
+
+
+$$u : \text{(truth } f, \text{ decision } \theta) \mapsto \mathbb{R}$$
+
+## The Utility Function Approach
+
+
+**(Kullback-Leibler divergence)** Let $g$ and $f$ be probability density functions 
+of a random variable $X \in \mathcal{X}$. Then, the distance between the two 
+densities is:
+
+$$d(g,f) = \int g(x) \; log \frac{g(x)}{f(x)} \, dx,$$
+with $d(g,f) \geq 0$ and strictly equal to zero iff $g=f$.
+
+
+
+The utility is negative KL divergence:
+
+$$u(f,\theta) = - d( \,  f(\cdot), \; f(\cdot ; \theta) \, )$$
+
+**Interpretation:**
+
+> "How much does the model $f(\cdot ; \theta)$ disagree with the true density 
+$f$, when assessed under the weighting implied by the true density?"
+
+
+
+Identify $\theta$ that:
+
+<div align="center">
+minimizes the distance $\rightarrow$ maximize utility.
+</div>
+
+
+Q: So, how does nonparameric prior come into play?
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+> Prior on $f$. We go through all candidate $f$ **based on** the data $X_1, \cdots , X_n$.
+
+</details>
+
+
+
+
+
+## The Utility function
+
+
+
+We said put prior on $f$... So like this?
+
+$$ \int u(f, \theta) \; \Pi(df)$$
+No. Let me just tell you this is wrong. What did I say? 
+I say to put prior on the possible density $f$ **after** observing the data! 
+
+So the correct answer is....
+
+
+<details>
+<summary><strong>Answer</strong></summary>
+
+$$\int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n)$$
+
+</details>
+
+
+
+## Maximization of Expected Utility
+
+
+Let: 
+
+$$U_n(\theta) = \int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n),$$
+which is expected utility. Our goal is to find $\theta$ which maximizes the 
+expected utility. We can further show that maximizing $U_n(\theta)$ is same 
+as maximizing 
+
+$$\tilde{U}_n (\theta) = \int log \, f(x; \theta) \; f_n (dx) = \mathbb{E}_{X \sim f_n} \left[ log \, f( X ; \, \theta )\right],$$
+where $f_n$ is the nonpaparmetric predictive density, given by 
+
+$$f_n(x)= \int f(x) \; \Pi(df \mid X_1, \cdots, X_n).$$
+
+So we can interpret $\tilde{U}_n (\theta)$ as the posterior predictive expected log-likelihood of model $\theta$. Or more simply, it's posterior expectation of some loss/score.
+
+
+We can read $\tilde{U}_n(\theta)$ as:
+"How well does the parametric model $f(\cdot; \, \theta)$ perform, on average, under my posterior beliefs about future data?"
+
+
+
+<details>
+<summary><strong>Derivation of $\tilde{U}_n (\theta)$ from $U_n (\theta)$ </strong></summary>
+
+
+``` math
+\begin{aligned}
+U_n(\theta) 
+&= \int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n) \\
+&= - \int d( \,   f(x) , \; f(x ; \theta)\, ) \; \Pi(df \mid X_1, \cdots, X_n)\\
+&= - \int \left(   \int f(x) \; log \frac{f(x)}{f(x ; \theta)} \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)\\
+&= - \int \left(   \int f(x) \; \left[log f(x) - log f(x; \theta) \right] \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)\\
+&= 
+
+\underbrace{- \int \left(   \int f(x) \;log f(x) \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)}_{\text{independent of } \theta}
++
+\underbrace{\int \left(   \int  f(x)  \;log f(x; \theta) \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)}_{\tilde{U}_n (\theta)}
+\end{aligned}
+```
+
+And $\tilde{U}_n (\theta)$ can be further simplified as :
+
+``` math
+\begin{aligned}
+\tilde{U}_n (\theta)
+&= \int log f(x; \, \theta) \left[ \int f(x) \, \Pi(df \mid X_1, \cdots, X_n) \right] dx, \quad log f(x; \, \theta) \text{ is fixed under } \Pi(df \mid X_{1:n}).\\
+&= \int log f(x; \, \theta) \left[ f_n(x) \right] dx, \quad f_n(x) \text{ denotes posterior predictive distribution}\\
+&=  \int log f(x; \, \theta)  f_n(dx), \quad  f_n(dx) \text{ is a measure theoric expression of } f_n(x)dx
+\end{aligned}
+```
+
+</details>
+
+
+Please refer to @sec-app-utility-example to see a toy example of $U_n(\theta).$
+
+
+## Okay yeah so now what 
+
+
+In order to maximize $\tilde{U}_n(\theta)$, we must know the posterior distribution, $\Pi (df \mid X_1, \cdots, X_n)$.
+
+Estimate the posterior using **Bayesian bootstrap**.
+
+Bayesian bootstrap posterior:
+
+$$f(x) = \sum_{i=1}^{n}\,  W_i \, \delta_{x_i}(x), \quad (W_1, ..., W_n) \sim Dirichlet(\alpha_1=1, ..., \alpha_n=1)$$
+
+Note:
+
+``` math
+\begin{aligned}
+  f_n(x) 
+  &= \int f(x) \Pi(df \mid X_1, \cdots, X_n) \\
+  &= \mathbb{E} [f(x) \mid X_1, \cdots, X_n] \\ 
+  &= \mathbb{E} \left[ \sum_{i=1}^{n}\,  W_i \, \delta_{x_i}(x) \right] \\
+  &= \sum_{i=1}^{n} \mathbb{E}[W_i]\delta_{x_i}(x), \quad \text{by linearity of expectation}\\
+  &=  \sum_{i=1}^{n} \frac{1}{n}\delta_{x_i}(x), \quad \mathbb{E}[W_i] = \left. \frac{\alpha_i}{\sum_{j=1}^{n} \alpha_j} \right|_{\alpha_1=...\alpha_n=1} =  \frac{1}{n} .
+\end{aligned}
+```
+
+Thus, 
+
+``` math
+\begin{aligned}
+  \tilde{U}_n(\theta)
+  &= \int log f(x; \, \theta) f_n(dx)\\
+  &=\frac{1}{n} \sum_{i=1}^{n} log f(x_i; \, \theta)
+\end{aligned}
+```
+
+So $\hat{\theta}$ is the maximum likelihood estimator!
+
+
+
+> We can also do this using each posterior draw of $F$. Posterior expected uility collapses uncertainty via expectation. Instead, we may want to fully incorporate the uncertainty by evaluating each posterior draw of $F$.
+
+> Draw $F \sim \Pi( \cdot \mid X)$
+evaludate utility under that draw.
+This yields:
+$$U^{(b)}(\theta) =\sum_{i=1}^{n} w_i^{(b)} \, log f(X_i ; \theta).$$
+
+> By the end, we would have the *distribution* of the utility under posterior uncertainty. 
+
+> Bayesian decision theory does not require collaping uncertainty immeidately, it's just your choice.
+
+
+
+---
+
+# Asymptotics
+
+Question: If the data are truly i.i.d from $f_0$, does the Bayesian posterior place more and more mass near $f_0$ as $n \rightarrow \infty$?
+
+For parametric Bayesian, it works... But under the assumption that the prior captures the true density. <- absurd to think this can happen.
+
+For non-parametric bayesian, we don't assume that. Prior is a **random procedure** that outputs a density.
+
+> Prior is not a formula - it is a random generator. 
+
+
+Histogram prior = random density generator. 
+
+1. draw a partition
+2. draw bin heights
+
+
+Algorithm: draw a random density $f$
+
+Step 1: draw number of bins
+
+- sample $k \in \{ 1, 2, 3, ... \}$ from some distribution
+- $k$ is a model-complexity index, each value of $k$ defines a family of densities  
+
+Step 2: Define bins
+
+- Partition [0,1] into $k$ bins:
+$$ B_1 = [0, 1/k), B_2=[1/k, 2/k), \cdots, B_k = [(k-1)/k, 1]$$
+
+Step 3: Draw bin probabilities
+
+- Sample $(p_1, \cdots, p_k) \sim Dirichlet(1, \cdots, 1)$
+
+Step 4: Define density
+
+$$f(x) = k \cdot p_j \quad \text{if } x \in B_j$$
+
+1. Prior belief:
+    ex.)Dirichlet (1,...,1) or Dirichle (1,2,3,..,0.5)
+2. learning model
+    ex.)
+
+
+
+Symbolically, for a distance $d$ (Hellinger $d_H$):
+
+$$\Pi(\{ f: d(f, f_0) > \epsilon\} \mid X_1, \cdots, X_n) \xrightarrow[n \rightarrow \infty]{\text{a.s. under } P_{f_0}}$$
+for some fixed $\epsilon > 0$. where
+
+- $\text{a.s. under } P_{f_0}$: almost sure (a.s) convergence under the true data law $P_{f_0}$ (not the true density, but the true density for the observed data, and fixed $f_0$).
+
+
+This property is called **posterior consistency**
+
+
+---
+
+
+# Appendix
+
+
+## Toy example of understanding $U_n(\theta)$ {#sec-app-utility-example}
+
+
+
+### 1. Setup — objects and notation
+
+- State space of possible true densities:  $\mathcal F = \{f_1,f_2,f_3\}$.
+- Posterior over densities after observing data: $\Pi_n$ with
+  $$\Pi_n(f_1)=0.25,\quad \Pi_n(f_2)=0.35,\quad \Pi_n(f_3)=0.40.$$
+- Parametric action space: $\Theta = \{\theta_A,\theta_B\}$ (note: fewer $\theta$'s than $f$'s).
+- For each action $\theta_j$ we have a candidate density $f(\cdot;\theta_j)$.
+
+**Goal:** choose $\theta\in\Theta$ to maximize posterior expected utility.
+
+
+### 2. Utility function
+
+We use KL-based utility between densities (Walker’s special case). For any true density $f\in\mathcal F$ and action $\theta\in\Theta$, define
+
+$$ u(f,\theta) = -\mathrm{KL}\big(f\,\|\, f(\cdot;\theta)\big). $$
+
+
+
+This rewards actions whose parametric density is close (in KL) to the true density.
+
+
+
+
+### 3. Posterior expected utility (finite form)
+
+The posterior expected utility for an action $\theta$ is
+
+$$ U_n(\theta) = \mathbb E_{f\sim\Pi_n}[u(f,\theta)] = \sum_{i=1}^3 \Pi_n(f_i)\,u(f_i,\theta). $$
+
+Equivalently,
+
+$$ U_n(\theta) = -\sum_{i=1}^3 \Pi_n(f_i)\,\mathrm{KL}\big(f_i\,\|\, f(\cdot;\theta)\big) = 
+-0.25 \mathrm{KL}\big(f_1\,\|\, f(\cdot;\theta)\big) 
+-0.35 \mathrm{KL}\big(f_2\,\|\, f(\cdot;\theta)\big)
+-0.40 \mathrm{KL}\big(f_3\,\|\, f(\cdot;\theta)\big)$$
+
+The optimal decision is
+
+$$ \theta_n^* = \arg\max_{\theta\in\{\theta_A,\theta_B\}} U_n(\theta). $$
+
+
+### 4. Small numeric example (explicit values)
+
+Fix the posterior weights (as above) and suppose the pairwise KL divergences are given by the following table (these numbers are illustrative):
+
+| true density $f_i$ | KL to $f(\cdot;\theta_A)$ | KL to $f(\cdot;\theta_B)$ |
+|---:|---:|---:|
+| $f_1$ | 0.20 | 0.45 |
+| $f_2$ | 0.30 | 0.25 |
+| $f_3$ | 0.10 | 0.50 |
+
+**Compute posterior expected utility** for each $\theta$ (remember utility is negative KL):
+
+- For $\theta_A$:
+
+$$ U_n(\theta_A) = -\big(0.25\cdot 0.20 + 0.35\cdot 0.30 + 0.40\cdot 0.10\big). $$
+Compute inside the parentheses:
+
+- $0.25\cdot 0.20 = 0.050$
+- $0.35\cdot 0.30 = 0.105$
+- $0.40\cdot 0.10 = 0.040$
+
+Sum: $0.050 + 0.105 + 0.040 = 0.195$.
+
+Thus
+
+$$ U_n(\theta_A) = -0.195. $$
+
+- For $\theta_B$:
+
+$$ U_n(\theta_B) = -\big(0.25\cdot 0.45 + 0.35\cdot 0.25 + 0.40\cdot 0.50\big). $$
+Compute inside the parentheses:
+
+- $0.25\cdot 0.45 = 0.1125$
+- $0.35\cdot 0.25 = 0.0875$
+- $0.40\cdot 0.50 = 0.2000$
+
+Sum: $0.1125 + 0.0875 + 0.2000 = 0.4000$.
+
+Thus
+
+$$ U_n(\theta_B) = -0.400. $$
+
+**Decision:** compare utilities. Since $-0.195 > -0.400$, we prefer $\theta_A$. Therefore
+
+$$ \theta_n^* = \theta_A. $$
+
+Interpretation: although $f_2$ and $f_3$ give different KL behaviors, the posterior weights combined with their KL distances make $\theta_A$ the better parametric approximation on average.
+
+
+

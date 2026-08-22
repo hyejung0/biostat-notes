@@ -1,0 +1,205 @@
+---
+title: "Planning Study Design Carefully"
+author: "Hyejung Lee"
+date: "`r Sys.Date()`"
+summary: >
+  This note address how we can avoid countless "back up" plans to do causal 
+  inference by being more careful with designing a study, as a biostatistician.
+description: >
+  This note address how we can avoid countless "back up" plans to do causal 
+  inference by being more careful with designing a study, as a biostatistician.
+tags:
+  - design
+  - causal-inference
+categories:
+  - design
+  - causal-inference
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+---
+
+# Context
+
+During the 2025 Seventh Seattle Symposium in Biostatistics on Causal
+Inference, Dan Scharfstein shared a critique that we shouldn't be
+talking about countless backup plans. Instead, we should do a better job
+at planning studies so that we can do a good causal inference. I reached
+out to Dan to clarify his point because he was being careful at sharing
+such comments because that's basically making all of us shameful haha.
+He then shared with me @scharfstein2019constructive and
+@hernan2018cautions. This note summarizes my learning from these two
+articles.
+
+# Scharfstein (2019): A constructive critique of the draft ICH E9 Addendum
+
+## Purpose
+
+-   Reviews and critiques the draft ICH E9(R1) Addendum on estimands and
+    sensitivity analysis in confirmatory clinical trials.\
+-   Acknowledges the Addendum’s importance but argues that, as written,
+    it risks weakening evidentiary standards for regulatory approval
+    unless revised and applied rigorously.
+
+## ICH E9 and Addendum
+
+-   ICH = International Council for Harmonisation of Technical
+    Requirements for Pharmaceuticals for Human Use
+    -   ICH brings together the regulatory authorities and
+        pharmaceutical industry to discuss scientific and technical
+        aspects of drug registration
+-   E9 Guideline: "Statistical Principles for Clinical Trials" guideline
+    published by ICH in 1998. Gives direction for design, conduct,
+    analysis and evaluation of clinical trials. For later phase.
+    Primarily for confirmatory trials.
+    -   stresses importance of intent-to-treat (ITT) principal
+-   ITT principle
+    -   Good b/c it preserves randomization
+    -   But what's the **relevance** of the outcome if there's treatment
+        discontinuation or use of rescue medication?
+    -   Typically, outcomes after these events are treated as missing
+        data.
+    -   **inference** critically relies on **untestable assumptions**
+        about the **missing data**
+-   National Research Council (NRC)
+    -   Created the *Panel on Handling Missing Data in Clinical Trials*
+    -   recommend appropriate study designs and follow-up methods to
+        **reduce missing data** and appropriate methods to address
+        missing data for analysis of results
+    -   In 2010, 18 recommendations:
+        1.  trial objectives
+        2.  reducing dropouts through trial design
+        3.  reducing dropouts through trial conduct
+        4.  treating missing data
+        5.  understanding the causes and degree of dropouts in clinical
+            trials
+-   NRC report $\overset{\text{motivated}}{\longrightarrow}$ ICH E9 addendum
+    -   Two parts of NRC triggered the addendum
+        1.  importance of clearly defining the estimation goal (i.e.,
+            estimand) of the trial. Questions about handling study &
+            data all depends on the estimation goal of the trial
+        2.  Inferences about estimands often require untestable
+            assumptions about missing data mechanism. It's important to
+            assess the robustness (via sensitivity analysis) of
+            inferences to assumptions.
+    -   Addendum was drafted without formal input from the academic
+        community
+
+## Estimands
+
+-   Four attributes of an estimand by the Addendum:
+    1.  population
+    2.  endpoint
+    3.  approach to handling "intercurrent events," and
+    4.  effect measure.
+-   It's the intercurrent events that we want to focus on
+-   Intercurrent events := events that occur after treatment initiation
+    and either preclude observation of the endpoint or affect its
+    interpretation (e.g. treatment discontinuation)
+-   5 strategies are provided in the addendum
+-   **Critique focuses** on confirmatory trials evaluating treatments
+    that are meant to be **sustained over time**.
+
+Critiques:
+
+1.  Missing Focus on Treatment Strategies
+
+-   The Addendum treats "intercurrent events" (e.g., treatment
+    discontinuation) as a separate estimand attribute.
+-   Scharfstein argues that trials should instead be designed around
+    clinically realistic treatment strategies (e.g., flexible dosing,
+    dose adjustments, rescue medications) that patients can plausibly
+    adhere to.
+-   Clearly defining treatment strategies should be foundational to the
+    estimand, not implicit or secondary.
+
+2.  Conflation of Scientific Question and Methods
+
+-   The Addendum's "intercurrent event strategies" (treatment policy,
+    hypothetical, composite, principal stratum, while-on-treatment) blur
+    the line between:
+
+    -   the clinical question of interest, and
+    -   the analytic methods used to answer it.
+
+-   Scharfstein proposes reframing outcomes more directly (e.g., ITT,
+    composite, counterfactual under adherence, while-adherent).
+
+3.  Principal Stratification Concerns
+
+-   Principal stratum estimands target effects in non-identifiable subpopulations (i.e., a treating clinician is unable to know, at the time of treatment initiation, whether an individual is a member of the principal stratum or not).
+- Inference requires strong, untestable assumptions akin to observational studies.
+- Reliance on such estimands for primary regulatory decisions may lower evidentiary standards and raise ethical and labeling concerns.
+- Enrichment designs may sometimes justify principal stratum inference, but caution is strongly advised. 
+
+
+## Sensitivity Analysis
+
+- The Addendum endorses sensitivity analysis but does not specify how extensive or rigorous it should be.
+- Scharfstein argues for global sensitivity analysis, examining a wide range of clinically plausible assumptions.
+- Regulatory decisions should consider results under unfavorable but reasonable assumptions.
+- Strong sensitivity requirements would incentivize better trial design, adherence, and follow-up. 
+
+## Case Study: Chronic Pain Trials
+
+- Fixed-dose designs often lead to discontinuation due to variability in patient response.
+- Flexible dosing with structured rescue medication use better reflects clinical practice and defines a meaningful treatment strategy.
+- Different outcome definitions (ITT, composite, counterfactual, while-adherent) imply different levels of reliance on imputation and assumptions.
+- Less reliance on imputation may improve robustness but must be weighed against clinical relevance.
+- Principal stratification effects (e.g., among fully adherent patients) are especially problematic as primary estimands.
+
+
+## Recommendations
+
+- Revise estimand attributes to include:
+  1. Target population (possibly including principal strata),
+  2. Explicitly defined treatment strategies,
+  3. Clearly specified outcome type (ITT, composite, counterfactual, while-adherent),
+  4. Effect measure.
+- Design trials around clinically realistic, adherable strategies.
+- Require rigorous, wide-ranging sensitivity analyses as part of primary inference
+
+
+## Overall Takeaway
+
+The ICH E9 Addendum has the potential to improve clarity and rigor in clinical trials, but only if regulators insist on clinically meaningful estimands and demanding sensitivity analyses. Without this discipline, the framework could unintentionally reduce the strength of evidence required for drug approval.
+
+## My temp
+
+    -   many of the issues stem from a "one-size-fits-all" mentality
+        with regard to treatment
+    -   All patients in a trial are typically expected to repeatedly
+        take a fixed dose of the treatment (selected based on earlier
+        phase trials) to which they are assigned.
+    -   problem because problem can occur that limits adherence to this.
+        Patients can react very differently to the same dose of a drug,
+        with some experiencing benefit, others experiencing adverse
+        effects, and still others experiencing lack of efficacy. The
+        latter factors can be a major driver of treatment
+        discontinuation.
+    -   Trials should be designed based on clinically relevant
+        *treatment strategies* to which all patients have the potential
+        to adhere. e.g.) allowing for reductions and escalations of
+        dose, termination of treatment due to contraindications, and
+        conditions for use of specified adjuvant medications/therapies.
+    -   Treatment strategies should be clearly articulated in the study
+        protocol, and adherence to treatment strategies should be
+        monitored.
+
+-   Advantages of designing trials in this way:
+
+    1.  patients are less likely to discontinue dynamic treatment
+        strategies than more rigid fixed dose strategies
+    2.  treatment strategies are consistent with how medicine is
+        practiced
+    3.  evaluating hypotheticals such as "what if everyone had adhered
+        to a specified treatment strategy" is clinically sensible (as
+        opposed to "what if everyone had followed a fixed dose strategy
+        regardless of contraindications") The addendum gives strategies
+        for handling intercurrent events.
+
+-   Principal stratum used as a way to handle intercurrent events
+    muddles the point. It should be listed under the population
+    attribute of an estimand.
+
+## References

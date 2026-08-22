@@ -1,0 +1,294 @@
+---
+title: "Symposium: External Controls for Causal Inference: Study Design and Analysis"
+author: "Hyejung Lee"
+date: today
+summary: >
+  21st Kolokotrones Symposium held by CAUSALab at the Harvard T.H. Chan School of Public Health on April 3, 2026. The symposium focuses on the use of external controls in causal inference, covering topics such as study design and analysis methods.
+description: >
+  21st Kolokotrones Symposium held by CAUSALab at the Harvard T.H. Chan School of Public Health on April 3, 2026. The symposium focuses on the use of external controls in causal inference, covering topics such as study design and analysis methods.
+tags:
+  - clinical-trial
+  - causal-inference
+  - external-control
+categories:
+  - clinical-trial
+  - causal-inference
+  - external-control
+status: draft         # draft | published | deprecated
+#bibliography: ../../references/references.bib
+#csl: ../../references/csl/nature.csl
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Symposium Info
+
+21st Kolokotrones Symposium, External Controls for Causal Inference: Study Design and Analysis. CAUSALab event in Collaboration with Richard A. and Susan F. Smith Center for Outcomes Research at Beth Israel Deaconess Medical Center.
+
+Moderated by Issa Dahabreh (Harvard T.H. Chan School of Public Health) and Robert Yeh (Richard A. and Susan F. Smith Center for Outcomes Research).
+
+The panel will be moderated by Christina Lalani (Richard A. and Susan F. Smith Center for Outcomes Research) and Dhruv Kazi (Richard A. and Susan F. Smith Center for Outcomes Research). 
+
+Speakers & Panelists:
+
+- Christina Lalani (Richard A. and Susan F. Smith Center for Outcomes Research)
+- Dhruv Kazi (Moderator) (Richard A. and Susan F. Smith Center for Outcomes Research)
+- Sonia Hernández-Díaz (Harvard T.H. Chan School of Public Health)
+- Lorenzo Trippa (Harvard T.H. Chan School of Public Health)
+- Daniel Burkhoff (CRF, PV Loops, Columbia University)
+- Issa Dahabreh (Harvard T.H. Chan School of Public Health)
+- Robert Yeh (Richard A. and Susan F. Smith Center for Outcomes Research)
+- Laura Mauri (Medtronic)
+- Rafael Cavalcante (Boston Scientific)
+
+
+# Opening by Sonia Hernández-Díaz 
+
+![questions](external_control_figures/sonia_question.png)
+
+
+
+# Lorenzo Trippa
+
+ Validation approaches for using external control.
+
+
+----
+
+simplest clinical trials in neuro-oncology example of using external data. : 
+
+![](external_control_figures/trippa1.png)
+
+
+---
+
+
+![](external_control_figures/trippa2.png)
+
+---
+
+not just statistical assumptions, but design and devaluation of an external data 
+![](external_control_figures/trippa3.png)
+
+---
+
+validation example 
+![](external_control_figures/trippa_validation.png)
+
+
+
+
+----
+
+ways to test type 1 error and power in testing drugs using external data
+
+
+![](external_control_figures/trippa_design.png)
+
+
+----
+
+
+phase 3 study that fails... but by the end of the study, we have more knowledge of the stuff. So we want to find out subgroup where the treatment works. We can use external control to find out the subgroup. We avoid publishing null-result for whole population. 
+
+
+
+![](external_control_figures/trippa_subgroup.png)
+
+
+---
+
+There are many distortion mechanism that can be bad: unmeasured confounding, censoring in survival, etc. Here's all distortion mechanism.:
+
+
+
+
+
+
+
+# Daniel Burkhoff
+
+
+![](external_control_figures/burkhoff_main.png)
+
+
+---
+
+limited evidence to guide treatment of patients with cardiogenic shock. 
+
+
+----
+
+U.S. registries to collect data. to replace randomized controlled trial.
+
+![](external_control_figures/burkhoff1.png)
+![](external_control_figures/burkhoff2.png)
+
+
+
+---
+
+Result from RWE has been proved to be the best. Other ones are biased.
+![](external_control_figures/burkhoff3.png)
+
+
+---
+
+Graphical demonstration of creating external data and how that will be used for single arm treatments.
+
+![](external_control_figures/burkhoff4.png)
+
+---
+
+![](external_control_figures/burkhoff5.png)
+
+
+
+
+---
+
+![](external_control_figures/burkhoff6.png)
+
+
+
+
+
+# Issa Dahabreh 
+
+![](external_control_figures/issa_main.png)
+
+
+---
+
+creating smaller trial from an existing trial. 
+
+![](external_control_figures/issa1.png)
+
+
+---
+
+![](external_control_figures/issa2.png)
+
+---
+
+![](external_control_figures/issa3.png)
+
+---
+
+![](external_control_figures/issa4.png)
+
+
+We shouldn't think we can get model correctly. So we try to learn from the data. But to learn model from the data, I need large data.... But I need to get the model to gain efficiency. So how do we solve this issue?
+
+
+---
+
+![](external_control_figures/issa5.png)
+
+external controls requires very strong assumption. 
+
+But the hybrid/fusion design... randomization in smaller trial can get by without any assumption...?
+
+
+---
+
+
+![](external_control_figures/issa6.png)
+
+He personally doesn't feel very lucky. 
+
+
+---
+
+
+![](external_control_figures/issa7.png)
+
+1. take chance: rare disease or randomization is not possible
+2. Use design: get external non-experimental data. 
+3. When I can use randomization in smaller sample size, he prefers that. 
+
+
+---
+
+
+![](external_control_figures/issa8.png)
+
+
+---
+
+
+![](external_control_figures/issa9.png)
+
+
+
+---
+
+
+![](external_control_figures/issa10.png)
+
+
+
+---
+
+
+![](external_control_figures/issa11.png)
+
+---
+
+
+![](external_control_figures/issa12.png)
+
+
+
+
+# Robert Yeh
+
+![](external_control_figures/yeh_main.png)
+
+
+
+---
+
+![](external_control_figures/yeh1.png)
+
+
+
+---
+
+![](external_control_figures/yeh2.png)
+
+
+---
+
+![](external_control_figures/yeh3.png)
+
+
+# Panel Discussion
+
+- Rafael Cavalcante (Boston Scientific)
+- Laura Mauri (Medtronic)
+
+Maintaining scientific rigor maintenance asked to Lorenzo Trippa:
+
+  - combine randomization + external control 
+
+
+
+practical. Regulatory moving along? Concerns about FDA accepting the method? What would it take for them to get there? (Rafael & Laura)
+
+  - more about education. Let them know. 
+  - And being critical to lay out what's lacking about the method. 
+  - FDA is interested in all methods that will increase efficiency.
+  
+
+Augmenting external data to improve efficiency... Is there the science ready? Or is it just concept   (Issa)
+
+  - The method is out for ATE. 
+  - For heterogeneous ATE, it's almost ready.
+
+
+
+
+
+

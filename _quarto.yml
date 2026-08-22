@@ -1,0 +1,82 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - topics.qmd
+    - guide.qmd
+    - notes/**/*.qmd
+  resources:
+    - notes/**/*.pdf
+    - notes/**/*.pptx
+    - notes/**/*.png
+    - assets/**
+    - code/**
+
+website:
+  title: "Biostatistics Notes"
+  description: "A searchable personal reference library for biostatistics, causal inference, clinical trials, Bayesian methods, and measure theory."
+  page-navigation: true
+  back-to-top-navigation: true
+  reader-mode: true
+  search:
+    location: navbar
+    type: overlay
+    limit: 30
+    collapse-after: 4
+    copy-button: true
+    show-item-context: tree
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: notes/index.qmd
+        text: All notes
+      - href: topics.qmd
+        text: By topic
+      - href: guide.qmd
+        text: Managing notes
+  sidebar:
+    style: docked
+    search: true
+    collapse-level: 1
+    contents:
+      - index.qmd
+      - notes/index.qmd
+      - topics.qmd
+      - section: "Bayesian methods"
+        contents:
+          - auto: "notes/Bayesian/*.qmd"
+      - section: "Causal inference"
+        contents:
+          - auto: "notes/Causal_Inference/*.qmd"
+      - section: "Clinical trials"
+        contents:
+          - auto: "notes/Clinical_Trials/*.qmd"
+      - section: "Measure theory"
+        contents:
+          - auto: "notes/Measure_Theory/*.qmd"
+      - section: "Other topics"
+        contents:
+          - auto: "notes/Other/*.qmd"
+      - guide.qmd
+  page-footer:
+    left: "Biostatistics Notes"
+    right: "A personal reference library built with Quarto"
+
+language:
+  search-text-placeholder: "Search every note"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+    code-fold: show
+    code-tools: true
+    html-math-method: mathjax
+    css: styles.css
+
+execute:
+  warning: false
+  message: false

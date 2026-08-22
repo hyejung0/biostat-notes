@@ -1,0 +1,245 @@
+---
+title: "Target Trial Emulation"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Target trial emulation (TTE) presented by Barbra Dickerman from Harvard's CAUSALab. General overview of TTE, its assumptions, and how to implement it in practice. 
+description: >
+  Target trial emulation (TTE) presented by Barbra Dickerman from Harvard's CAUSALab. General overview of TTE, its assumptions, and how to implement it in practice. 
+tags:
+  - causal-inference
+categories:
+  - causal-inference
+status: draft         # draft | published | deprecated
+bibliography: ../../references/tte-references.bib
+csl: ../../references/csl/nature.csl   # optional
+---
+
+## What Is Target Trial Emulation and Why Do We Need It?
+
+Causal questions about treatment effects ideally require randomized trials. But randomized trials are not always feasible — due to ethical constraints, cost, long follow-up requirements, or the need to study rare or heterogeneous populations. In these situations, observational data can be used to answer causal questions, but only if the analysis is designed carefully [@hernan2022tte].
+
+Target trial emulation (TTE) is a two-step framework for designing observational analyses that mimic randomized trials as closely as possible [@hernan2025why]:
+
+1. **Specify** the protocol of the hypothetical pragmatic randomized trial (the *target trial*) that would answer the causal question.
+2. **Emulate** each component of that protocol using the available observational data.
+
+The framework's key contribution is structural: by making the target trial explicit, it forces researchers to confront the design choices that conventional observational analyses often leave implicit — choices that, when made poorly, introduce *design-related biases* such as immortal time bias, selection bias, and prevalent-user bias [@hernan2016immortal]. Critically, TTE addresses biases arising from *incorrect use of data*; it does not fix biases arising from *data limitations* such as unmeasured confounding or measurement error [@hernan2025why].
+
+> **Key distinction**: TTE eliminates design-related biases by construction. It does not eliminate confounding from unmeasured variables — that still requires good data and careful assumption-making.
+
+---
+
+## The Two Steps in Practice
+
+### Step 1: Specify the Target Trial Protocol
+
+The target trial protocol defines the causal estimand. Its components are [@cashin2025transparent; @hernan2022tte]:
+
+| Component | What to specify |
+|---|---|
+| **Eligibility criteria** | Who would be enrolled (demographics, diagnoses, treatment history, washout requirements) |
+| **Treatment strategies** | What is compared (drug A vs. drug B, initiation vs. non-initiation, dose, duration, grace period) |
+| **Assignment procedures** | Random assignment; note whether participants are aware of allocation |
+| **Follow-up** | Time zero = time of assignment; when and why follow-up ends |
+| **Outcomes** | Primary and secondary outcomes; how and when measured |
+| **Causal contrasts** | ITT effect? Per-protocol effect? Both? Relative and absolute measures |
+| **Identifying assumptions** | What must be true to estimate each causal estimand from the data |
+| **Data analysis plan** | Statistical models; how to adjust for confounding; handling missing data and loss to follow-up |
+
+Specifying the target trial is an iterative process. You often start by identifying several candidate target trials, then check whether the data can actually support them. If the data are insufficient, you must choose: abandon the data, or modify the target trial to match what the data can answer [@cashin2025transparent]. **Be transparent about how the protocol evolved.**
+
+### Step 2: Emulate Each Component with Observational Data
+
+For each component of the target trial, you describe how it was operationalized using the observational data — including any imperfections in the mapping and the reasons for them.
+
+The side-by-side structure from the TARGET reporting checklist [@cashin2025transparent] is a useful template (see @sec-target-table below).
+
+---
+
+## Time Zero and Immortal Time Bias
+
+Getting time zero right is one of the most important — and most commonly violated — principles in TTE. Time zero is the moment when:
+
+- the participant meets all eligibility criteria,
+- is classified into a treatment strategy, and
+- follow-up begins.
+
+These three events must be **simultaneous** [@hernan2016immortal]. When they are misaligned, *immortal time bias* is introduced: person-time is attributed to a treatment group during a period when the person could not have experienced the outcome (because they hadn't yet initiated treatment, or hadn't yet been selected into the study).
+
+Four common misalignments that produce immortal time bias [@hernan2016immortal]:
+
+1. Eligibility assessed *before* treatment assignment (but baseline defined as time of treatment)
+2. Treatment classified using data from *after* baseline
+3. Follow-up started at enrollment but treatment assigned later
+4. Selection into the study depends on future outcomes (classic case-control problem)
+
+**The fix**: Align eligibility, assignment, and start of follow-up at a single, well-defined time zero.
+
+---
+
+## Design-Related Biases TTE Prevents
+
+| Bias | What it is | How TTE addresses it |
+|---|---|---|
+| **Immortal time bias** | Person-time misclassified; subject is "immortal" during exposure ascertainment period | Explicit time zero aligned with treatment assignment |
+| **Prevalent-user bias** | Including people who started treatment before baseline | New-user design: restrict to people initiating treatment at time zero |
+| **Selection bias** | Eligible cases/controls selected based on events after baseline | Eligibility and selection happen at the same time (time zero) |
+| **Time-window bias** | Using different reference time windows for exposed vs. unexposed | Symmetric follow-up defined by time zero, not by events |
+
+---
+
+## The TARGET Reporting Checklist {#sec-target-table}
+
+The TARGET statement [@cashin2025transparent] provides a 21-item checklist for reporting TTE studies. The core methodological items are organized as a parallel table comparing the target trial specification to its emulation in the data. Use this as a template when writing up your own TTE study.
+
+### Template: Protocol Specification vs. Emulation
+
+| Component | Target Trial | Observational Emulation |
+|---|---|---|
+| **Eligibility criteria** | Describe the eligibility criteria (demographics, diagnosis, treatment history, washout). | Describe how each criterion was operationalized with the data (e.g., ICD codes, prescription records). Note any imperfect mapping. |
+| **Treatment strategies** | Describe the treatment strategies compared, including dose, duration, grace period, concomitant treatments, and decision rules for discontinuation. | Describe how treatment strategies were identified in the data (e.g., dispensing records, ATC codes). Describe how adherence was defined. |
+| **Assignment procedures** | Report that eligible individuals would be randomly assigned. Note whether participants would be aware of treatment allocation. | Describe how individuals were classified into treatment strategies at time zero (e.g., based on a new prescription). Note that randomization is not present and describe adjustment strategy. |
+| **Follow-up** | State that follow-up starts at time of random assignment (time zero). Specify when follow-up ends (e.g., outcome, death, end of data, pre-specified maximum). | State that follow-up starts at time of classification into a treatment strategy. Describe how end of follow-up was ascertained in the data. |
+| **Outcomes** | Describe primary and secondary outcomes, including how and when they would be assessed. | Describe how outcomes were ascertained from the data (e.g., codes, registries). Note any validation. |
+| **Causal contrasts** | Specify: ITT effect, per-protocol effect, or both. Specify effect measure (risk ratio, risk difference, hazard ratio). | Describe how each contrast was operationalized. Describe how competing events (e.g., death) were handled. |
+| **Identifying assumptions** | Describe assumptions needed to identify each estimand (e.g., no unmeasured confounding, positivity, consistency). List adjustment variables. | For each estimand, describe assumptions including those regarding baseline confounding due to lack of randomization. Describe how adjustment variables were operationalized. |
+| **Data analysis plan** | Describe analysis procedures for each estimand; modeling choices; handling of missing data; any subgroup or sensitivity analyses. | Describe any modifications needed due to the observational data (e.g., IP weighting to adjust for confounding and censoring). Report statistical software and packages. |
+
+*Source: adapted from Table 2, Cashin et al. (2025)* [@cashin2025transparent]
+
+---
+
+## Causal Contrasts: ITT vs. Per-Protocol Effects in TTE
+
+In TTE, both the ITT and per-protocol effects have well-defined analogs in the observational setting [@hernan2017perprotocol; @cashin2025transparent]:
+
+**Observational ITT effect**
+: Comparison of groups classified into different treatment strategies at time zero, regardless of whether they continue those strategies. Requires adjustment for *baseline confounders* only (no randomization → no guaranteed comparability). Analogous to: *What is the effect of being prescribed treatment A vs. B, regardless of what they actually took?*
+
+**Observational per-protocol effect**
+: Effect of receiving the treatment strategy under full adherence to the protocol. Requires adjustment for *baseline and time-varying confounders*, typically via g-methods (IP weighting, g-estimation). Analogous to: *What is the effect of continuously adhering to treatment A vs. B?*
+
+> When there is nonadherence or loss to follow-up, you need per-protocol analysis to estimate the effect of actual treatment. This in turn requires time-varying confounder data and appropriate methods.
+
+---
+
+## Identifying Assumptions
+
+TTE requires the following assumptions to identify each causal estimand from observational data. These should be stated explicitly in your protocol [@hernan2025why; @cashin2025transparent]:
+
+**1. Conditional exchangeability (no unmeasured confounding)**
+: Within levels of the adjustment variables, individuals receiving each treatment strategy at each time have the same counterfactual risk of the outcome. This is the core unverifiable assumption. Sensitivity analyses can assess robustness.
+
+**2. Positivity**
+: For every combination of adjustment variable values, there is a nonzero probability of receiving each treatment strategy. If some covariate patterns are only observed in one treatment group, estimates can become unstable or undefined.
+
+**3. Consistency (well-defined interventions)**
+: The treatment strategies are sufficiently well-defined that counterfactual outcomes are well-specified. Vague treatments like "treatment as usual" violate this if they mean different things for different people.
+
+**4. No interference**
+: One person's treatment does not affect another person's outcome (standard SUTVA assumption).
+
+For **per-protocol effects**, additional conditional exchangeability assumptions are needed to handle nonadherence and loss to follow-up over time — i.e., the measured time-varying covariates must account for all factors that jointly affect adherence (or censoring) and the outcome.
+
+---
+
+## Data Assembly: Getting It Right
+
+The quality of a TTE is only as good as the quality of the assembled dataset. Several principles apply:
+
+**Variable time ordering within each interval**
+: Within each time interval, covariates must be measured *before* treatment, and treatment before outcomes. The ordering between competing events (e.g., death, D) and censoring (C) depends on clinical context, but the outcome should generally come last:
+
+$$\text{Covariate}(t) \rightarrow \text{Treatment}(t) \rightarrow \text{Outcome}(t) \; [\rightarrow D(t), C(t)]$$
+
+**Time interval length**
+: Intervals should be long enough to capture meaningful differences between them, but not so long that multiple events can occur within a single interval (which creates ambiguity about ordering and timing). The right length depends on clinical context — e.g., weekly for rapidly-changing conditions, monthly or quarterly for slower-moving exposures.
+
+**New-user design**
+: Restrict to incident users of treatment — people initiating treatment at or just after time zero, with no prior use in a washout period. This prevents prevalent-user bias and aligns with the target trial's eligibility criteria, which typically exclude people already on treatment [@hernan2016immortal].
+
+**Sequential trials (when appropriate)**
+: If individuals can become eligible at multiple time points, you can emulate a sequence of nested trials — one for each calendar time when a person first meets eligibility. This increases efficiency and can be pooled for analysis [@hernan2016bigdata].
+
+---
+
+## Common Pitfalls in Observational TTE
+
+| Pitfall | Problem | Solution |
+|---|---|---|
+| Defining eligibility at a different time than treatment assignment | Creates immortal time | Align both at time zero |
+| Using post-baseline covariates as adjustment variables | Introduces collider bias / blocks causal pathway | Only use *pre-baseline* variables for baseline adjustment |
+| Including prevalent users | Healthy-survivor bias; different population than intended | Enforce a washout period; new-user design |
+| Naïve per-protocol analysis (simple restriction to adherers) | Selection bias: adherers differ from non-adherers | Adjust for time-varying confounders using IP weighting or g-estimation |
+| Classifying cases by exposure over follow-up, controls by exposure at interview | Differential immortal time in case-control designs | Align time zero and exposure classification window for cases and controls equally |
+| Measuring adjustment variables at interview (end of study) | These are post-baseline covariates | Restrict adjustment variables to pre-baseline measurements |
+
+---
+
+## Analysis Methods for TTE
+
+### For the ITT Effect
+
+Requires adjustment for *baseline confounders* only (since there is no randomization). Standard approaches:
+
+- Regression adjustment (logistic, Cox, Poisson)
+- Propensity score methods (matching, stratification, inverse probability weighting at baseline)
+- Standardization (g-computation at baseline)
+
+### For the Per-Protocol Effect
+
+Requires adjustment for *both baseline and time-varying confounders*, especially when those confounders are themselves affected by prior treatment (treatment-confounder feedback). Standard regression cannot handle this correctly. Use g-methods [@hernan2017perprotocol]:
+
+- **Inverse Probability (IP) Weighting**: weight each person's contribution by the inverse probability of their observed treatment and censoring history, given covariates. Creates a pseudo-population in which treatment is independent of measured confounders.
+- **G-estimation (structural nested models)**: directly models the counterfactual treatment effect; useful when the dose-response relationship is the target.
+- **G-computation (parametric g-formula)**: simulates counterfactual outcomes under each treatment strategy using models for all time-varying variables.
+
+For the **per-protocol effect**, you typically need:
+
+1. A model for the probability of adhering (or being censored) at each time point, conditional on past covariates
+2. IP weights derived from that model, stabilized to reduce variance
+3. A weighted outcome model
+
+---
+
+## Case-Control Adaptations
+
+Case-control studies are useful for TTE when the outcome is rare, when full-cohort data is unavailable, or when the exposure-confounder information is only practical to collect for a sample. Relative (not absolute) risks can be estimated [@dickerman2020casectrl].
+
+Key potential biases when case-control designs are used carelessly in TTE:
+
+**Immortal time bias via differential exposure window**
+: If cases are classified by treatment up to the time of outcome (diagnosis), but controls are classified by treatment up to the time of interview (end of study), controls have a longer exposure window. This can make treatment look falsely protective for cases.
+
+**Post-selection confounders**
+: Adjusting for variables measured at the time of interview (end of study) for controls means adjusting for post-baseline covariates. These are not true baseline confounders and may introduce collider bias.
+
+**Prevalent users**
+: Including cases and controls who were already using treatment before baseline leads to prevalent-user bias. Those susceptible to the outcome may have already experienced it (e.g., death) before the study window, leaving a healthier group of users — which can underestimate the true risk.
+
+**The fix**: Define a common time zero for both cases and controls; classify exposure over the same time window; restrict to new users; and adjust only for covariates measured at or before baseline.
+
+---
+
+## Quick-Reference Checklist Before Submitting Your TTE Analysis
+
+Use this self-audit before finalizing your analysis:
+
+- [ ] Is the target trial explicitly specified, including all 8 protocol components?
+- [ ] Is time zero clearly defined and the same for eligibility, treatment assignment, and start of follow-up?
+- [ ] Did I use a new-user design (no prevalent users at baseline)?
+- [ ] Are my adjustment variables all measured at or before baseline (for the ITT effect)?
+- [ ] For the per-protocol effect, did I collect time-varying confounder data throughout follow-up?
+- [ ] Did I use appropriate methods (IP weighting or g-estimation) for per-protocol analysis?
+- [ ] Did I prespecify sensitivity analyses for the key identifying assumptions?
+- [ ] Does my report clearly describe any imperfect mapping from the target trial to the data?
+- [ ] Did I report both relative and absolute effect measures?
+- [ ] Did I register my protocol and/or analysis plan prospectively?
+
+---
+
+## References
+
+::: {#refs}
+:::

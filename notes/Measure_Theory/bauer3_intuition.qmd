@@ -1,0 +1,86 @@
+---
+title: "Measure Theory by Bauer Section 3: my own note"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Trying to relate my statistical background to measure
+description: >
+  Trying to relate my statistical background to measure
+tags:
+  - measure-theory
+categories:
+  - measure-theory
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+---
+
+# Context
+
+Now that I've covered the lectures up to section 3, I want to apply what "measure" is in statistics that I'm familiar with.
+
+# Notes
+
+In Bauer’s language, a **measure** is a nonnegative set function on a $\sigma$-algebra that is $\sigma$-additive (countably additive) on disjoint sets; and when it is normalized so that $\mu(\Omega)=1$, it is a probability measure.
+
+# Examples
+
+## Bernoulli(p) as a measure
+
+Sample space: $\Omega = \{0,1\}$
+
+$\sigma$-algebra: $\mathcal{F} = \mathscr{P}(\Omega) = \{ \{0\}, \{1\}, \emptyset, \Omega=\{0,1\} \}$
+
+Define $P:\mathcal{F} \rightarrow [0, 1]$ by
+
+- $P(\{ 1 \}) = p$
+- $P(\{ 0 \}) = 1-p$
+- $P(\emptyset) = 0$
+- $P(\Omega) = 1$.
+
+
+
+<details>
+
+<summary><strong>This $P$ is a probability measure because:</strong></summary>
+
+First, we should show that $\mathcal{F}$ is a ring. We use the definition of a ring that appears in [Bauer note 3](bauer3.qmd). First, $\emptyset \in \mathcal{F}$. Second, for every $A$ and $B$ in $\mathcal{F}$, we need to show that $A\backslash B \in \mathcal{F}$. But that's easy and cumbersome to do. We need to show (4 choose 2) = 6 cases.. But I will still do it. 
+
+1. For $A=\{1\}$, and $B$ is any one of $\{ \{0\}, \emptyset, \Omega=\{0,1\} \}$:
+    - $\{1\} \backslash \{0\} = \{1\} \in \mathcal{F}$
+    - $\{1\} \backslash \emptyset = \{1\} \in \mathcal{F}$
+    - $\{1\} \backslash \{1, 0\} = \{0\} \in \mathcal{F}$
+2. For  $A=\{0\}$, and $B$ is any one of $\{ \emptyset, \Omega=\{0,1\} \}$ ($\{1\}$ is not a candidate for $B$ because we've already tested that above):
+    - $\{0\} \backslash \emptyset = \{0\} \in \mathcal{F}$
+    - $\{0\} \backslash \{1, 0\} = \{1\} \in \mathcal{F}$
+3. For  $A=\emptyset$, and $B=\Omega=\{0,1\}$:
+    - $\emptyset \backslash \{1, 0\} =  \emptyset \in \mathcal{F}$.
+    
+Thus, the second condition is satisfied. Lastly, we need to show that $A\cup B \in \mathcal{F}$. We need to go through similar exercise as the set difference. 
+
+1. For $A=\{1\}$, and $B$ is any one of $\{ \{0\}, \emptyset, \Omega=\{0,1\} \}$:
+    - $\{1\} \cup \{0\} = \{1, 0\} \in \mathcal{F}$
+    - $\{1\} \cup \emptyset = \{1\} \in \mathcal{F}$
+    - $\{1\} \cup \{1, 0\} = \{1, 0\} \in \mathcal{F}$
+2. For  $A=\{0\}$, and $B$ is any one of $\{ \emptyset, \Omega=\{0,1\} \}$:
+    - $\{0\} \cup \emptyset = \{0\} \in \mathcal{F}$
+    - $\{0\} \cup \{1, 0\} = \{1,0\} \in \mathcal{F}$
+3. For  $A=\emptyset$, and $B=\Omega=\{0,1\}$:
+    - $\emptyset \cup \{1, 0\} =  \{1, 0\} \in \mathcal{F}$.
+
+    
+Therefore, $\mathcal{F}$ is a ring. Now, by the definition of premeasure, show that $P$ is a premeasure on $\mathcal{F}$. First, $P(\emptyset)=0$. Second, we need to show that for every sequence $(A_n)$ of pairwise disjoint sets from$\mathcal{F}$ whose union lies in $\mathcal{F}$, $P\left(\bigcup_{n=1}^\infty A_n\right)=\sum_{n=1}^\infty P(A_n)$.  Note that $\{ 1 \}$, $\{ 0 \}$, and $\emptyset$ are pairwise disjoint sets in $\mathcal{F}$, and $\{ 1 \} \cup \{ 0 \} \cup \emptyset = \{0,1\} \subset \mathcal{F}$. Also, 
+
+$$P\left(\bigcup_{n=1}^\infty A_n\right) = P \left(\{ 1 \} \cup \{ 0 \} \cup \emptyset \right) = P(\{0,1\}) = 1 = p + (1-p) + 0 = P(\{ 1 \}) + P(\{ 0 \}) + P(\emptyset) = \sum_{n=1}^\infty P(A_n).$$
+
+Therefore, $P$ is a premeasure on $\mathcal{F}$. Please also note that it's easy to show that $\mathcal{F}$ is also a $\sigma$-algebra by the definition. Since $P$ is a premeasure on $\sigma$-algebra, it is a measure on  $\mathcal{F}$. Since $P(\Omega) = 1$, $P$ is a probability measure.
+
+</details>
+
+
+
+
+## Uniform(0,1) as a measure on $\mathbb{R}$
+
+Here, we want a probability measure $P$ on $(\mathbb{R}, \mathcal{B}(\mathbb{R}))$.
+

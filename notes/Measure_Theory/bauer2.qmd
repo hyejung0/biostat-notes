@@ -1,0 +1,156 @@
+---
+title: "Measure Theory by Bauer Section 2: Dynkin systems"
+author: "Hyejung Lee"
+date: today
+summary: >
+  Section 2 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
+description: >
+  Section 2 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
+tags:
+  - measure-theory
+categories:
+  - measure-theory
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+---
+
+
+
+# Dynkin Systems ($\lambda$-systems)
+
+Dynkin systems are introduced as a **technical tool** that is often easier to work with than $\sigma$-algebras. They play a crucial role in uniqueness proofs and extension arguments in probability theory.
+
+
+---
+
+# Definition: Dynkin system
+
+Let $\Omega$ be a set.
+A collection $\mathcal{D} \subset \mathcal{P}(\Omega)$ is called a **Dynkin system** (or $\lambda$-system) if:
+
+1. **Whole space included**
+   $$
+   \Omega \in \mathcal{D}
+   $$
+
+2. **Closed under complements**
+   If $A \in \mathcal{D}$, then
+   $$
+   A^c = \Omega \setminus A \in \mathcal{D}
+   $$
+
+3. **Closed under countable disjoint unions**
+   If $A_1, A_2, \dots \in \mathcal{D}$ are **pairwise disjoint**, then
+   $$
+   \bigcup_{n=1}^\infty A_n \in \mathcal{D}
+   $$
+
+---
+
+# Comparison with $\sigma$-algebras
+
+| Property | $\sigma$-algebra | Dynkin system |
+|--------|-----------|---------------|
+| Contains $\Omega$ | Yes | Yes |
+| Closed under complements | Yes | Yes |
+| Closed under countable unions | Yes (arbitrary) | Yes (disjoint only) |
+| Closed under finite intersections | Yes | Not necessarily |
+
+Every $\sigma$-algebra is a Dynkin system, but not every Dynkin system is a $\sigma$-algebra.
+
+---
+
+# Why Dynkin systems are easier to verify
+
+The key difference is **disjointness**.
+
+- $\sigma$-algebras require closure under **all** countable unions, including overlapping sets.
+- Dynkin systems require closure only under **countable disjoint unions**.
+
+Because measures are defined using $\sigma$-additivity on disjoint sets, Dynkin systems align naturally with measure-theoretic arguments and are much easier to check in practice.
+
+---
+
+# Example: Dynkin system that is not a $\sigma$-algebra
+
+Let
+$$
+\Omega = \{1,2,3,4\}.
+$$
+
+Define
+$$
+\mathcal{D} = \{A \subset \Omega : |A| \text{ is even}\}.
+$$
+
+Then:
+$$
+\mathcal{D}=
+\{
+\emptyset,\, \Omega,\,
+\{1,2\},\{1,3\},\{1,4\},\{2,3\},\{2,4\},\{3,4\}
+\}.
+$$
+
+## Dynkin system?
+- Complements preserve even cardinality ✓
+- Disjoint unions of even-sized sets remain even-sized ✓
+
+## Not a $\sigma$-algebra
+$$
+\{1,2\} \cap \{2,3\} = \{2\} \notin \mathcal{D}.
+$$
+
+So intersection closure fails.
+
+---
+
+# Key theorem (Bauer §2.3)
+
+> **A Dynkin system that is closed under finite intersections is a $\sigma$-algebra.**
+
+Important:
+
+- Finite intersection closure is an **additional assumption**
+- It does **not** hold for all Dynkin systems
+
+## Proof idea
+1. Use complements + intersections to get finite unions
+2. Rewrite arbitrary unions as disjoint unions
+3. Apply Dynkin closure
+
+---
+
+# Dynkin vs $\sigma$ generation (Bauer §2.4)
+
+Let $\mathcal{S} \subset \mathcal{P}(\Omega)$ be **closed under finite intersections**.
+
+Then:
+$$
+\delta(\mathcal{S}) = \sigma(\mathcal{S})
+$$
+
+where:
+
+- $\delta(\mathcal{S})$ = smallest Dynkin system containing $\mathcal{S}$
+- $\sigma(\mathcal{S})$ = smallest $\sigma$-algebra containing $\mathcal{S}$
+
+---
+
+# Why this result matters
+
+This theorem allows one to:
+
+- Prove results on simple generating classes
+- Extend them automatically to full $\sigma$-algebras
+- Avoid direct $\sigma$-algebra verification
+
+This is the foundation of the **$\pi - \lambda$ theorem** used throughout probability theory.
+
+---
+
+# Conceptual takeaway
+
+> Dynkin systems are weaker than $\sigma$-algebras, but when generators are closed under finite intersections, Dynkin systems and $\sigma$-algebras coincide.
+

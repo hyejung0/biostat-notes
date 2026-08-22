@@ -1,0 +1,231 @@
+---
+title: "Measure theory notation d for Bayesian Nonparametric Methods"
+author: "Hyejung Lee"
+date: "`r Sys.Date()`"
+summary: >
+  This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
+description: >
+  This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
+tags:
+  - bayesian
+  - nonparametric
+  - measure-theory
+categories:
+  - bayesian
+  - nonparametric
+  - measure-theory
+status: draft         # draft | published | deprecated
+bibliography: ../../references/references.bib
+csl: ../../references/csl/vancouver.csl   # optional
+---
+
+
+# Context {-}
+
+This is to help people understand the following equation
+
+$$
+\Pi(df \mid X_{1:n}) = \frac{ \prod_{i=1}^n f(X_i) \,  \cdot \Pi(df)}{\int \prod_{i=1}^n f(X_i) \, \Pi(df)}
+$$
+
+that appears in bayes-nonpar-concept.Rmd file.
+
+
+---
+
+# The Meaning of "d" in Basic Integration
+
+You may have seen integrals like:
+
+$$
+\int f(x)\, dx
+$$
+
+Here:
+
+- $f(x)$ is the function being integrated
+- $dx$ tells us **what measure we are integrating with respect to**
+
+Important point:
+
+> The symbol **"d" is not a variable and not a derivative**.  
+> It indicates the *measuring rule* being used.
+
+When we write $dx$, we mean **Lebesgue measure** (ordinary length on the real line).
+
+---
+
+# Replacing $dx$ with a Probability Distribution
+
+A probability distribution $F$ is itself a *measure* — it assigns probability mass to sets.
+
+So instead of integrating with respect to length, we can integrate with respect to probability:
+
+$$
+\int g(x)\, dF(x)
+$$
+
+This means:
+
+> Add up values of $g(x)$, weighted by how much probability $F$ assigns to different regions.
+
+> $dF(x)$ represents the "probability mass" assigned to an infinitesimal interval (d) around $x$.
+
+
+
+---
+
+# What Does $dF(x)$ Mean?
+
+This notation appears in likelihoods.
+
+## Conceptual Meaning
+
+$$
+dF(x)
+$$
+
+means:
+
+> The probability mass (or density contribution) that the distribution $F$ assigns 
+to the infinitesimal interval (d) around $x$.
+
+
+---
+
+## Discrete Example
+
+If $F$ is discrete and
+
+$$
+P_F(X = 3) = 0.2,
+$$
+
+then observing $X_i = 3$ gives:
+
+$$
+F(dX_i) = F(\{3\}) = 0.2.
+$$
+
+---
+
+## Continuous Example
+
+If $F$ has density $f$, then:
+
+$$
+dF(X_i) \approx f(X_i)\, dX.
+$$
+
+This is exactly why:
+
+$$
+\int x\, dF(x) = \mathbb{E}_F[X].
+$$
+
+
+
+
+
+
+---
+
+# Why This Notation Is Used
+
+The notation $dF(X_i)$ works **universally**:
+
+- Discrete distributions
+- Continuous distributions
+- Mixed distributions
+
+This avoids assuming a density exists.
+
+---
+
+# What Does $\pi(df)$ Mean?
+
+Now we move one level higher.
+
+## What Is Random Here?
+
+In Bayesian nonparametrics:
+
+- The unknown object is the **distribution itself**, denoted $f$
+- We model $f$ as a random object
+
+So we introduce a prior probability law $\pi$ whose outcomes are *distributions*.
+
+
+---
+
+## The component $\Pi$: The "Rule" or "Bag"
+
+$\Pi$ represents the **Prior Probability Measure**. It is the "God's eye view" 
+distribution that governs which $f$ (which curve) is likely to be the truth.
+
+The Bag Analogy: Imagine a giant bag containing every possible probability 
+density function that could ever exist. Some are smooth, some are jagged, 
+some are normal, some are exponential.
+ 
+- The Weighting: $\Pi$ is the rule that tells you how likely you are to pick a 
+specific type of curve from this bag.
+   - If $\Pi$ is a parametric prior (like Normal), it assigns $100 \%$ of the 
+   probability mass to the subset of curves that are perfect bell curves.
+    - If $\Pi$ is a nonparametric prior (like the Dirichlet Process), 
+    it spreads the probability mass out over all possible shapes.
+    
+---
+
+## Interpreting $\Pi(df)$
+
+The symbol:
+
+$$
+\Pi(df)
+$$
+
+means:
+
+"The probability mass assigned by the rule $\Pi$ to a tiny, infinitestimal neighborhood around the specific function $f$."
+
+
+> why not just $\Pi(f)$? : In standard statistics, we write $p(x)dx$ where 
+$p(x)$ is the density height and $dx$ is the width.
+
+> In infinite dimensions, "width" ($df$) doesn't really exist in a standard way, 
+and "height" ($p(f)$) is often impossible to define because the space is too big. 
+
+> So, instead of separating them into "height × width," we keep them combined 
+as a single unit: $\Pi(df)$. This represents the "chunk" of probability weight 
+located at $f$.
+
+
+
+---
+
+# The Posterior Formula, Explained
+
+The Bayesian nonparametric posterior is written:
+
+$$
+\pi(df \mid X_{1}, X_2, \cdots, X_{n}) = \frac{ \text{likelihood } \cdot \text{ prior}}{ \text{marginal density of } X_i's} \propto \prod_{i=1}^n f(X_i) \, \cdot \Pi(df)
+$$
+
+Read in words:
+
+The posterior probability assigned to distributions near $f$ is proportional to  
+how well $F$ explains the observed data and how plausible $f$ was under the prior.
+
+---
+
+
+# Why This Notation Is Unavoidable
+
+Bayesian nonparametrics allows:
+
+- Discrete distributions
+- Continuous distributions
+- Mixtures of both
+
+The "d" notation is the **only way** to write Bayes’ rule in a form that applies universally.
+
