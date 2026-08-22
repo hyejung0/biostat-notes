@@ -9,5 +9,6 @@ Imports:
     knitr,
     rmarkdown,
     tibble
+    DiagrammeR
 Suggests:
     rstudioapi
