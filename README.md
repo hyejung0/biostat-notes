@@ -28,6 +28,7 @@ A searchable Quarto website for a personal collection of biostatistics notes. Th
 ├── code/                       # Supporting analysis code
 ├── scripts/                    # Preview and render helpers
 ├── .github/workflows/          # Automatic GitHub Pages deployment
+├── DESCRIPTION                 # R packages installed for local/online rendering
 └── _site/                      # Generated website; do not edit or commit
 ```
 
@@ -69,6 +70,33 @@ categories:
 ```
 
 Save the file under the appropriate `notes/<Subject>/` folder. Navigation, topic listings, the title index, and the full-text search index update automatically on the next render.
+
+## R package dependencies
+
+GitHub renders the site on a clean computer. It installs the packages listed under `Imports` in `DESCRIPTION`; it cannot see packages that happen to be installed on your own computer.
+
+The current site requires `data.table`, `ggplot2`, `knitr`, `rmarkdown`, and `tibble`. The `rmarkdown` package is a site-wide rendering dependency and should remain in `DESCRIPTION`. It does **not** need a `library(rmarkdown)` call inside individual notes.
+
+Whenever an R code chunk uses a new package:
+
+1. Add the package name under `Imports` in `DESCRIPTION`.
+2. Use either `library(packageName)` or `packageName::function()` in the note.
+3. Install it locally if necessary with `install.packages("packageName")`.
+4. Run `quarto render` before committing and pushing.
+
+For example, if a note uses `survival::coxph()`, add `survival` to `DESCRIPTION`:
+
+```text
+Imports:
+    data.table,
+    ggplot2,
+    knitr,
+    rmarkdown,
+    survival,
+    tibble
+```
+
+Keep the final package without a trailing comma. The GitHub Actions workflow reads this file automatically; do not add separate package-install commands to the workflow for ordinary R dependencies.
 
 ## Publish with GitHub Pages
 
@@ -122,6 +150,7 @@ Quarto builds a local `search.json` file during every render. No search service,
 - **A new note is missing:** confirm it ends in `.qmd`, is inside one of the five subject folders, has a `title`, and `quarto render` completes.
 - **An image is missing:** use a path relative to the note and commit the image along with the note.
 - **A citation fails:** confirm the bibliography and CSL paths are relative to the note's folder.
+- **GitHub reports “there is no package called …”:** add that package under `Imports` in `DESCRIPTION`, render locally, commit both files, and push again. A `library(...)` call loads a package but does not install it.
 - **GitHub Actions fails:** open the failed run, expand the red step, fix the first reported render or package error locally, and push again.
 - **A deleted note remains online:** confirm the deletion was committed and the newest Actions run completed successfully.
 

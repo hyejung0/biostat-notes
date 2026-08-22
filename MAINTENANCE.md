@@ -11,6 +11,14 @@ The `.qmd` files under `notes/` are the editable source files. Never edit `_site
 
 New notes are discovered automatically by the globs in `_quarto.yml`, `topics.qmd`, and `notes/index.qmd`.
 
+## R packages used by notes
+
+GitHub builds on a clean computer and installs only the R packages declared under `Imports` in `DESCRIPTION`. If a note uses a new package with `library(packageName)` or `packageName::function()`, also add `packageName` to `DESCRIPTION`. Loading a package in the note does not install it.
+
+`rmarkdown` is required by the Quarto/R rendering process and must remain in `DESCRIPTION`; individual notes do not need `library(rmarkdown)`.
+
+After adding a dependency, install it locally if needed and run `quarto render` before pushing. If GitHub reports `there is no package called 'x'`, add `x` to `DESCRIPTION`, commit that change, and push again.
+
 ## Modify
 
 1. Edit the source `.qmd` file and its metadata.
