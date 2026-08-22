@@ -6,13 +6,9 @@ summary: >
   Explanation of BART, a flexible modeling scheme to identify conditional causal effects of treatment in nonexperimental setting.
 description: >
   Explanation of BART, a flexible modeling scheme to identify conditional causal effects of treatment in nonexperimental setting.
-tags:
-  - bayesian
-  - nonparametrics
-  - causal-inference
 categories:
   - bayesian
-  - nonparametrics
+  - nonparametric
   - causal-inference
 status: draft         # draft | published | deprecated
 bibliography: ../../references/references.bib

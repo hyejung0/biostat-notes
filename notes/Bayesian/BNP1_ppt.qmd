@@ -6,7 +6,7 @@ description: >
   Slide-based notes on the foundations, motivation, common critiques, and applied examples of Bayesian nonparametric methods.
 categories:
   - bayesian
-  - bayesian-nonparametrics
+  - nonparametric
   - presentation
 format:
   revealjs:

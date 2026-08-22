@@ -6,10 +6,6 @@ summary: >
   This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
 description: >
   This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
-tags:
-  - bayesian
-  - nonparametric
-  - measure-theory
 categories:
   - bayesian
   - nonparametric
@@ -228,4 +224,3 @@ Bayesian nonparametrics allows:
 - Mixtures of both
 
 The "d" notation is the **only way** to write Bayes’ rule in a form that applies universally.
-

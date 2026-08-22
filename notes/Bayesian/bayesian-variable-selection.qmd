@@ -1,0 +1,64 @@
+---
+title: "Bayesian Variable Selection"
+author: "Hyejung Lee"
+date: "2026-08-22"
+summary: >
+  Based off of Handbook of Bayesian Variable Selection by Tadesse and Vannucci (2021)
+description: >
+  Based off of Handbook of Bayesian Variable Selection by Tadesse and Vannucci (2021)
+categories:
+  - bayesian
+  - regularization
+status: draft         # draft | published | deprecated
+bibliography: ../../references/bayesian-variable-selection.bib
+csl: ../../references/csl/nature.csl
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Summary
+
+This shows some concepts related to Bayesian variable selection based off of the handbook by Tadesse and Vannucci (2021)[@tadesse2021handbook].
+
+# Overview of Variable Selection in Bayesian Framework
+
+```{r}
+#| echo: false
+
+library(DiagrammeR)
+
+DiagrammeR(
+ "graph TD
+    A[Variable selection methods] --> B[Hypothesis Testing]
+    A[Variable selection methods] --> C[Penalized Parameter Estimation]
+    B[Hypothesis Testing] --> D[Bayes factor]
+    B[Hypothesis Testing] --> E[Posterior Model Probabilities]
+    C[Penalized Parameter Estimation] --> F[Shinkage priors that induce sparsity]
+    F[Shinkage priors that induce sparsity] --> G[Spike-and-slab priors]
+    F[Shinkage priors that induce sparsity] --> H[Continuous shrinkage priors]
+    H[Continuous shrinkage priors] --> I[Horseshoe prior]
+  "  )
+    
+```
+
+
+
+Benefit:
+
+- allow rich modeling via MCMC stochastic search strategies and incorporate optimal model averaging prediction
+- extend naturally to multivariate responses and many linear and non-linear settings
+- can handle the "small $n$-large $p$" setting, i.e., situations where the number of covariates is larger than the sample size;
+- they allow the use of priors that incorporate past and collateral information into the model
+
+
+# Discrete Spike-and-slab
+
+A latent binary vector is introduced to index the possible subsets of predictors and
+used to induce mixture priors of two components on the regression coefficients,
+one peaked at zero (spike) and the other one a diffuse distribution (slab).
+Posterior inference is carried out via stochastic search MCMC techniques to identify 
+the high-probability models, and variable selection is performed based on the 
+posterior model probabilities.
+
+- discrete spike-and-slab constructions: employ a point mass distribution at zero as the spike component

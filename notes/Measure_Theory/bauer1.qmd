@@ -6,8 +6,6 @@ summary: >
   Section 1 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
 description: >
   Section 1 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
-tags:
-  - measure-theory
 categories:
   - measure-theory
 status: draft         # draft | published | deprecated
@@ -322,5 +320,4 @@ In statistics and probability, $\sigma$-algebras encode **information**:
 - What can be observed
 - What questions can be asked
 - What probabilities are meaningful
-
 

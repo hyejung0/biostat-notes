@@ -6,8 +6,6 @@ summary: >
   Section 3 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
 description: >
   Section 3 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
-tags:
-  - measure-theory
 categories:
   - measure-theory
 status: draft         # draft | published | deprecated
@@ -396,4 +394,3 @@ You understand section 3 if you can do the following without guessing:
    - a premeasure,
    - a measure,
    by checking **domain** + **additivity level**. 
-

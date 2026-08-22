@@ -33,7 +33,7 @@ csl: ../../references/csl/nature.csl
 ---
 ```
 
-Use stable, descriptive categories. Existing categories are shown on the [All Notes](notes/index.qmd) page and are a good vocabulary to reuse.
+Use stable, descriptive categories. In this project, `categories` are the topic tags that power [Browse by Topic](topics.qmd). You do not need a separate `tags` field. Existing topics are shown on the topic page and are a good vocabulary to reuse; use the same spelling and hyphenation whenever possible.
 
 ## When a note uses an R package
 
@@ -44,7 +44,7 @@ Whenever you use a new package in an R code chunk:
 1. Add its name under `Imports` in `DESCRIPTION`.
 2. Use `library(packageName)` or `packageName::function()` in the note.
 3. Install it on your computer if needed with `install.packages("packageName")`.
-4. Run `quarto render` before pushing.
+4. Render the current note while editing, then run the complete site once before pushing.
 
 The `rmarkdown` package is required by Quarto's R rendering process and must remain in `DESCRIPTION`. You do not need to add `library(rmarkdown)` to individual notes.
 
@@ -64,21 +64,45 @@ The site-wide search index and all listings are rebuilt automatically. There is 
 3. Search the project for links to the deleted file and remove or replace them.
 4. Render the site. The note disappears automatically from navigation, topic pages, the title index, and full-text search.
 
-## Preview and check locally
+## Render only the current note
 
-Open the R project in RStudio, open the **Terminal** tab, and run:
+For everyday editing, keep the `.qmd` file saved and active in the RStudio editor. Run this in the **Console**:
+
+```r
+source("scripts/render_current.R")
+```
+
+That command detects the active editor file and renders only that document. It does not render all the other notes.
+
+You can also provide a note path from the **Terminal**:
+
+```bash
+./scripts/render_note.sh notes/Bayesian/bcf.qmd
+```
+
+For a live preview that watches only one note:
+
+```bash
+./scripts/preview_note.sh notes/Bayesian/bcf.qmd
+```
+
+RStudio recognizes this as a website project, so its website-level Render/Preview action may initialize multiple pages. Use the commands above when you want guaranteed single-document rendering.
+
+## Preview or render the complete website
+
+Use a full-site preview when checking navigation, topic filters, search, or shared styling:
 
 ```bash
 quarto preview
 ```
 
-Quarto prints a local address and refreshes the preview when you save a file. Press `Ctrl+C` in the terminal when you are finished. For a one-time build instead, run:
+For the final check before publishing, render the entire website:
 
 ```bash
 quarto render
 ```
 
-The finished local website is written to `_site/`. You can also use `scripts/preview_site.sh` and `scripts/render_site.sh` from a terminal at the project root.
+The finished local website is written to `_site/`. The project reuses results from unchanged computational notes during global renders, but direct single-note renders always execute the selected note.
 
 ## Publish an update
 

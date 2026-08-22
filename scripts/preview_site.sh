@@ -6,4 +6,5 @@ if [ ! -f "_quarto.yml" ]; then
   exit 1
 fi
 
+echo "Previewing the complete website. Use preview_note.sh for one document."
 quarto preview

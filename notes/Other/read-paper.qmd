@@ -6,8 +6,6 @@ summary: >
   How to effectively read research paper written by Keshav.
 description: >
   How to effectively read research paper written by Keshav.
-tags: 
-  - soft-skill
 categories: 
   - soft-skill
 status: draft

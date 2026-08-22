@@ -32,23 +32,55 @@ A searchable Quarto website for a personal collection of biostatistics notes. Th
 └── _site/                      # Generated website; do not edit or commit
 ```
 
-## Preview the website
+## Fast single-note workflow
 
-Install [Quarto](https://quarto.org/docs/get-started/) and R. Open `biostat-notes.Rproj` in RStudio, select the **Terminal** tab, and run:
+Install [Quarto](https://quarto.org/docs/get-started/) and R, then open `biostat-notes.Rproj` in RStudio.
+
+For everyday editing, render only the `.qmd` file you are working on. With that file saved and active in the RStudio editor, run this in the **Console**:
+
+```r
+source("scripts/render_current.R")
+```
+
+This detects the active editor document and passes only that file to Quarto. It does not render the other notes.
+
+Alternatively, use the **Terminal** and provide the note path:
+
+```bash
+./scripts/render_note.sh notes/Bayesian/bcf.qmd
+```
+
+To open a live preview that watches and re-renders only one note:
+
+```bash
+./scripts/preview_note.sh notes/Bayesian/bcf.qmd
+```
+
+Leave that preview running while editing and press `Ctrl+C` when finished.
+
+RStudio treats this project as a website, so its website-level Render/Preview action may initialize multiple pages. Use one of the commands above when you need guaranteed single-document rendering.
+
+## Full-site preview and render
+
+Use a full preview when checking navigation, topic filters, or site-wide styling:
 
 ```bash
 quarto preview
 ```
 
-Quarto prints a local URL and refreshes the browser when a source file changes. Stop the preview with `Ctrl+C`.
+Use a full render only before publishing or after changing `_quarto.yml`, shared CSS, navigation, or listing pages:
 
-To build once without starting the preview server:
+```bash
+./scripts/render_site.sh
+```
+
+This is equivalent to:
 
 ```bash
 quarto render
 ```
 
-The rendered site is created in `_site/`.
+The rendered site is created in `_site/`. The project uses `freeze: auto`, so an accidental full render reuses execution results for unchanged computational notes. A direct single-note render always executes that note's code.
 
 ## Add, edit, or delete notes
 
@@ -71,6 +103,8 @@ categories:
 
 Save the file under the appropriate `notes/<Subject>/` folder. Navigation, topic listings, the title index, and the full-text search index update automatically on the next render.
 
+In this project, `categories` are the topic tags shown on **Browse by topic**. Use only `categories`; do not repeat the same values under a separate `tags` field. Reuse an existing topic spelling when possible—for example, use `causal-inference` consistently rather than creating variants such as `causal` or `causal_inference`.
+
 ## R package dependencies
 
 GitHub renders the site on a clean computer. It installs the packages listed under `Imports` in `DESCRIPTION`; it cannot see packages that happen to be installed on your own computer.
@@ -82,7 +116,7 @@ Whenever an R code chunk uses a new package:
 1. Add the package name under `Imports` in `DESCRIPTION`.
 2. Use either `library(packageName)` or `packageName::function()` in the note.
 3. Install it locally if necessary with `install.packages("packageName")`.
-4. Run `quarto render` before committing and pushing.
+4. Run the single-note renderer while editing, then run `quarto render` once before committing and pushing.
 
 For example, if a note uses `survival::coxph()`, add `survival` to `DESCRIPTION`:
 
@@ -148,6 +182,7 @@ Quarto builds a local `search.json` file during every render. No search service,
 ## Troubleshooting
 
 - **A new note is missing:** confirm it ends in `.qmd`, is inside one of the five subject folders, has a `title`, and `quarto render` completes.
+- **Rendering is processing every note:** use `source("scripts/render_current.R")` from the RStudio Console with the note active, or `./scripts/render_note.sh path/to/note.qmd` from the Terminal. Bare `quarto render` intentionally means the complete project.
 - **An image is missing:** use a path relative to the note and commit the image along with the note.
 - **A citation fails:** confirm the bibliography and CSL paths are relative to the note's folder.
 - **GitHub reports “there is no package called …”:** add that package under `Imports` in `DESCRIPTION`, render locally, commit both files, and push again. A `library(...)` call loads a package but does not install it.

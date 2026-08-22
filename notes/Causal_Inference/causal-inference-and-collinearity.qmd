@@ -10,12 +10,6 @@ description: >
   A note on how exploratory associational regression differs from causal
   analysis, why collinearity matters when interpreting predictor coefficients,
   and why confounder selection in causal inference follows different principles.
-tags:
-  - causal-inference
-  - collinearity
-  - regression-modeling
-  - confounding
-  - variable-selection
 categories:
   - causal-inference
   - collinearity

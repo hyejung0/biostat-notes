@@ -6,8 +6,6 @@ summary: >
   Target trial emulation (TTE) presented by Barbra Dickerman from Harvard's CAUSALab. General overview of TTE, its assumptions, and how to implement it in practice. 
 description: >
   Target trial emulation (TTE) presented by Barbra Dickerman from Harvard's CAUSALab. General overview of TTE, its assumptions, and how to implement it in practice. 
-tags:
-  - causal-inference
 categories:
   - causal-inference
 status: draft         # draft | published | deprecated

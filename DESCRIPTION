@@ -9,3 +9,5 @@ Imports:
     knitr,
     rmarkdown,
     tibble
+Suggests:
+    rstudioapi

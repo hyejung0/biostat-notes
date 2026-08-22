@@ -6,9 +6,6 @@ summary: >
   Explanation of Bayesian Causal Forest method to identify treatment heterogenity under small effect size and strong confounding.
 description: >
   Explanation of Bayesian Causal Forest method to identify treatment heterogenity under small effect size and strong confounding.
-tags:
-  - bayesian
-  - semiparametric
 categories:
   - bayesian
   - semiparametric

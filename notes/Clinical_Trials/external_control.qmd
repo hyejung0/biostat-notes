@@ -6,10 +6,6 @@ summary: >
   21st Kolokotrones Symposium held by CAUSALab at the Harvard T.H. Chan School of Public Health on April 3, 2026. The symposium focuses on the use of external controls in causal inference, covering topics such as study design and analysis methods.
 description: >
   21st Kolokotrones Symposium held by CAUSALab at the Harvard T.H. Chan School of Public Health on April 3, 2026. The symposium focuses on the use of external controls in causal inference, covering topics such as study design and analysis methods.
-tags:
-  - clinical-trial
-  - causal-inference
-  - external-control
 categories:
   - clinical-trial
   - causal-inference
@@ -286,7 +282,6 @@ Augmenting external data to improve efficiency... Is there the science ready? Or
 
   - The method is out for ATE. 
   - For heterogeneous ATE, it's almost ready.
-
 
 
 

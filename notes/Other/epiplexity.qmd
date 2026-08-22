@@ -6,8 +6,6 @@ summary: >
   This is a note summarizing the manuscript "From Entropy to Epiplexity: Rethinking Information for Computationally Bounded Intelligence" by Finzi et al (2026) from arXiv. 
 description: >
   This is a note summarizing the manuscript "From Entropy to Epiplexity: Rethinking Information for Computationally Bounded Intelligence" by Finzi et al (2026) from arXiv. 
-tags:
-  - information-theory
 categories:
   - information-theory
 status: draft         # draft | published | deprecated

@@ -6,9 +6,6 @@ summary: >
   This is a surface level review of Rubin's 1981 The Bayesian Bootstrap paper 
 description: >
   This is a surface level review of Rubin's 1981 The Bayesian Bootstrap paper 
-tags:
-  - bayesian
-  - bootstrap
 categories:
   - bayesian
   - bootstrap
@@ -146,4 +143,3 @@ $$F = \sum_{i=1}^{n} W_i\delta_{x_i}, \quad (W_1, \cdots, W_n) \sim Dirichlet (1
 | Data are treated as fixed | Distribution $F$ is treated as random |
 | Uses Multinomial weights | Uses Dirichlet weights |
 | Not Bayesian | Fully Bayesian under exchangeability |
-

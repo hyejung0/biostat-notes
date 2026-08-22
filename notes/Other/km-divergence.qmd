@@ -6,9 +6,6 @@ summary: >
   Understanding Kullback-Leibler (KL) divergence using entopy and information theory
 description: >
   Understanding Kullback-Leibler (KL) divergence using entopy and information theory
-tags: 
-  - distance
-  - information-theory
 categories: 
   - distance
   - information-theory

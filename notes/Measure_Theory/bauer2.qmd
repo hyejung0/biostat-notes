@@ -6,8 +6,6 @@ summary: >
   Section 2 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
 description: >
   Section 2 of Heinz Bauer's Measure and Integration Theory Translated from the German by Robert B. Burckel
-tags:
-  - measure-theory
 categories:
   - measure-theory
 status: draft         # draft | published | deprecated
@@ -153,4 +151,3 @@ This is the foundation of the **$\pi - \lambda$ theorem** used throughout probab
 # Conceptual takeaway
 
 > Dynkin systems are weaker than $\sigma$-algebras, but when generators are closed under finite intersections, Dynkin systems and $\sigma$-algebras coincide.
-

@@ -8,9 +8,6 @@ summary: >
 description: >
   This note address how we can avoid countless "back up" plans to do causal 
   inference by being more careful with designing a study, as a biostatistician.
-tags:
-  - design
-  - causal-inference
 categories:
   - design
   - causal-inference

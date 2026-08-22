@@ -6,10 +6,6 @@ summary: >
   This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
 description: >
   This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
-tags:
-  - bayesian
-  - nonparametric
-  - theory
 categories:
   - bayesian
   - nonparametric
@@ -722,6 +718,5 @@ $$ U_n(\theta_B) = -0.400. $$
 $$ \theta_n^* = \theta_A. $$
 
 Interpretation: although $f_2$ and $f_3$ give different KL behaviors, the posterior weights combined with their KL distances make $\theta_A$ the better parametric approximation on average.
-
 
 

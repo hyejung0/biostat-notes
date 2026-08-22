@@ -6,4 +6,5 @@ if [ ! -f "_quarto.yml" ]; then
   exit 1
 fi
 
+echo "Rendering the complete website. This intentionally processes all site pages."
 quarto render

@@ -6,9 +6,6 @@ summary: >
   This note summarizes Bayesian vs. Frequentist and parametric vs. nonparametric methods for statistical modeling, to introduce why Bayesian nonparametric would be an ideal choice. 
 description: >
   This note summarizes Bayesian vs. Frequentist and parametric vs. nonparametric methods for statistical modeling, to introduce why Bayesian nonparametric would be an ideal choice. 
-tags:
-  - bayesian
-  - nonparametric
 categories:
   - bayesian
   - nonparametric

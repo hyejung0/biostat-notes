@@ -6,8 +6,6 @@ summary: >
   workshop provided by Dr. Guang Cheng
 description: >
   workshop provided by Dr. Guang Cheng
-tags:
-  - sample-size
 categories:
   - sample-size
 status: draft         # draft | published | deprecated
@@ -103,7 +101,6 @@ Governance & ethics
 
 
 ## LLMS as a representative synthesizer
-
 
 
 

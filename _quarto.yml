@@ -66,6 +66,8 @@ website:
 
 language:
   search-text-placeholder: "Search every note"
+  listing-page-field-categories: "Topics"
+  listing-page-category-all: "All topics"
 
 format:
   html:
@@ -78,5 +80,6 @@ format:
     css: styles.css
 
 execute:
+  freeze: auto
   warning: false
   message: false

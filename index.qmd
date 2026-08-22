@@ -29,37 +29,43 @@ Tip: press <kbd>/</kbd> anywhere on the site to open full-text search.
 :::
 :::
 
-## Browse by subject
+## Browse by topic
 
 ::: {.topic-grid}
 ::: {.topic-card .topic-bayesian}
-### [Bayesian methods](topics.qmd#bayesian-methods)
+### [Bayesian methods](topics.qmd#category=bayesian)
 
 Nonparametrics, BART, Bayesian causal forests, bootstrap methods, and foundations.
 :::
 
 ::: {.topic-card .topic-causal}
-### [Causal inference](topics.qmd#causal-inference)
+### [Causal inference](topics.qmd#category=causal-inference)
 
 Target trial emulation, study design, collinearity, and causal estimands.
 :::
 
 ::: {.topic-card .topic-trials}
-### [Clinical trials](topics.qmd#clinical-trials)
+### [Clinical trials](topics.qmd#category=clinical-trial)
 
 Trial analysis strategies, pilot studies, and external control designs.
 :::
 
 ::: {.topic-card .topic-measure}
-### [Measure theory](topics.qmd#measure-theory)
+### [Measure theory](topics.qmd#category=measure-theory)
 
 Sigma-algebras, Dynkin systems, measures, premeasures, and intuition.
 :::
 
 ::: {.topic-card .topic-other}
-### [Other topics](topics.qmd#other-topics)
+### [Information theory](topics.qmd#category=information-theory)
 
-Information measures, sample size, synthetic data, and reading workflows.
+Entropy, KL divergence, epiplexity, and computational views of information.
+:::
+
+::: {.topic-card .topic-all}
+### [All topic tags](topics.qmd)
+
+Explore every topic label, including bootstrap, design, probability, sample size, and presentations.
 :::
 :::
 

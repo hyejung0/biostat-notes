@@ -6,9 +6,6 @@ summary: >
   Clinical trials often use different analytical approaches to evaluate the effectiveness of interventions. This article explores the differences among intention-to-treat (ITT), per-protocol (PP), and as-treated (AT) analyses, highlighting their implications for interpreting trial results and making informed decisions in clinical practice.
 description: >
   Clinical trials often use different analytical approaches to evaluate the effectiveness of interventions. This article explores the differences among intention-to-treat (ITT), per-protocol (PP), and as-treated (AT) analyses, highlighting their implications for interpreting trial results and making informed decisions in clinical practice.
-tags:
-  - clinical-trial
-  - causal-inference
 categories:
   - clinical-trial
   - causal-inference

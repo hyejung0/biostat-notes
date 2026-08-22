@@ -6,8 +6,6 @@ summary: >
   Trying to relate my statistical background to measure
 description: >
   Trying to relate my statistical background to measure
-tags:
-  - measure-theory
 categories:
   - measure-theory
 status: draft         # draft | published | deprecated
@@ -83,4 +81,3 @@ Therefore, $P$ is a premeasure on $\mathcal{F}$. Please also note that it's easy
 ## Uniform(0,1) as a measure on $\mathbb{R}$
 
 Here, we want a probability measure $P$ on $(\mathbb{R}, \mathcal{B}(\mathbb{R}))$.
-

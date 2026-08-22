@@ -6,8 +6,6 @@ summary: >
   Just gathering some information about pilot study with very small sample sizes.
 description: >
   Just gathering some information about pilot study with very small sample sizes.
-tags:
-  - clinical-trial
 categories:
   - clinical-trial
 status: draft         # draft | published | deprecated
@@ -106,4 +104,3 @@ The primary feasibility endpoint is the treatment compliance rate, defined as th
 
 > **Operating Characteristics**:
 > As shown in the table, if the true underlying compliance rate is unacceptably low (40%), there is only a 5.5% chance that the study will falsely meet the feasibility benchmark. Conversely, if the true compliance rate is highly desirable (80%), there is an 87.9% probability of successfully meeting the benchmark and proceeding to a larger trial.
-

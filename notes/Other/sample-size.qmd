@@ -6,8 +6,6 @@ summary: >
   n=10 for every parameter
 description: >
   n=10 for every parameter
-tags:
-  - sample-size
 categories:
   - sample-size
 status: draft         # draft | published | deprecated
