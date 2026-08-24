@@ -28,6 +28,6 @@ listing:
   max-description-length: 190
 ---
 
-Choose a topic from the **Topics** panel to show only matching notes. You can also type in **Filter** to search topic tags, titles, and summaries. Click the **Topics** heading to reset the collection.
+Choose a topic from the **Topics** panel on the left to show only matching notes. You can also type in **Filter** to search topic tags, titles, and summaries. Click the **Topics** heading to reset the collection.
 
-Each topic below comes from the note's `categories` metadata. In this project, categories are the topic tags; a separate `tags` list is not needed.
+Every topic in the left panel is generated from the notes' `categories` metadata. In this project, categories are the topic tags; a separate `tags` list is not needed. New category values appear automatically after a complete site render.

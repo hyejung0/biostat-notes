@@ -1,0 +1,27 @@
+<script>
+(() => {
+  const moveTopicFiltersToSidebar = () => {
+    const marginSidebar = document.querySelector("#quarto-margin-sidebar");
+    const siteSidebar = document.querySelector("#quarto-sidebar .sidebar-menu-container");
+    const categoryTitle = marginSidebar?.querySelector(".quarto-listing-category-title");
+    const categoryCloud = marginSidebar?.querySelector(".quarto-listing-category");
+
+    // Only the Browse by Topic listing has Quarto's category filter.
+    if (!siteSidebar || !categoryTitle || !categoryCloud) return;
+
+    const filterSection = document.createElement("section");
+    filterSection.className = "topic-sidebar-filters";
+    filterSection.setAttribute("aria-label", "Browse notes by topic");
+    filterSection.append(categoryTitle, categoryCloud);
+    siteSidebar.append(filterSection);
+
+    document.body.classList.add("topic-sidebar-active");
+  };
+
+  if (document.readyState === "complete") {
+    moveTopicFiltersToSidebar();
+  } else {
+    window.addEventListener("load", moveTopicFiltersToSidebar, { once: true });
+  }
+})();
+</script>

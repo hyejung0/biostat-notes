@@ -103,13 +103,13 @@ categories:
 
 Save the file under the appropriate `notes/<Subject>/` folder. Navigation, topic listings, the title index, and the full-text search index update automatically on the next render.
 
-In this project, `categories` are the topic tags shown on **Browse by topic**. Use only `categories`; do not repeat the same values under a separate `tags` field. Reuse an existing topic spelling when possible—for example, use `causal-inference` consistently rather than creating variants such as `causal` or `causal_inference`.
+In this project, `categories` are the topic tags shown in the left panel on **Browse by topic**. Use only `categories`; do not repeat the same values under a separate `tags` field. Reuse an existing topic spelling when possible—for example, use `causal-inference` consistently rather than creating variants such as `causal` or `causal_inference`. A complete render regenerates this topic panel automatically; note-folder names do not define it.
 
 ## R package dependencies
 
 GitHub renders the site on a clean computer. It installs the packages listed under `Imports` in `DESCRIPTION`; it cannot see packages that happen to be installed on your own computer.
 
-The current site requires `data.table`, `ggplot2`, `knitr`, `rmarkdown`, and `tibble`. The `rmarkdown` package is a site-wide rendering dependency and should remain in `DESCRIPTION`. It does **not** need a `library(rmarkdown)` call inside individual notes.
+The current site requires `data.table`, `DiagrammeR`, `ggplot2`, `knitr`, `rmarkdown`, and `tibble`. The `rmarkdown` package is a site-wide rendering dependency and should remain in `DESCRIPTION`. It does **not** need a `library(rmarkdown)` call inside individual notes.
 
 Whenever an R code chunk uses a new package:
 
@@ -118,19 +118,27 @@ Whenever an R code chunk uses a new package:
 3. Install it locally if necessary with `install.packages("packageName")`.
 4. Run the single-note renderer while editing, then run `quarto render` once before committing and pushing.
 
-For example, if a note uses `survival::coxph()`, add `survival` to `DESCRIPTION`:
+For example, `DiagrammeR` is declared like this:
 
 ```text
 Imports:
     data.table,
+    DiagrammeR,
     ggplot2,
     knitr,
     rmarkdown,
-    survival,
     tibble
 ```
 
-Keep the final package without a trailing comma. The GitHub Actions workflow reads this file automatically; do not add separate package-install commands to the workflow for ordinary R dependencies.
+Put one package on each line. Every package needs a comma after it except the final package (`tibble` in this example). Without the comma after `tibble` when another package follows it, R combines the lines into a value such as `tibble DiagrammeR`, which `pak` cannot parse.
+
+Before pushing, check the dependency syntax from the project root:
+
+```bash
+Rscript scripts/check_dependencies.R
+```
+
+The GitHub Actions workflow runs this check automatically and then reads `DESCRIPTION`; do not add separate package-install commands to the workflow for ordinary R dependencies. In a note, use `library(DiagrammeR)` or a call such as `DiagrammeR::grViz()`. A `library(...)` call loads an installed package but does not make GitHub install it.
 
 ## Publish with GitHub Pages
 
@@ -186,6 +194,7 @@ Quarto builds a local `search.json` file during every render. No search service,
 - **An image is missing:** use a path relative to the note and commit the image along with the note.
 - **A citation fails:** confirm the bibliography and CSL paths are relative to the note's folder.
 - **GitHub reports “there is no package called …”:** add that package under `Imports` in `DESCRIPTION`, render locally, commit both files, and push again. A `library(...)` call loads a package but does not install it.
+- **GitHub reports “Cannot parse package: tibble DiagrammeR”:** a comma is missing between those names in `DESCRIPTION`. Add the comma, then run `Rscript scripts/check_dependencies.R`.
 - **GitHub Actions fails:** open the failed run, expand the red step, fix the first reported render or package error locally, and push again.
 - **A deleted note remains online:** confirm the deletion was committed and the newest Actions run completed successfully.
 

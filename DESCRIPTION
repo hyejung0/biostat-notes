@@ -5,10 +5,10 @@ Version: 0.0.0.9000
 Encoding: UTF-8
 Imports:
     data.table,
+    DiagrammeR,
     ggplot2,
     knitr,
     rmarkdown,
-    tibble,
-    DiagrammeR
+    tibble
 Suggests:
     rstudioapi

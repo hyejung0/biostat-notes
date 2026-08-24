@@ -230,6 +230,56 @@ main.content pre {
   line-height: 1.35;
 }
 
+/* On Browse by Topic, place Quarto's live category filter in the left sidebar. */
+.topic-sidebar-filters {
+  margin: 1rem 0.75rem 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--notes-border);
+}
+
+.topic-sidebar-filters .quarto-listing-category-title {
+  margin: 0 0 0.55rem;
+  color: var(--notes-teal-dark);
+  font-size: 0.86rem;
+  font-weight: 750;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.topic-sidebar-filters .quarto-listing-category {
+  display: flex;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.1rem;
+}
+
+.topic-sidebar-filters .category {
+  display: block;
+  margin: 0;
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.3rem;
+  color: var(--notes-teal-dark);
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.topic-sidebar-filters .category:hover,
+.topic-sidebar-filters .category.active {
+  background: #dfecea;
+}
+
+.topic-sidebar-filters .quarto-category-count {
+  font-size: 0.88rem !important;
+  font-weight: 500;
+}
+
+body.topic-sidebar-active #quarto-margin-sidebar {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .topic-card {
     grid-column: span 3;

@@ -44,21 +44,6 @@ website:
       - index.qmd
       - notes/index.qmd
       - topics.qmd
-      - section: "Bayesian methods"
-        contents:
-          - auto: "notes/Bayesian/*.qmd"
-      - section: "Causal inference"
-        contents:
-          - auto: "notes/Causal_Inference/*.qmd"
-      - section: "Clinical trials"
-        contents:
-          - auto: "notes/Clinical_Trials/*.qmd"
-      - section: "Measure theory"
-        contents:
-          - auto: "notes/Measure_Theory/*.qmd"
-      - section: "Other topics"
-        contents:
-          - auto: "notes/Other/*.qmd"
       - guide.qmd
   page-footer:
     left: "Biostatistics Notes"
@@ -78,6 +63,7 @@ format:
     code-tools: true
     html-math-method: mathjax
     css: styles.css
+    include-after-body: assets/topic-sidebar.html
 
 execute:
   freeze: auto
