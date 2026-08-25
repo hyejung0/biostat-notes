@@ -12,12 +12,16 @@ bibliography: ../../references/bayesian-variable-selection.bib
 csl: ../../references/csl/nature.csl
 editor_options: 
   chunk_output_type: console
+editor: 
+  markdown: 
+    wrap: 72
 ---
-
 
 # Summary
 
-This shows some concepts related to Bayesian variable selection based off of the handbook by Tadesse and Vannucci (2021)[@tadesse2021handbook].
+This shows some concepts related to Bayesian variable selection based
+off of the handbook by Tadesse and Vannucci
+(2021)[@tadesse2021handbook].
 
 # Overview of Variable Selection in Bayesian Framework
 
@@ -40,23 +44,250 @@ DiagrammeR(
     
 ```
 
-
-
 Benefit:
 
-- allow rich modeling via MCMC stochastic search strategies and incorporate optimal model averaging prediction
-- extend naturally to multivariate responses and many linear and non-linear settings
-- can handle the "small $n$-large $p$" setting, i.e., situations where the number of covariates is larger than the sample size;
-- they allow the use of priors that incorporate past and collateral information into the model
+-   allow rich modeling via MCMC stochastic search strategies and
+    incorporate optimal model averaging prediction
+-   extend naturally to multivariate responses and many linear and
+    non-linear settings
+-   can handle the "small $n$-large $p$" setting, i.e., situations where
+    the number of covariates is larger than the sample size;
+-   they allow the use of priors that incorporate past and collateral
+    information into the model
+
+# Spike-and-slab
+
+Multiple linear regression model on a continuous response $y_i$:
+
+$$y_i = \alpha + \boldsymbol{x}_i^\top \boldsymbol{\beta} + \epsilon_i, \qquad i=1, \cdots, n,$$
+where,
+
+-   $\boldsymbol{x}_i = (x_1, \cdots, x_p)$ = a $p$-dimensional vector
+    of predictors for $i$th observation.
+-   $\boldsymbol{\beta} = (\beta_1, \cdots, \beta_p)$ = a
+    $p$-dimensional vector of regression coefficients.
+-   $\alpha$ = intercept
+-   $\epsilon_i \sim N(0, \sigma^2)$ = independent and identically
+    distributed (i.i.d.) error terms.
+
+Use when: not all $p$ predictors are important in explaining changes of
+the response and identification of the important predictors is one of
+the goals of the analysis.
+
+## Discrete
+
+Spike-and-slob priors is known as sparsity-inducing mixture prior (on
+the $\beta_j$ coefficients).
+
+Let $\boldsymbol{\gamma} = (\gamma_1, \cdots, \gamma_p)$ be a latent
+vector of binary indicators:
+
+$$
+\gamma_j = \begin{cases}
+1, & \text{if variable $j$ is included in the model,}\\
+0, & \text{otherwise.}
+\end{cases}
+$$ The mixture prior distribution on $\beta_j$ with a point mass at zero
+is then
+
+$$
+\beta_j \mid \sigma^2, \gamma_j \sim (1 - \gamma_j) \delta_0 (\beta_j) + \gamma_j N(0, h_j\sigma^2),
+$$ {#eq-spike-slab} for $j = 1, \cdots, p$, with $\delta_0(\cdot)$ the
+Dirac function at $\beta_j=0$ (i.e., a point mass at $\beta_j=0$ ) and
+the $h_j$'s a set of hyperparameter that controls the variance of the
+slab component.
+
+-   $\gamma_j=0 \implies$ exclude the $j$th variable from the model and
+    $\beta_j=0$ (spike)
+-   $\gamma_j=1 \implies$ include the $j$th variable in the model and
+    $\beta_j \sim N(0, h_j \sigma^2)$ (slab)
+-   $h_j$: assume that $\beta_j$'s are independent a priori and the
+    $h_j$'s are known and fixed.
+    -   e.g., $h_j = c$ for all $j$. Small $c \implies$ shrinkage of the
+        $\beta_j$'s towards smaller model. Large $c \implies$ larger
+        model.
+    -   The range of values $c \in [10, 100]$ is suggested in Smith and
+        Kohn (1996)@smith1996nonparametric.
+
+Priors on $\alpha$ & $\sigma^2$:
+
+$$
+\alpha \mid \sigma^2 \sim N(\alpha_0, h_0 \sigma^2), \qquad \sigma^2 \sim IG(\nu/2, \lambda/2),
+$$ {#eq-prior-alpha-sigma}
+
+with $\alpha_0, h_0, \nu$, and $\lambda$ hyperparameters to be chosen.
+
+-   $\alpha = 0$ and $h_0 \rightarrow \infty$ : results in a vague prior
+    on the intercept. $\implies$ mean centering the predictors sets the
+    posterior mean for $\alpha$ at $\bar{\boldsymbol{Y}}$.
+
+The $h_j$ framework in @eq-spike-slab assumes independent $\beta_j$'s a
+priory. But if we want to model where they are correlated, we can use
+the following Zellner's g-prior:
+
+$$
+\boldsymbol{\beta_{(\gamma)}} \mid \sigma^2 \sim N(\boldsymbol{0}, c  (\boldsymbol{X_{(\gamma)}}^\top \boldsymbol{X_{(\gamma)}})^{-1} \sigma^2),
+$$ {#eq-g-prior}
+
+with $\boldsymbol{\beta_{(\gamma)}}$ the subset of coefficients
+corresponding to the elements of $\boldsymbol{\gamma}$ that are equal to
+1, i.e., the selected predictors, and $\boldsymbol{X_{(\gamma)}}$ the
+corresponding design matrix.
+
+-   pros of Zellner's g-prior:
+    -   intuitive interpretation of the prior variance of
+        $\boldsymbol{\beta_{(\gamma)}}$ in terms of the Fisher
+        information matrix.
+    -   the prior variance of $\boldsymbol{\beta_{(\gamma)}}$ is
+        proportional to the inverse of the Fisher information matrix,
+        which is a measure of the amount of information that an
+        observable random variable carries about an unknown parameter.
+    -   the prior variance of $\boldsymbol{\beta_{(\gamma)}}$ is
+        proportional to $\sigma^2$, which allows for a more flexible
+        modeling of the regression coefficients.
+    -   Optimality have been studied[@yang2016computational].
+-   cons of Zellner's g-prior:
+    -   induce mixing problems in the MCMC, particularly with subsets of
+        highly correlated predictors.
+    -   the prior variance of $\boldsymbol{\beta_{(\gamma)}}$ is
+        proportional to the inverse of the Fisher information matrix,
+        which can be problematic when the design matrix is
+        ill-conditioned or when there are many predictors relative to
+        the sample size.
+    -   the prior variance of $\boldsymbol{\beta_{(\gamma)}}$ is
+        proportional to $\sigma^2$, which can lead to overfitting when
+        the sample size is small.
+    -   $h_j$ can be set to be proportional to the $j$-th diagonal
+        element of $(\boldsymbol{X}^\top \boldsymbol{X})^{-1}$, to
+        alleviate this problem.
+
+@eq-spike-slab and @eq-g-prior are both conjugate to the Gaussian
+likelihood. Non-conjugate constructions that assume independent priors
+on $\boldsymbol{\beta}$ and $\sigma^2$ can be used as well from here
+@george1997approaches.
+
+Below is the table comparing three different prior situations:
+
+|   | independent $\beta_j$'s | Zellner's g-prior | Non-conjugate priors |
+|------------------|------------------|------------------|------------------|
+| modeling that is unique | $\gamma_j N(0, h_j \sigma^2)$ | $\gamma_j N(0, c (\boldsymbol{X_{(\gamma)}}^\top \boldsymbol{X_{(\gamma)}})^{-1} \sigma^2)$ | $\boldsymbol{\beta} \mid \sigma^2, \boldsymbol{\gamma} \sim N_p(0, D_{\boldsymbol{\gamma}} R_{\boldsymbol{\gamma}} D_{\boldsymbol{\gamma}} )$ |
+| Description of key differing feature | simplest model, assume $\beta_j$'s are independent a priori | assume $\beta_j$'s are correlated a priori | assume $\beta_j$'s are correlated a priori, but not conjugate to the Gaussian likelihood |
+| Pros | simple to implement, easy to interpret | intuitive interpretation of the prior variance of $\boldsymbol{\beta_{(\gamma)}}$ in terms of the Fisher information matrix | flexible modeling of the regression coefficients, can handle correlated predictors |
+| Cons | may not be appropriate for correlated predictors | induce mixing problems in the MCMC, particularly with subsets of highly correlated predictors | can be computationally intensive, may require more sophisticated MCMC algorithms |
+| number of parameters to be estimated | $p$ | $p$ | $p + p(p-1)/2$ |
+| When should consider using | when the predictors are independent | when the predictors are correlated | when the predictors are correlated and the sample size is small |
+
+## Continuous
+
+-   Mixture of two continuous components (typically Gaussian
+    distributions)
+    -   One concentrated around zero + one spread out over plausible
+        large values
+-   Optimality properties have been studied extensively
+
+In addition to @eq-spike-slab, (shown again for convenience): $$
+\beta_j \mid \sigma^2, \gamma_j \sim (1 - \gamma_j) \delta_0 (\beta_j) + \gamma_j N(0, h_j\sigma^2),
+$$
+
+we also need to specify the the prior distribution for
+$\boldsymbol{\gamma}$. The simplest and most common choice adopted in
+the literature is a product of independent Bernoulli distributions with
+a common parameter $\omega$ as: $$
+p(\boldsymbol{\gamma} \mid \omega) = \prod_{j=1}^{p} \omega^{\gamma_j} (1 - \omega)^{1 - \gamma_j}, \qquad 0 < \omega < 1,
+$$ {#eq-cont-prior-gamma}
+
+where $\omega$ is the prior probability of including a variable in the
+model.
+
+-   $p \omega$: number of variables expected a priori to be included in
+    the model
+-   $\omega$: can be fixed or assigned a hyperprior distribution.
+    -   e.g., $\omega \sim Beta(a, b)$, with $a$ and $b$ hyperparameters
+        to be chosen.
+    -   e.g., $a= 1$ and $b = p$ is a common choice, which implies that
+        the expected number of variables included in the model is 1.
+    -   e.g., $a= 1$ and $b = 1$: weakly informative prior. Implies that
+        the prior expected mean value to b = 0.5.
+    -   Beta-binomial imposes an a prior multiplicity penalty. :
+        marginal prior on $\boldsymbol{\gamma}$ contains a non-linear
+        penalty on the number of included variables ($p$). As $p$ grows,
+        with the number of true variables remaining fixed, the posterior
+        distribution of $\omega$ concentrates near 0.
+    -   Beta-Binomial limitation: inclusion indicators are
+        stochastically independent.
+
+### Stochastic MCMC searches
+
+Use MCMC methods to do stochastic searches to explore the posterior
+distribution of all possible combination of $\boldsymbol{\gamma}$.
+
+Add-delete-swap moves: moves that allow the exploration of the posterior
+space by visiting a sequence of models where, at each step, the new
+model differs from the previously visited one by the inclusion and/or
+exclusion of one or two variables.
+
+Let $\boldsymbol{\gamma}^0$ be a randomly chosen staring value. At a
+generic iteration, the new model is generated from the previous one by
+randomly choosing one of the following transition moves:
+
+1.  (Adding or deleting): Randomly pick one of the $p$ indices in
+    $\boldsymbol{\gamma}^{old}$ and change its value. This results in
+    either including a new variable in the model or in deleting a
+    variable currently included.
+2.  (Swapping): Draw independently and at random a 0 and a 1 in
+    $\boldsymbol{\gamma}^{old}$ and switch their values. This results in
+    both the inclusion of a new variable in the model and the deletion
+    of a currently included one.
+
+By indicating with $\boldsymbol{\gamma}^{new}$ the candidate model, the
+aceptance probability is calculated as
+
+$$min \left[ \frac{p(\boldsymbol{\gamma}^{new} \mid \boldsymbol{y}, \boldsymbol{X})}{p(\boldsymbol{\gamma}^{old} \mid \boldsymbol{y}, \boldsymbol{X})}, \, 1 \right].$$
+
+The results: posterior probability of all possible combinations of
+$\boldsymbol{\gamma}$.
+
+Variable selection:
+
+-   look at the posterior distribution of all visited model,
+    $\boldsymbol{\gamma}^{(0)}, \cdots, \boldsymbol{\gamma}^{(0)}$.
+    Select the $\boldsymbol{\gamma}$ vector with largest joint posterior
+    probabilities among all other $\boldsymbol{\gamma}$.\
+-   calculate frequencies of inclusion for each $\gamma_j$ and then
+    choose those $\gamma_j$'s with frequencies above a certain threshold
+    (e.g., 0.5).
+
+Other advanced methods:
+
+-   faster exploration of the posterior space:
+    shotgun[@hans2007shotgun],
+-   a correlation-based method that uses a combination of stochastic
+    search and deterministic search to explore the posterior space:
+    [@kwon2011efficient]
+-   Adaptive scheme that improve mixing of the MCMC chain:
+    [@griffin2021search; @lamnisos2013adaptive]
+
+### Prediction via Bayesian Model Averaging
+
+We have posterior distribution of
+$\boldsymbol{\gamma}^{(0)}, \cdots, \boldsymbol{\gamma}^{(0)}$ from
+stochastic searches.
+
+We can make a prediction of a future observation $y^f$ : 
+
+- via least squares on single models 
+- Bayesian model averaging, which accounts for
+the uncertainty in the selection process by averaging over a set of a
+posteriori likely models.
 
 
-# Discrete Spike-and-slab
 
-A latent binary vector is introduced to index the possible subsets of predictors and
-used to induce mixture priors of two components on the regression coefficients,
-one peaked at zero (spike) and the other one a diffuse distribution (slab).
-Posterior inference is carried out via stochastic search MCMC techniques to identify 
-the high-probability models, and variable selection is performed based on the 
-posterior model probabilities.
+## Recent Theoretical Advances with the Discrete Spike-and-Slab Priors
 
-- discrete spike-and-slab constructions: employ a point mass distribution at zero as the spike component
+
+
+::: {#rem-BvM name="Bernstein-von Mises phenomenon"}
+In a fixed dimensional parametric models, the Bernstein-von Mises (BvM) phenomenon asserts that under mild conditions on the likelihood and the prior, the posterior distribution of the regression coefficients $\boldsymbol{\beta}$ assumes a Gaussian shape, centered at the maximum likelihood or some other efficient estimator, and with covariance the inverse Fisher information matrix[@johnstone2010high]. 
+:::
+
+
