@@ -1,722 +1,1116 @@
 ---
-title: "Bayesian Nonparametric Methods: Motivation and Ideas"
+title: "Bayesian Nonparametric Methods: Walker's Motivation and Ideas"
 author: "Hyejung Lee"
-date: today
-summary: >
-  This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
+date: 2026-08-27
 description: >
-  This is a complete guided reconstruction of Stephen G. Walker's 2010 paper. Theoretical understanding of Bayesian nonparametric method.
+  A measure-aware guided reconstruction of Stephen G. Walker's chapter,
+  separating mathematical structure, notation, decision theory, asymptotics, and viewpoint.
 categories:
   - bayesian
   - nonparametric
   - theory
-status: draft         # draft | published | deprecated
-bibliography: ../../references/references.bib
-csl: ../../references/csl/vancouver.csl   # optional
+  - measure-theory
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
 ---
-
-
 
 # Summary {.unnumbered}
 
-(Insert short summary of the paper)
+Walker asks Bayesians to think of a prior as one probability measure on a space
+of possible sampling distributions. A parametric prior is concentrated on a
+fixed finite-dimensional family; a Bayesian nonparametric prior is not confined
+to one such family. Conditional iid sampling from a random
+distribution produces an exchangeable sequence, Bayes' rule updates the law of
+that distribution, and the posterior predictive averages candidate sampling
+distributions under the posterior.
 
-# Context {.unnumbered}
+The chapter then makes three less elementary moves:
 
-These notes are written so that *you could teach from them*. Nothing is
-introduced without motivation, and every mathematical choice is
-justified in terms of logic, decision‑making, and statistical learning.
+1. use decision theory to project a rich posterior onto a simpler parametric
+   action;
+2. evaluate whether the posterior learning rule is consistent when data really
+   arise iid from a fixed $f_0$;
+3. derive the ordinary posterior—and fractional alternatives—by minimizing
+   expected log loss plus KL divergence from the prior.
 
-The pedagogical principle is: At every step, the student should know
+Some of Walker's statements about “complete” priors, model selection, and
+coherence are forcefully argued philosophical positions. This note labels them
+as such rather than presenting them as consequences of measure theory.
 
-1.  what problem we are solving,
-2.  why this tool is chosen, and
-3.  what would break if we chose something else.
+# Walker fast path {.unnumbered #walker-fast-path}
 
-------------------------------------------------------------------------
+This reconstruction assumes the probability, likelihood, posterior, and
+regression-level asymptotics normally used in graduate biostatistics. It does
+not assume measure theory, real analysis, topology, stochastic-process theory,
+or functional analysis.
 
+You can begin with this note. The broader companion notes are reference notes,
+not required cover-to-cover reading. This page repeats every idea needed for
+the chapter and sends you to a **specific section** only when a fuller
+explanation would help.
 
+Use these four foundation excerpts before Section 1 only if the notation is
+still unfamiliar:
 
-# The Core Question of Statistics (Before Any Bayesian Language)
+| Needed idea | Read only this section | Connection to Walker |
+|---|---|---|
+| A measure and its domain | [The three components of a measure space](../Measure_Theory/measure-probability-foundations.qmd#measure-space-components) | Explains why $P_f$ and $\Pi$ are both measures but act on different event collections |
+| Integration with respect to a measure | [Integration with respect to a measure](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#integration-with-respect-to-a-measure) | Makes $P_f(dx)$ and $\int h\,dP_f$ precise without infinitesimals |
+| A density relative to a measure | [A continuous density](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#a-continuous-density-is-relative-to-lebesgue-measure) and [the Radon--Nikodym derivative](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#the-radon-nikodym-derivative-is-a-measure-level-density) | Explains $f=dP_f/d\lambda$ and later $d\Pi_n/d\Pi$ |
+| A prior whose points are densities | [A prior on densities](bayes-measure-d-concept.qmd#notation-prior-on-densities) | Explains why $df$ in $\Pi(df)$ is integration notation rather than a calculus derivative |
 
-## What Are We Actually Trying to Learn?
+The two new construction notes on
+[generated sigma-fields](../Measure_Theory/generating-sigma-fields-and-pi-lambda.qmd)
+and [measure extension](../Measure_Theory/premeasures-and-measure-extension.qmd)
+are valuable for general measure theory, but Walker assumes those measures
+already exist. They are therefore outside this fast path.
 
-We observe data:
+# Walker chapter map {.unnumbered}
 
-$$
-X_1, X_2, \dots, X_n.
-$$
+| Walker section | Main ideas in the chapter | Where reconstructed here | Read only these companion sections if needed |
+|---|---|---|---|
+| 1.1, pp. 22--23 | Exchangeable learning, $\Pi(df)$, updating, prediction, stochastic-process priors | [Sections 1--6](#walker-object-spaces) and [Section 9](#walker-process-priors) | [Random-measure definition](../Measure_Theory/random-probability-measures.qmd#rpm-definition), [two-level notation](../Measure_Theory/random-probability-measures.qmd#rpm-two-level-notation), [prediction](../Measure_Theory/random-probability-measures.qmd#rpm-prediction), and [exchangeability](../Measure_Theory/random-probability-measures.qmd#rpm-exchangeability) |
+| 1.2, pp. 24--25 | “Complete” priors, parametric versus nonparametric uncertainty, $\mu_1$ and $\mu_2$ elicitation | [Sections 7--8](#walker-choices) | [Parametric priors induced on distribution space](../Measure_Theory/random-probability-measures.qmd#rpm-parametric-induced-prior); Sections 16--17 separate mathematics from viewpoint |
+| 1.3, pp. 26--27 | Decision theory, KL projection, MLE, Bayesian bootstrap, weighted likelihood bootstrap | [Sections 10--11](#walker-decision-theory) | [Walker's KL decision problem](../Other/km-divergence.qmd#kl-walker-decision), [the bootstrap random object](bayes-boots.qmd#bootstrap-random-object), and [its decision calculation](bayes-boots.qmd#bootstrap-walker-decision) |
+| 1.4, pp. 27--28 | Prior-predictive model versus fixed $f_0$, Doob, Hellinger consistency, fractional likelihood | [Sections 12--13](#walker-asymptotics) and the start of [Section 15](#walker-fractional) | [The two probability laws](../Measure_Theory/posterior-consistency.qmd#consistency-two-laws), [Walker's consistency display](../Measure_Theory/posterior-consistency.qmd#consistency-walker-display), and [fractional posteriors](../Measure_Theory/posterior-consistency.qmd#consistency-fractional-posteriors) |
+| 1.5, pp. 29--33 | Posterior from cumulative loss plus KL, power posteriors, final consistency calculation | [Sections 14--15](#walker-loss-kl) | [KL between belief distributions](../Other/km-divergence.qmd#kl-belief-distributions) and [fractional posteriors](../Measure_Theory/posterior-consistency.qmd#consistency-fractional-posteriors) |
+| 1.6, p. 33 | The chapter's overall learning-model viewpoint | [Sections 16--18](#walker-structure-viewpoint) | None required |
 
-The most fundamental assumption in statistics is:
+This map also marks the scope boundary: the chapter motivates and sketches
+theory; it does not teach posterior computation for a fitted BNP model.
 
-> There exists some probability distribution $F_0$ that generated these
-> data.
+# 1. Put every object on its correct space {#walker-object-spaces}
 
-This statement alone already contains everything:
+**Optional companion excerpt.** Read
+[The two measurable spaces](../Measure_Theory/random-probability-measures.qmd#rpm-two-spaces)
+to see how data-space events and sets of candidate distributions form two
+different measurable spaces. Read
+[A prior on densities](bayes-measure-d-concept.qmd#notation-prior-on-densities)
+only if the type of object measured by $\Pi$ is still unclear.
 
--   There is **uncertainty** (we do not know $F_0$)
--   There is **structure** (the data are not arbitrary)
--   There is a **learning problem** (use data to infer $F_0$)
+Let
 
-Every statistical method answers the same question:
+- $(\mathcal X,\mathscr X)$ be the observation space;
+- $\lambda$ be a common dominating measure on that space;
+- $\mathcal D$ be a collection of candidate densities relative to $\lambda$;
+- $\mathscr G$ be a sigma-field on $\mathcal D$;
+- $\Pi$ be a probability measure on $(\mathcal D,\mathscr G)$.
 
-> How do we learn about the unknown data‑generating distribution?
+A useful symbol map is
 
-## Frequentist statistics
+| Symbol | Type | Role |
+|---|---|---|
+| $x$ | Point in $\mathcal X$ | A possible observation |
+| $f$ | Point in $\mathcal D$ | An entire candidate density |
+| $P_f$ | Probability measure on $\mathcal X$ | Sampling distribution with $dP_f/d\lambda=f$ |
+| $\Pi$ | Probability measure on $\mathcal D$ | Prior law of the random density |
+| $\Pi_n$ | Probability measure on $\mathcal D$ | Posterior law after $n$ observations |
+| $P_n^{\mathrm{pred}}$ | Probability measure on $\mathcal X$ | Posterior predictive distribution |
+| $f_0$ | Fixed density | True data-generating density in the asymptotic analysis |
 
-Assume $X_1, X_2, \dots, X_n$ are independently and identically
-distributed (i.i.d) from a fixed density $f$
+This table prevents the most common confusion: $P_f$ and $\Pi$ are both
+probability measures, but they act on different spaces.
 
-> This constraint is not okay!
+The sigma-field $\mathscr G$ is the collection of subsets of the density space
+to which $\Pi$ may assign prior probability. Its members are sets of entire
+density functions, not sets of observed $x$ values.
 
-> If the true data-generating process is slightly skewed or
-> heavy-tailed, the parametric model will never converge to the truth,
-> regardless of sample size. It will converge to the "closest" Normal
-> distribution.
+Walker works with densities. In other BNP models the random object may instead
+be a probability measure $G$, a distribution function, a regression function,
+or a hazard. Then use $\Pi(dG)$ or the corresponding notation.
 
-> It will forever remian biased.
+# 2. The random-distribution model {#walker-random-model}
 
-# Classical Approaches and Their Limitations
+**Optional companion excerpt.**
+[A random probability measure](../Measure_Theory/random-probability-measures.qmd#rpm-definition)
+develops the same hierarchy with a general distribution $G$ rather than only
+a density $f$. It explains the source of randomness behind the phrase
+“random distribution.”
 
-## Parametric Models
-
-In parametric statistics, we assume:
-
-$$
-F_0 \in \{F_\theta : \theta \in \Theta \subset \mathbb{R}^d\}.
-$$
-
-This assumption is extremely strong.
-
-**What we gain:**
-
--   Finite‑dimensional optimization
--   Fast convergence
--   Simple interpretation
-
-**What we lose:**
-
--   Model correctness
--   Robustness
--   Ability to represent complex distributions
--   Exchangeability for parametric Bayesian
-
-> Teaching insight: Parametric models *do not learn distributions* —
-> they learn parameters inside a rigid family.
-
-## Example of paramteric assumption
-
-Sometimes we fake as if we know the answer.
-
-e.g.) "I am certain the data generating mechanism is a Gaussian bell
-curve. I am only uncertain about its location ($\mu$) and scale
-($\sigma$) \<- Problem: Reduces the infinite complexity of the real
-world to a two-dimensional problem.
-
-> Problem?: such constraint is artificial and incohehent. Incoherent
-> means that you ..... If the true data-generating process is slightly
-> skewed or heavy-tailed, the parametric model will never converge to
-> the truth, regardless of sample size. It will converge to the
-> "closest" Normal distribution. It will forever remian biased
-
-Bayesian Nonparametrics (BNP) removes this constraint. Because instead
-of putting prior probability mass on a vector of parameters
-$\theta = (\mu , \sigma)$, it puts on the **function space** of all
-possible probability densities.
-
-Parameter = density function $f$ (can be of infinite degrees of
-freedom).
-
-Truly let the data speak for itself.
-
-## Nonparametric (Frequentist) View
-
-We drop the parametric assumption and attempt to estimate $F_0$
-directly:
-
--   Kernel density estimators
--   Empirical CDF
--   Sieve methods
-
-But uncertainty quantification becomes difficult.
-
-This motivates Bayesian thinking.
-
-------------------------------------------------------------------------
-
-# Bayesian Thinking: What Is Random?
-
-## Key Bayesian Shift
-
-Bayesian statistics answers uncertainty by *randomizing the unknown*.
-
--   In parametric Bayes: $\theta$ is random
--   In nonparametric Bayes: **the distribution** $F$ is random
-
-This is not philosophical — it is a modeling decision.
-
-------------------------------------------------------------------------
-
-# Treating the Distribution as Unknown (The Conceptual Leap)
-
-## What Does It Mean for a Distribution to Be Random?
-
-Think operationally:
-
-1.  Nature first selects a distribution $F$
-2.  Then data are generated i.i.d. from that $F$
-
-This is written as:
+The basic hierarchy is
 
 $$
-F \sim \pi, \quad X_i \mid F \sim F.
+f\sim\Pi,
+\qquad
+X_i\mid f\overset{\mathrm{iid}}\sim P_f.
+\tag{1}
 $$
 
-Here:
+Operationally:
 
--   $\pi$ is a probability law whose outcomes are **entire
-    distributions**
+1. draw one entire density $f$ from the prior law $\Pi$;
+2. conditional on that $f$, draw all observations iid from $P_f$.
 
-This answers a student’s natural question:
+The density is shared across observations. This sharing is what makes one
+observation informative about the distribution of another.
 
-> “How can we assign probability to something infinite‑dimensional?”
+## Conditional independence versus marginal dependence
 
-Answer: The same way we assign probability to random functions or
-stochastic processes — via a probability law on a space of objects.
-
-------------------------------------------------------------------------
-
-# Bayes’ Rule When the Unknown Is a Distribution
-
-Bayes’ rule is structural:
+Conditional on $f$,
 
 $$
-\text{posterior} \propto \text{likelihood} \times \text{prior}.
+P(X_1\in A_1,\ldots,X_n\in A_n\mid f)
+=\prod_{i=1}^nP_f(A_i).
 $$
 
-Here:
-
--   Prior: $\pi(df)$
--   Likelihood: how well $f$ explains observed data
-
-So:
+After integrating out $f$,
 
 $$
-\pi(df \mid X_{1}, X_2, \cdots, X_{n}) = \frac{ \text{likelihood } \cdot \text{ prior}}{ \text{marginal density of }X_i's} = \frac{ \prod_{i=1}^n f(X_i) \,  \cdot \Pi(df)}{\int \prod_{i=1}^n f(X_i) \, \Pi(df)}
+P(X_1\in A_1,\ldots,X_n\in A_n)
+=\int_{\mathcal D}
+\prod_{i=1}^nP_f(A_i)\Pi(df).
+\tag{2}
 $$
 
-where
+The observations are generally dependent marginally because learning about
+the shared $f$ couples them.
+
+# 3. Why exchangeability appears {#walker-exchangeability}
+
+**Optional companion excerpt.**
+[Connection to exchangeability](../Measure_Theory/random-probability-measures.qmd#rpm-exchangeability)
+shows how conditional iid sampling yields exchangeability after the shared
+random distribution is integrated out.
+
+A finite sequence is exchangeable if its joint distribution is invariant to a
+permutation of labels. The product in (2) is unchanged when the indices are
+reordered. Therefore a conditional-iid mixture is exchangeable.
+
+This is true for both parametric and nonparametric Bayesian models. A
+parametric hierarchy
 
--   Numerator:
-    -   Likelihood = $\prod_{i=1}^n f(X_i)$ = likelihood of the data
-        under specific density $f$.
-    -   prior = $\Pi (df)$ = prior weight of that density.
--   Denominator:
-    -   The marginal likelihood (evidence), obtained by integrating over
-        all possible functions $f$.
+$$
+\theta\sim\pi,
+\qquad
+X_i\mid\theta\overset{\mathrm{iid}}\sim P_\theta
+$$
 
-This equation *defines* Bayesian nonparametrics. Everything else is
-analysis of its behavior.
+is also exchangeable after $\theta$ is integrated out.
 
-> Please refer to notes `bayes-measure-d-concept.Rmd` file to understand
-> meaning of $d\Pi(df)$.
+Representation theorems of de Finetti and Hewitt-Savage provide a converse
+under suitable conditions: an infinitely exchangeable sequence can be
+represented as conditionally iid given a random directing probability measure
+[@hewitt1955symmetric]. The theorem motivates random probability measures; it
+does not say that every finite exchangeable dataset uniquely determines a BNP
+prior.
 
-Generalization to Function Spaces: Walker relies on the generalization
-of this theorem \@ref{hewitt1955symmetric} to general variables. It states
-that any infinitely exchangeable sequence of random variables can be
-represented as a mixture of i.i.d. sequences.
+# 4. Bayes' rule on a space of densities {#walker-bayes-density-space}
 
-$$p(x_1, \cdots , x_n) = \int \Big( \Pi_{i=1}^{n} f(x_i) \Big) d\Pi(f)$$
+**Optional companion excerpt.** Read
+[Bayes' rule on the function space](bayes-measure-d-concept.qmd#notation-bayes-function-space)
+for the finite-candidate analogy and the derivation of $d\Pi_n/d\Pi$. That
+section is the targeted remedy if $\Pi(df\mid X)$ still looks like a
+calculus derivative.
 
-------------------------------------------------------------------------
+For observed $x_{1:n}$, define
 
-# Learning Means Posterior Concentration
+$$
+L_n(f)=\prod_{i=1}^nf(x_i)
+$$
 
-## What Does “Learning the Distribution” Mean?
+and the marginal likelihood
 
-We do **not** expect the posterior to collapse to a single point
-exactly.
+$$
+m_n(x_{1:n})
+=\int_{\mathcal D}L_n(g)\Pi(dg).
+$$
 
-Instead, we want:
+Assume $f\mapsto L_n(f)$ is $\mathscr G$-measurable and
+$0<m_n(x_{1:n})<\infty$. For every measurable
+$A\subseteq\mathcal D$, the posterior is
 
-> As $n \to \infty$, the posterior puts most of its mass near the true
-> distribution $F_0$.
+$$
+\Pi_n(A)
+=\Pi(A\mid x_{1:n})
+=\frac{\int_A L_n(f)\Pi(df)}
+{\int_{\mathcal D}L_n(g)\Pi(dg)}.
+\tag{3}
+$$
 
-This raises an unavoidable question:
+The compact differential notation
 
-> **What does "near" mean for probability distributions?**
+$$
+\Pi_n(df)
+=\Pi(df\mid x_{1:n})
+=\frac{L_n(f)\Pi(df)}{m_n(x_{1:n})}
+\tag{4}
+$$
 
-This question *forces* the choice of a distance or divergence.
+means
 
-------------------------------------------------------------------------
+$$
+\frac{d\Pi_n}{d\Pi}(f)
+=\frac{L_n(f)}{m_n(x_{1:n})}.
+\tag{5}
+$$
 
-# What “Bayesian Nonparametrics” Really Means
+Equation (5) is a Radon-Nikodym derivative: the normalized likelihood is the
+posterior density **relative to the prior measure**. No infinite-dimensional
+Lebesgue measure or prior density $\pi(f)$ is required.
 
-## Parametric vs Nonparametric (Bayesian View)
+The [density prerequisite](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#the-radon-nikodym-derivative-is-a-measure-level-density)
+explains this derivative as the function that converts prior integration into
+posterior integration. No proof of the Radon-Nikodym theorem is needed here.
 
-In **parametric Bayesian statistics**, we assume:
+# 5. Posterior prediction {#walker-prediction}
 
--   A *finite-dimensional* parameter
-    $\theta \in \Theta \subset \mathbb{R}^d$
--   A likelihood $p(x \mid \theta)$
--   A prior $\pi(\theta)$
+**Optional companion excerpt.**
+[Prior and posterior predictive distributions](../Measure_Theory/random-probability-measures.qmd#rpm-prediction)
+explains why prediction averages the **sampling measures** under the posterior
+law rather than substituting a generic posterior mean parameter.
 
-In **Bayesian nonparametrics**, the unknown object is **not
-finite-dimensional**. Instead, it is typically:
+For a future observation,
 
--   A **probability distribution** $F$
--   Or a **function** (density, regression function, hazard rate, etc.)
+$$
+P(X_{n+1}\in A\mid X_{1:n})
+=\int_{\mathcal D}P_f(A)\Pi_n(df).
+\tag{6}
+$$
 
-So the prior is not $\pi(\theta)$, but $$
-\pi(dF)
-$$ which is a **probability measure on a space of probability
-measures**.
+If all $P_f$ have densities relative to $\lambda$, the predictive density is
 
-This is the key conceptual leap.
+$$
+f_n(x)=\int_{\mathcal D}f(x)\Pi_n(df).
+\tag{7}
+$$
 
-------------------------------------------------------------------------
+Equation (7) is a posterior mean at each $x$. The measure form (6) is more
+general and avoids calling a distribution with atoms a density.
 
-# Bayesian Choices - The Incoherence of Constraints
+# 6. Why the model is called “nonparametric” {#walker-nonparametric}
 
-## The "What If" Question
+**Optional companion excerpt.**
+[Parametric Bayes also induces a prior on distributions](../Measure_Theory/random-probability-measures.qmd#rpm-parametric-induced-prior)
+isolates the key distinction: both approaches induce laws on distributions,
+but their supports have different dimensional structure.
 
-Critics to nonparametricians: "What if the true density is normal? Won't
-your infinite-dimensional model be inefficient?"
+## Parametric model viewed on density space
 
-Critics to parametrician:
+Suppose $f=f_\theta$ for $\theta\in\Theta\subseteq\mathbb R^p$ and
+$\theta\sim\pi$. The map $\theta\mapsto f_\theta$ induces a probability law
+$\Pi$ on $\mathcal D$, but its support lies within
 
--   "What if the model is not normal?"
--   A parametric model (like the Normal distribution) puts probability
-    zero on any shape that isn't a bell curve.
--   If the true data has a slight skew or heavy tails, a normal model
-    will never converge to the truth, no matter how much data you have.
--   The KL divergence will minimize to the "closest" normal, but the
-    error will remain non-zero.
+$$
+\{f_\theta:\theta\in\Theta\},
+$$
 
-## Incoherence of Post-Data Selection
+a fixed finite-dimensional subset.
 
-Selecting a prior after looking at the data (e.g., checking if data
-looks normal, then choosing a normal prior) $\rightarrow$ violates the
-axioms of probability.
+The **support** of a prior is, informally, the collection of possibilities it
+does not rule out, including limiting possibilities. The precise
+neighborhood-based definition is given in the
+[consistency note](../Measure_Theory/posterior-consistency.qmd#prior-support).
 
--   Coherence: A statistical analysis is coherent if it follows the laws
-    of probability based on information available *before* the decision.
--   The "Big" Prior: The solution is to define a prior support that is
-    "large enough" to encompass all reasonable possibilities before
-    seeing the data. This necessitates a nonparametric prior (one with
-    support over the entire space of densities).
+## Nonparametric model
 
-## Specifying the Nonparametric Prior
+In BNP, the unknown distribution or function is not restricted to one fixed
+finite-dimensional family. The prior may live on
 
-How do we define a prior $\Pi$ over infinite functions?
+- probability distributions;
+- densities;
+- regression functions;
+- hazard or cumulative-hazard functions;
+- partitions, feature allocations, or other growing structures.
 
--   use moments
--   If we can specify expectations like $E[f(x)]$ (the mean shape) and
-    $E[f^2(x)]$ (the variance of the shape), we can construct a valid
-    nonparametric prior.
+This does not mean “no parameters,” “all possible functions,” or
+“assumption-free.” A BNP prior has hyperparameters, support restrictions, and
+regularity assumptions. Its effective complexity can grow with the data.
 
-Example: We might center our nonparametric prior on a Normal
-distribution. This means our "best guess" is a bell curve, but we allow
-the posterior to deviate from this shape if the data demands it. This
-creates a "random density" that fluctuates around a parametric base.
+# 7. Walker's argument about Bayesian choices {#walker-choices}
 
-| Feature | Parametric Prior (e.g., Normal) | Nonparametric Prior (e.g., Dirichlet Process) |
-|-------------------------|:---------------------------:|-----------------:|
-| Parameter space | Finite dimension ($\theta \in \mathbb{R}^k$) | Infinite dimension (Function space $\mathcal{F}$) |
-| Flexibility | Rigid; fixed shape assumption | Flexible; adapts to any shape |
-| Bias/Variance | High Bias (if model wrong), Low Variance. | Low Bias, Higher Variance (initially) |
-| Convergence | Converges to "closest" parametric fit. | Converges to true density $f_0$ (Consistency). |
-| Philosophy | "I know the shape, just not the size." | "I am uncertain about the shape itself." |
+Walker argues that the prior should represent all uncertainty entertained
+before seeing the observations. If the analyst suspects that a normal sampling
+family may be wrong, his preferred coherent response is to enlarge the prior
+before observing data rather than select a different prior after inspecting
+the same data [@walker2010bnp].
 
-: Table 1. Parametric vs. Nonparametric Priors
+## The mathematical fact
 
-## Common argument
+A parametric prior can be pushed forward to a prior on sampling distributions,
+and it assigns probability one to its parametric family. A richer prior can
+assign mass outside that family.
 
-"It's not possible to learn about all the parameters of a nonparametric
-model."
+## Walker's normative position
 
+Walker calls a prior “complete” when it incorporates all uncertainties he
+believes the analyst should acknowledge. He argues that choosing among priors
+after inspecting the data and then reporting the selected analysis as if its
+prior had been fixed beforehand is incoherent as a representation of personal
+belief.
 
-<details>
-<summary><strong>Walker's note</strong></summary>
+This should not be expanded into the claims that
 
-> **Spectacularly** misses the point. Bayesian inference is about being
-*willing* and *able* to speficy all uncertainties into a prior
-distribution. If noe does not like the outcome, do not be a Bayesian.
+- every parametric model is incoherent;
+- posterior predictive checking is illegitimate;
+- every data-adaptive procedure violates probability axioms;
+- one BNP prior can literally anticipate every model inadequacy.
 
-> The "complete" (nonparametric) prior represents genuine uncertainty.
+A parametric analysis with a genuinely pre-specified prior is internally
+Bayesian. Bayesian model averaging can place a prior on a model index before
+data. Model checking can reveal scientifically important failures. The precise
+problem Walker targets is unmodeled post-data selection followed by an
+interpretation that ignores the selection.
 
-</details>
+## Special case: a normal truth
 
+A flexible prior can include distributions close to normal while retaining
+support for skewness, multimodality, or heavy tails. This can reduce
+misspecification bias, but flexibility has a price:
 
+- more prior choices;
+- potentially slower learning;
+- harder computation;
+- more difficult interpretation;
+- no automatic guarantee that the true distribution lies in the support.
 
-------------------------------------------------------------------------
+The honest comparison is therefore not “rigid and wrong” versus “flexible and
+true,” but a trade-off among support, regularization, data information, and
+computational tractability.
 
-# Decision Theory
+# 8. Prior elicitation through functionals
 
-In this section, Walker shows the complete prior framework using decision theory. 
-He also shows how maximum likelihood estimate can be viewed as a decision problem 
-within a nonparametric framework. 
+A **functional** is a rule that takes an entire function or distribution as
+its input and returns a number or another summary. For fixed $x$, evaluation
+$f\mapsto f(x)$ is a functional. “Pointwise” below means that the summary is
+considered separately at each value of $x$.
 
-Example: Which specific density from a family of densities indexed 
-by a parameter that is the best approximation to the data $X_1, \cdots , X_n$? 
+Walker suggests thinking about functions such as
 
+$$
+\mu_1(x)=E_\Pi\{f(x)\},
+\qquad
+\mu_2(x)=E_\Pi\{f(x)^2\}.
+$$
 
+when these pointwise expectations are finite. They express a prior mean density
+and pointwise second moment. One can use a
+parametric prior as an elicitation benchmark; for example,
 
+$$
+\mu_1(x)
+=\int N(x\mid\theta,\sigma^2)\pi(d\theta,d\sigma).
+$$
 
+A nonparametric prior may be centered to share these summaries while allowing
+shapes outside the normal family.
 
-## Setup 
+Important limitation: arbitrary choices of $\mu_1$ and $\mu_2$ do not, by
+themselves, generally determine a unique valid law on density functions.
+Walker is describing an elicitation strategy for suitable process models, not
+a universal construction theorem.
 
+# 9. Stochastic-process priors {#walker-process-priors}
 
-Denote:
+**Optional companion excerpt.** Read
+[A random measure as a stochastic process](../Measure_Theory/random-probability-measures.qmd#rpm-stochastic-process)
+for the general set-indexed-process idea. Read
+[The Dirichlet process](../Measure_Theory/random-probability-measures.qmd#rpm-dirichlet-process)
+only for Walker's concrete random-measure example; the later DP-mixture section
+is not needed to understand this part of the chapter.
 
-- $f(\cdot)$: State of nature. The true but unknown density which generated the data. Infinite-dimensional. Treated as random under the posterior $\Pi(df \mid X_1, \cdots, X_n)$.
-- $\theta$: Action. Decision parameter. We select a parameter $\theta$. Not random.
-- $f(\cdot; \, \theta)$: The density implied by that decision. A parametric approximation (a decision/action). A model-based candidate density chosen by the statistician. 
-    - Completely known once $\theta$ is chosen.
-    - not random
-    - not the truth
-    - lives in a parameteric family (e.g. Normal, Laplace, etc.)
-    - This is a *decision*, not a random variable
-- $\theta \in \Theta$: the specific parameter with which we can best approximate the data. e.g.) mean, variance, etc.
-- $\{f(x; \, \theta)\}$ : the parametric family of densities characterized by $\theta$. 
+A random function is commonly built from a stochastic process, whose law is
+the prior. Examples include
 
+- Gaussian processes for regression or transformed log densities;
+- independent-increment processes for cumulative hazards;
+- the Dirichlet process for random probability measures.
 
-choose a utility function which describes the reward in selecting $\theta$ when 
-$f$ is the true density. 
+A **stochastic process** is a collection of jointly distributed random
+variables indexed by a location such as time or $x$. One complete draw supplies
+a value at every index and therefore produces an entire random function. Its
+**law** is the probability distribution over all such possible functions.
 
+For a Gaussian process, every finite vector of function values has a
+multivariate normal distribution. For an independent-increment process,
+changes over nonoverlapping intervals are independent. These facts identify
+the examples; their construction theory is not needed for Walker's argument.
 
-$$u : \text{(truth } f, \text{ decision } \theta) \mapsto \mathbb{R}$$
+For
 
-## The Utility Function Approach
+$$
+G\sim\operatorname{DP}(\alpha,H),
+$$
 
+every finite measurable partition has Dirichlet-distributed random masses
+[@ferguson1973dp]. A DP draw $G$ is almost surely discrete. For continuous
+density estimation it is therefore commonly used as a mixing distribution:
 
-**(Kullback-Leibler divergence)** Let $g$ and $f$ be probability density functions 
-of a random variable $X \in \mathcal{X}$. Then, the distance between the two 
-densities is:
+$$
+f_G(x)=\int k(x\mid\theta)G(d\theta).
+$$
 
-$$d(g,f) = \int g(x) \; log \frac{g(x)}{f(x)} \, dx,$$
-with $d(g,f) \geq 0$ and strictly equal to zero iff $g=f$.
+The induced law of $f_G$ is Walker's prior $\Pi(df)$. See the
+[applied DP-mixture bridge](bayes-nonpar-concept-applied.qmd).
 
+# 10. Decision theory under a rich posterior {#walker-decision-theory}
 
+**Optional companion excerpt.**
+[Walker's posterior decision problem](../Other/km-divergence.qmd#kl-walker-decision)
+derives the KL orientation and posterior-predictive log-score identity used in
+this section. The earlier portions of the KL note are only needed if the
+definition of KL itself is unfamiliar.
 
-The utility is negative KL divergence:
+Walker next asks how to select a lower-dimensional parametric approximation
+without pretending it is the full state of nature.
 
-$$u(f,\theta) = - d( \,  f(\cdot), \; f(\cdot ; \theta) \, )$$
+Let
 
-**Interpretation:**
+- $f$ be the unknown true density, the state of nature;
+- $\theta\in\Theta$ be an action;
+- $q_\theta$ be the density implied by action $\theta$.
 
-> "How much does the model $f(\cdot ; \theta)$ disagree with the true density 
-$f$, when assessed under the weighting implied by the true density?"
+In decision theory, the **state of nature** is the unknown object relevant to
+the consequence of a decision; an **action** is what the analyst chooses; a
+utility ranks the consequence of choosing that action under a given state.
 
+Choose the KL-based utility
 
+$$
+u(f,\theta)
+=-D_{\mathrm{KL}}(f\|q_\theta)
+=-\int f(x)\log\frac{f(x)}{q_\theta(x)}\lambda(dx).
+\tag{8}
+$$
 
-Identify $\theta$ that:
+The posterior expected utility is
 
-<div align="center">
-minimizes the distance $\rightarrow$ maximize utility.
-</div>
+$$
+U_n(\theta)
+=\int_{\mathcal D}u(f,\theta)\Pi_n(df).
+\tag{9}
+$$
 
+Expanding (8),
 
-Q: So, how does nonparameric prior come into play?
-
-<details>
-<summary><strong>Answer</strong></summary>
-
-> Prior on $f$. We go through all candidate $f$ **based on** the data $X_1, \cdots , X_n$.
-
-</details>
-
-
-
-
-
-## The Utility function
-
-
-
-We said put prior on $f$... So like this?
-
-$$ \int u(f, \theta) \; \Pi(df)$$
-No. Let me just tell you this is wrong. What did I say? 
-I say to put prior on the possible density $f$ **after** observing the data! 
-
-So the correct answer is....
-
-
-<details>
-<summary><strong>Answer</strong></summary>
-
-$$\int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n)$$
-
-</details>
-
-
-
-## Maximization of Expected Utility
-
-
-Let: 
-
-$$U_n(\theta) = \int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n),$$
-which is expected utility. Our goal is to find $\theta$ which maximizes the 
-expected utility. We can further show that maximizing $U_n(\theta)$ is same 
-as maximizing 
-
-$$\tilde{U}_n (\theta) = \int log \, f(x; \theta) \; f_n (dx) = \mathbb{E}_{X \sim f_n} \left[ log \, f( X ; \, \theta )\right],$$
-where $f_n$ is the nonpaparmetric predictive density, given by 
-
-$$f_n(x)= \int f(x) \; \Pi(df \mid X_1, \cdots, X_n).$$
-
-So we can interpret $\tilde{U}_n (\theta)$ as the posterior predictive expected log-likelihood of model $\theta$. Or more simply, it's posterior expectation of some loss/score.
-
-
-We can read $\tilde{U}_n(\theta)$ as:
-"How well does the parametric model $f(\cdot; \, \theta)$ perform, on average, under my posterior beliefs about future data?"
-
-
-
-<details>
-<summary><strong>Derivation of $\tilde{U}_n (\theta)$ from $U_n (\theta)$ </strong></summary>
-
-
-``` math
+$$
 \begin{aligned}
-U_n(\theta) 
-&= \int u(f, \theta) \; \Pi(df \mid X_1, \cdots, X_n) \\
-&= - \int d( \,   f(x) , \; f(x ; \theta)\, ) \; \Pi(df \mid X_1, \cdots, X_n)\\
-&= - \int \left(   \int f(x) \; log \frac{f(x)}{f(x ; \theta)} \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)\\
-&= - \int \left(   \int f(x) \; \left[log f(x) - log f(x; \theta) \right] \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)\\
-&= 
-
-\underbrace{- \int \left(   \int f(x) \;log f(x) \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)}_{\text{independent of } \theta}
-+
-\underbrace{\int \left(   \int  f(x)  \;log f(x; \theta) \, dx  \right) \; \Pi(df \mid X_1, \cdots, X_n)}_{\tilde{U}_n (\theta)}
+U_n(\theta)
+={}&-
+\int_{\mathcal D}
+\left\{\int f(x)\log f(x)\lambda(dx)\right\}\Pi_n(df)\\
+&+
+\int_{\mathcal D}
+\left\{\int f(x)\log q_\theta(x)\lambda(dx)\right\}\Pi_n(df).
 \end{aligned}
-```
+$$
 
-And $\tilde{U}_n (\theta)$ can be further simplified as :
+The first term is constant in $\theta$. Under conditions that permit the order
+of integration to be exchanged, maximizing $U_n$ is equivalent to maximizing
 
-``` math
+$$
+\widetilde U_n(\theta)
+=\int_{\mathcal X}\log q_\theta(x)P_n^{\mathrm{pred}}(dx).
+\tag{10}
+$$
+
+Read (10) as the average log score of action $q_\theta$ under current posterior
+predictive beliefs about a future observation.
+
+The qualification about exchanging integrals refers to Tonelli/Fubini
+conditions, summarized in the
+[integration prerequisite](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#when-two-integrals-appear).
+
+## A direction-of-KL issue in the printed chapter
+
+On page 26, Walker first prints $u(f,\theta)=-d(q_\theta,f)$ and defines
+$d(g,f)=\int g\log(g/f)$. The next displayed result, however, is (10), which
+follows from $D_{\mathrm{KL}}(f\|q_\theta)$ as written in (8), not from the
+reverse divergence. The subsequent derivation fixes the intended orientation.
+
+# 11. Why the Bayesian bootstrap yields maximum likelihood {#walker-bootstrap}
+
+**Optional companion excerpts.** Read
+[The bootstrap random object](bayes-boots.qmd#bootstrap-random-object) and
+[Walker's decision calculation](bayes-boots.qmd#bootstrap-walker-decision) for
+the full weighted-distribution argument. Read
+[Bayesian bootstrap in Dirac notation](../Measure_Theory/dirac-measure-and-dirac-delta.qmd#dirac-bayesian-bootstrap)
+only if $\sum_iW_i\delta_{X_i}$ is unfamiliar.
+
+Under the Bayesian bootstrap, a posterior draw is
+
+$$
+F^{(b)}=\sum_{i=1}^nW_i^{(b)}\delta_{X_i},
+\qquad
+W^{(b)}\sim\operatorname{Dirichlet}(1,\ldots,1).
+$$
+
+Its posterior mean is the empirical distribution
+
+$$
+\widehat F_n=\frac1n\sum_{i=1}^n\delta_{X_i}.
+$$
+
+Substituting the posterior predictive mean into (10),
+
+$$
+\widetilde U_n(\theta)
+=\int\log q_\theta(x)\widehat F_n(dx)
+=\frac1n\sum_{i=1}^n\log q_\theta(X_i).
+$$
+
+Therefore the Bayes action under this utility is the maximum likelihood
+estimator.
+
+This is not a statement that the empirical distribution has a Lebesgue
+density. It is a discrete probability measure, and the integral is a finite
+sum.
+
+## A distribution over projected actions
+
+Instead of maximizing posterior **expected** utility once, project each
+posterior draw:
+
+$$
+\theta^{(b)}
+=\arg\max_\theta
+\sum_{i=1}^nW_i^{(b)}\log q_\theta(X_i).
+\tag{11}
+$$
+
+Repeated Dirichlet weights induce a distribution over $\theta^{(b)}$. Walker
+connects (11) with the weighted likelihood bootstrap
+[@newton1994weighted]. This distribution is not the same object as the single
+Bayes action that maximizes expected utility.
+
+# 12. Why Walker studies asymptotics {#walker-asymptotics}
+
+**Optional companion excerpt.**
+[The two probability laws](../Measure_Theory/posterior-consistency.qmd#consistency-two-laws)
+separates the Bayesian prior-predictive law from the repeated-sampling law at
+a fixed $f_0$. That distinction is the only prerequisite needed for Walker's
+discussion of Doob's theorem.
+
+The prior performs two tasks:
+
+1. it represents initial uncertainty about the sampling distribution;
+2. together with Bayes' rule, it determines how learning proceeds as data
+   accumulate.
+
+Asymptotic analysis evaluates the second task.
+
+## Bayesian joint model versus fixed truth
+
+Inside the Bayesian model,
+
+$$
+m_n(x_{1:n})
+=\int\prod_{i=1}^nf(x_i)\Pi(df)
+$$
+
+is the marginal law of the observations.
+
+For repeated-sampling evaluation, instead fix $f_0$ and suppose
+
+$$
+X_1,X_2,\ldots\overset{\mathrm{iid}}\sim f_0.
+$$
+
+These are not contradictory statements. The first specifies the Bayesian
+learning model; the second evaluates that learning rule under a fixed
+data-generating mechanism. We need not assume that Nature sampled $f_0$ from
+$\Pi$.
+
+## Where Doob's theorem fits
+
+Walker mentions Doob's consistency theorem in this discussion. In simplified
+terms, under appropriate identifiability and measurability conditions, Doob's
+result provides a set of parameter or density values having prior probability
+one at which the posterior is consistent [@doob1949application]. This is a
+**prior-almost-everywhere** conclusion; it is not a guarantee for every
+preselected fixed truth $f_0$, and it does not provide a contraction rate.
+
+That distinction matters in an infinite-dimensional model. A particular
+scientifically relevant $f_0$ could lie in the prior-null exceptional set, so
+fixed-truth consistency theorems ask directly for conditions that work at the
+chosen $f_0$.
+
+The prior-predictive law $m_n$ is still a mathematically valid marginal law
+inside the Bayesian hierarchy. Walker's criticism is better read as a warning
+that this internally specified law need not be accepted as the literal
+external mechanism that generated repeated datasets. The Bayesian model law
+and the fixed-truth evaluation law answer different questions.
+
+# 13. Posterior consistency {#walker-consistency}
+
+**Optional companion excerpts.** Use
+[the general consistency statement](../Measure_Theory/posterior-consistency.qmd#consistency-statement)
+to decode the limit, [Reading Walker's display](../Measure_Theory/posterior-consistency.qmd#consistency-walker-display)
+for a line-by-line reading, and
+[Support is not the whole theorem](../Measure_Theory/posterior-consistency.qmd#support-is-important-but-not-the-whole-theorem)
+only for the roles of tests, sieves, and entropy.
+
+For a distance $d$ and every $\varepsilon>0$, consistency at $f_0$ means
+
+$$
+\boxed{
+\Pi\{f:d(f,f_0)>\varepsilon\mid X_{1:n}\}
+\longrightarrow0
+\quad P_0^\infty\text{-almost surely}.
+}
+\tag{12}
+$$
+
+The probability law $P_0^\infty$ governs the infinite iid data sequence. The
+quantity on the left is random because it is a function of the observed data.
+
+The symbol $P_0^\infty$ and “almost surely” are expanded in
+[the two-probability-laws section](../Measure_Theory/posterior-consistency.qmd#consistency-two-laws).
+
+Walker emphasizes Hellinger distance. One common convention is
+
+$$
+h^2(f_0,f)
+=\frac12\int\{\sqrt{f_0(x)}-\sqrt{f(x)}\}^2\lambda(dx).
+$$
+
+Constants differ across authors and do not change the topology.
+
+Consistency theorems typically combine
+
+- positive prior mass near $f_0$, often in KL neighborhoods;
+- tests separating $f_0$ from alternatives;
+- complexity or sieve control so overly rich parts of the model receive
+  sufficiently little effective mass.
+
+Tests, sieves, entropy, topology, and support are proof-level terms explained
+in plain language in the [posterior-consistency note](../Measure_Theory/posterior-consistency.qmd#support-is-important-but-not-the-whole-theorem).
+
+Having broad or even full topological support is not, by itself, a universal
+consistency proof. The targeted explanation is
+[Support is important but not the whole theorem](../Measure_Theory/posterior-consistency.qmd#support-is-important-but-not-the-whole-theorem).
+
+# 14. General posterior inference from loss plus KL {#walker-loss-kl}
+
+**Optional companion excerpt.**
+[KL between belief distributions](../Other/km-divergence.qmd#kl-belief-distributions)
+explains why KL is now comparing a candidate posterior $\mu$ with the prior
+$\Pi$, rather than comparing two data-generating distributions.
+
+Walker's Section 1.5 is one of the chapter's most important ideas. Instead of
+starting from Bayes' theorem, he asks which probability measure $\mu$ on
+$\mathcal D$ should represent posterior beliefs after observing data.
+
+The optimization variable is therefore an entire candidate belief
+distribution $\mu$, not a finite parameter vector. Problems of this type are
+often called **variational** problems.
+
+## Loss to the data
+
+Use self-information loss for a candidate density:
+
+$$
+\ell(f,x)=-\log f(x).
+$$
+
+If beliefs about $f$ are represented by $\mu$, expected cumulative data loss is
+
+$$
+-\int_{\mathcal D}\log L_n(f)\mu(df)
+=-\sum_{i=1}^n\int_{\mathcal D}\log f(X_i)\mu(df).
+$$
+
+## Loss from departing from prior information
+
+Penalize departure from the prior by
+
+$$
+D_{\mathrm{KL}}(\mu\|\Pi)
+=\int\log\left(\frac{d\mu}{d\Pi}(f)\right)\mu(df),
+$$
+
+with value $+\infty$ if $\mu\not\ll\Pi$.
+
+## The optimization problem
+
+Choose $\mu$ to minimize
+
+$$
+\mathcal J_n(\mu)
+=-\int\log L_n(f)\mu(df)
++D_{\mathrm{KL}}(\mu\|\Pi).
+\tag{13}
+$$
+
+Let the ordinary posterior satisfy
+
+$$
+\frac{d\Pi_n}{d\Pi}(f)=\frac{L_n(f)}{m_n}.
+$$
+
+Then
+
+$$
 \begin{aligned}
-\tilde{U}_n (\theta)
-&= \int log f(x; \, \theta) \left[ \int f(x) \, \Pi(df \mid X_1, \cdots, X_n) \right] dx, \quad log f(x; \, \theta) \text{ is fixed under } \Pi(df \mid X_{1:n}).\\
-&= \int log f(x; \, \theta) \left[ f_n(x) \right] dx, \quad f_n(x) \text{ denotes posterior predictive distribution}\\
-&=  \int log f(x; \, \theta)  f_n(dx), \quad  f_n(dx) \text{ is a measure theoric expression of } f_n(x)dx
+D_{\mathrm{KL}}(\mu\|\Pi_n)
+&=\int\log\left(
+\frac{d\mu/d\Pi}{d\Pi_n/d\Pi}
+\right)d\mu\\
+&=D_{\mathrm{KL}}(\mu\|\Pi)
+-\int\log L_n(f)\mu(df)
++\log m_n.
 \end{aligned}
-```
+$$
 
-</details>
+Hence
 
+$$
+\mathcal J_n(\mu)
+=D_{\mathrm{KL}}(\mu\|\Pi_n)-\log m_n.
+$$
 
-Please refer to @sec-app-utility-example to see a toy example of $U_n(\theta).$
+Because KL is minimized at zero,
 
+$$
+\arg\min_\mu\mathcal J_n(\mu)=\Pi_n.
+\tag{14}
+$$
 
-## Okay yeah so now what 
+The ordinary Bayesian posterior is therefore the distribution that optimally
+balances cumulative log loss against KL departure from the prior. This idea was
+later developed into a broader framework for updating with general losses
+[@bissiri2016general].
 
+# 15. Fractional or power posteriors {#walker-fractional}
 
-In order to maximize $\tilde{U}_n(\theta)$, we must know the posterior distribution, $\Pi (df \mid X_1, \cdots, X_n)$.
+**Optional companion excerpt.**
+[Fractional or power posteriors](../Measure_Theory/posterior-consistency.qmd#consistency-fractional-posteriors)
+explains the interpretation of the powered likelihood and the limits of the
+associated consistency claim. The calculation below records Walker's more
+specific rate argument.
 
-Estimate the posterior using **Bayesian bootstrap**.
+Walker allows a data-weight $\alpha_n\geq0$ in (13):
 
-Bayesian bootstrap posterior:
+$$
+\mathcal J_{n,\alpha_n}(\mu)
+=-\alpha_n\int\log L_n(f)\mu(df)
++D_{\mathrm{KL}}(\mu\|\Pi).
+$$
 
-$$f(x) = \sum_{i=1}^{n}\,  W_i \, \delta_{x_i}(x), \quad (W_1, ..., W_n) \sim Dirichlet(\alpha_1=1, ..., \alpha_n=1)$$
+The same calculation gives
 
-Note:
+$$
+\Pi_{n,\alpha_n}(df)
+=\frac{L_n(f)^{\alpha_n}\Pi(df)}
+{\int L_n(g)^{\alpha_n}\Pi(dg)}.
+\tag{15}
+$$
 
-``` math
-\begin{aligned}
-  f_n(x) 
-  &= \int f(x) \Pi(df \mid X_1, \cdots, X_n) \\
-  &= \mathbb{E} [f(x) \mid X_1, \cdots, X_n] \\ 
-  &= \mathbb{E} \left[ \sum_{i=1}^{n}\,  W_i \, \delta_{x_i}(x) \right] \\
-  &= \sum_{i=1}^{n} \mathbb{E}[W_i]\delta_{x_i}(x), \quad \text{by linearity of expectation}\\
-  &=  \sum_{i=1}^{n} \frac{1}{n}\delta_{x_i}(x), \quad \mathbb{E}[W_i] = \left. \frac{\alpha_i}{\sum_{j=1}^{n} \alpha_j} \right|_{\alpha_1=...\alpha_n=1} =  \frac{1}{n} .
-\end{aligned}
-```
+Special cases are
 
-Thus, 
+- $\alpha_n=0$: no update, so $\Pi_{n,0}=\Pi$;
+- $\alpha_n=1$: ordinary Bayes;
+- $0<\alpha_n<1$: a fractional or tempered posterior.
 
-``` math
-\begin{aligned}
-  \tilde{U}_n(\theta)
-  &= \int log f(x; \, \theta) f_n(dx)\\
-  &=\frac{1}{n} \sum_{i=1}^{n} log f(x_i; \, \theta)
-\end{aligned}
-```
+A fractional posterior stays closer to the prior by downweighting the data.
+Walker discusses consistency results for such learning rules
+[@walker2001consistency]. These are conditional mathematical results, not a
+claim that every choice $\alpha<1$ fixes every inconsistency.
 
-So $\hat{\theta}$ is the maximum likelihood estimator!
+## Map of Walker's final consistency calculation
 
+The chapter's last technical argument can be read without reproducing every
+bound. Define the likelihood ratio
 
+$$
+R_n(f)=\prod_{i=1}^n\frac{f(X_i)}{f_0(X_i)}
+$$
 
-> We can also do this using each posterior draw of $F$. Posterior expected uility collapses uncertainty via expectation. Instead, we may want to fully incorporate the uncertainty by evaluating each posterior draw of $F$.
+and an alternative set
 
-> Draw $F \sim \Pi( \cdot \mid X)$
-evaludate utility under that draw.
-This yields:
-$$U^{(b)}(\theta) =\sum_{i=1}^{n} w_i^{(b)} \, log f(X_i ; \theta).$$
+$$
+A_\varepsilon=\{f:h(f_0,f)>\varepsilon\}.
+$$
 
-> By the end, we would have the *distribution* of the utility under posterior uncertainty. 
+Then the fractional posterior probability is a numerator-to-denominator ratio:
 
-> Bayesian decision theory does not require collaping uncertainty immeidately, it's just your choice.
+$$
+\Pi_{n,\alpha_n}(A_\varepsilon)
+=\frac{\int_{A_\varepsilon}R_n(f)^{\alpha_n}\Pi(df)}
+{\int R_n(f)^{\alpha_n}\Pi(df)}.
+\tag{16}
+$$
 
+Walker proceeds in two directions:
 
+1. **Lower-bound the denominator.** Prior concentration near $f_0$ supplies a
+   rate $\varepsilon_n$ and a bound related to
+   $\int R_n(f)^{1/2}\Pi(df)$.
+2. **Upper-bound the numerator.** Hellinger separation on
+   $A_\varepsilon$ makes the expected numerator decay at a rate involving
+   $n(1-\alpha_n)\varepsilon^2$.
+
+Balancing the bounds leads to a condition of the form
 
----
+$$
+n\left\{(1-\alpha_n)\varepsilon^2
+-4c\varepsilon_n^2\alpha_n\right\}\longrightarrow\infty.
+$$
 
-# Asymptotics
+One admissible form is
+
+$$
+\alpha_n=1-\psi_n\varepsilon_n^2,
+$$
+
+where $\psi_n\to\infty$ but
+$\psi_n\varepsilon_n^2\to0$. Thus the learning rule can approach ordinary
+Bayes while retaining the stated consistency control. The example in the
+chapter takes $\varepsilon_n^2=(\log n)/n$ and $\psi_n=\log n$, giving
+
+$$
+\alpha_n=1-\frac{(\log n)^2}{n}.
+$$
 
-Question: If the data are truly i.i.d from $f_0$, does the Bayesian posterior place more and more mass near $f_0$ as $n \rightarrow \infty$?
+# 16. Mathematical structure and Walker's viewpoint {#walker-structure-viewpoint}
+
+| Claim | Status |
+|---|---|
+| A prior on a parameter induces a prior on sampling distributions | Mathematical fact |
+| Conditional iid mixtures are exchangeable | Mathematical fact |
+| $\Pi(df)$ is measure-integration notation | Mathematical fact |
+| The posterior has RN derivative proportional to likelihood | Mathematical fact, under normalizing and measurability conditions |
+| KL projection leads to posterior-predictive expected log score | Mathematical fact with the orientation in (8) |
+| Bayesian bootstrap posterior mean yields the MLE decision | Mathematical fact for this setup |
+| A Bayesian prior should be “complete” enough that it is never checked | Walker's normative position |
+| Post-data selection makes the resulting posterior meaningless as belief | Walker's normative critique of an unmodeled workflow |
+| BNP is generally preferable whenever parametric shape is uncertain | Modeling recommendation, not theorem |
+| Ordinary Bayes need not be nonparametrically consistent | Mathematical fact; consistency needs conditions |
+| The specific fractional posterior is consistent under stated conditions | Theorem-level claim with assumptions |
 
-For parametric Bayesian, it works... But under the assumption that the prior captures the true density. <- absurd to think this can happen.
+# 17. Corrections to tempting slogans
 
-For non-parametric bayesian, we don't assume that. Prior is a **random procedure** that outputs a density.
+## “Let the data speak for themselves”
 
-> Prior is not a formula - it is a random generator. 
+No model does this literally. A BNP prior determines support, smoothness,
+tail behavior, clustering, and learning rate. The data speak through those
+assumptions.
 
+## “A DP spreads mass over every possible shape”
+
+A DP draw is discrete. A DP mixture induces a flexible but still constrained
+class of densities determined by its kernel and base measure.
 
-Histogram prior = random density generator. 
+## “Nonparametric means infinitely many parameters must all be learned”
 
-1. draw a partition
-2. draw bin heights
+Inference usually targets a distribution, function, prediction, or functional,
+with regularization supplied by the prior. Finite data occupy only finite
+portions of many infinite representations.
 
+## “A misspecified parametric posterior can never learn anything”
 
-Algorithm: draw a random density $f$
+It can learn a KL-best approximation or useful functionals under conditions.
+The limitation is that it cannot leave its support and may give misleading
+uncertainty if its scientific approximation is poor.
 
-Step 1: draw number of bins
+## “A broad prior guarantees consistency”
 
-- sample $k \in \{ 1, 2, 3, ... \}$ from some distribution
-- $k$ is a model-complexity index, each value of $k$ defines a family of densities  
+Support is necessary in the relevant sense, but infinite-dimensional
+consistency also requires control of testing and complexity.
+
+# 18. A compact reading of the chapter
 
-Step 2: Define bins
+Walker's chapter can now be reduced to one sequence:
 
-- Partition [0,1] into $k$ bins:
-$$ B_1 = [0, 1/k), B_2=[1/k, 2/k), \cdots, B_k = [(k-1)/k, 1]$$
+1. Put a probability law $\Pi$ on candidate sampling distributions.
+2. Conditional iid sampling produces an exchangeable learning model.
+3. Update $\Pi$ through the likelihood to obtain $\Pi_n$.
+4. Average under $\Pi_n$ to predict future data.
+5. If a low-dimensional answer is required, obtain it as a posterior decision
+   rather than pretending the full distribution was parametric.
+6. Study consistency because the prior specifies not only initial beliefs but
+   the learning dynamics.
+7. View Bayes as the minimizer of data loss plus KL departure from prior.
+8. Changing the relative weight of those two terms gives fractional learning
+   rules.
+
+# 19. Symbol glossary
 
-Step 3: Draw bin probabilities
+| Symbol | Read it as |
+|---|---|
+| $\mathcal D$ | Space of candidate densities |
+| $\Pi(df)$ | Prior measure on that space |
+| $\Pi_n(df)$ | Posterior measure after $n$ observations |
+| $L_n(f)$ | Likelihood at candidate density $f$ |
+| $m_n$ | Integral of likelihood under the prior |
+| $d\Pi_n/d\Pi$ | Posterior density relative to prior |
+| $P_n^{\mathrm{pred}}$ | Posterior predictive probability measure |
+| $f_n$ | Predictive density when it exists |
+| $f_0$ | Fixed true density for asymptotic evaluation |
+| $P_0^\infty$ | Infinite-product sampling law under $f_0$ |
+| $\mu$ | Candidate belief distribution in the variational problem |
+| $\alpha_n$ | Relative weight on cumulative log likelihood |
 
-- Sample $(p_1, \cdots, p_k) \sim Dirichlet(1, \cdots, 1)$
+# What to read next
 
-Step 4: Define density
+Continue to the
+[Dirichlet-process mixture bridge](bayes-nonpar-concept-applied.qmd) for a
+concrete model whose random mixing measure induces Walker's abstract
+$\Pi(df)$. Return to the Bayesian-bootstrap or posterior-consistency companion
+whenever more detail is needed for Sections 11 or 13--15 above.
 
-$$f(x) = k \cdot p_j \quad \text{if } x \in B_j$$
+# 20. Check your understanding
 
-1. Prior belief:
-    ex.)Dirichlet (1,...,1) or Dirichle (1,2,3,..,0.5)
-2. learning model
-    ex.)
+Select each **Answer** box after working out the question yourself.
 
+**1. What are the domain and codomain of the prior $\Pi$?**
 
+::: {.callout-tip collapse="true"}
+## Answer
 
-Symbolically, for a distance $d$ (Hellinger $d_H$):
+Formally,
 
-$$\Pi(\{ f: d(f, f_0) > \epsilon\} \mid X_1, \cdots, X_n) \xrightarrow[n \rightarrow \infty]{\text{a.s. under } P_{f_0}}$$
-for some fixed $\epsilon > 0$. where
+$$
+\Pi:\mathscr G\longrightarrow[0,1],
+$$
 
-- $\text{a.s. under } P_{f_0}$: almost sure (a.s) convergence under the true data law $P_{f_0}$ (not the true density, but the true density for the observed data, and fixed $f_0$).
+where $\mathscr G$ is the sigma-field of measurable subsets of the candidate
+density space $\mathcal D$. Thus $\Pi$ takes a measurable **set of entire
+densities** as input and returns its prior probability. Saying informally that
+“$\Pi$ is on $\mathcal D$” means that $(\mathcal D,\mathscr G)$ is its
+underlying measurable space.
+:::
 
+**2. Why are the observations dependent marginally but iid conditionally?**
 
-This property is called **posterior consistency**
+::: {.callout-tip collapse="true"}
+## Answer
 
+Given one shared density $f$, the model specifies
 
----
+$$
+P(X_1\in A_1,\ldots,X_n\in A_n\mid f)
+=\prod_{i=1}^nP_f(A_i),
+$$
 
+so the observations are conditionally iid. Marginally, $f$ is integrated out.
+All observations then share the same unresolved random $f$, so learning from
+one observation changes beliefs relevant to the others and generally induces
+dependence.
+:::
 
-# Appendix
+**3. Write the posterior probability of a measurable set
+$A\subseteq\mathcal D$.**
 
+::: {.callout-tip collapse="true"}
+## Answer
 
-## Toy example of understanding $U_n(\theta)$ {#sec-app-utility-example}
+Provided $0<m_n(x_{1:n})<\infty$,
 
+$$
+\Pi_n(A)
+=\Pi(A\mid x_{1:n})
+=\frac{\int_A\prod_{i=1}^nf(x_i)\Pi(df)}
+{\int_{\mathcal D}\prod_{i=1}^ng(x_i)\Pi(dg)}.
+$$
 
+The different dummy letter $g$ in the denominator emphasizes that it ranges
+over every candidate density.
+:::
 
-### 1. Setup — objects and notation
+**4. What is the difference between $\Pi_n$ and
+$P_n^{\mathrm{pred}}$?**
 
-- State space of possible true densities:  $\mathcal F = \{f_1,f_2,f_3\}$.
-- Posterior over densities after observing data: $\Pi_n$ with
-  $$\Pi_n(f_1)=0.25,\quad \Pi_n(f_2)=0.35,\quad \Pi_n(f_3)=0.40.$$
-- Parametric action space: $\Theta = \{\theta_A,\theta_B\}$ (note: fewer $\theta$'s than $f$'s).
-- For each action $\theta_j$ we have a candidate density $f(\cdot;\theta_j)$.
+::: {.callout-tip collapse="true"}
+## Answer
 
-**Goal:** choose $\theta\in\Theta$ to maximize posterior expected utility.
+$\Pi_n$ is the posterior probability measure on **model space**; it assigns
+probability to sets of candidate densities $f$. The posterior predictive
+$P_n^{\mathrm{pred}}$ is a probability measure on **data space**; it assigns
+probability to possible future observations and is obtained by averaging:
 
+$$
+P_n^{\mathrm{pred}}(B)=\int_{\mathcal D}P_f(B)\Pi_n(df).
+$$
+:::
 
-### 2. Utility function
+**5. Which orientation of KL produces the expected log score in (10)?**
 
-We use KL-based utility between densities (Walker’s special case). For any true density $f\in\mathcal F$ and action $\theta\in\Theta$, define
+::: {.callout-tip collapse="true"}
+## Answer
 
-$$ u(f,\theta) = -\mathrm{KL}\big(f\,\|\, f(\cdot;\theta)\big). $$
+The required orientation is
+$D_{\mathrm{KL}}(f\|q_\theta)$, with the unknown candidate density first and
+the action density second. After averaging its negative under $\Pi_n$, the term
+that depends on $\theta$ is
 
+$$
+\int\log q_\theta(x)P_n^{\mathrm{pred}}(dx).
+$$
+:::
 
+**6. Why is the empirical distribution in the Bayesian-bootstrap calculation a
+measure rather than a Lebesgue density?**
 
-This rewards actions whose parametric density is close (in KL) to the true density.
+::: {.callout-tip collapse="true"}
+## Answer
 
+The empirical distribution is
 
+$$
+\widehat F_n=\frac1n\sum_{i=1}^n\delta_{X_i},
+$$
 
+a probability measure with atoms at the observations. A finite set has
+Lebesgue measure zero but receives total $\widehat F_n$-mass one, so
+$\widehat F_n\not\ll\lambda$ and it has no ordinary Lebesgue density.
+:::
 
-### 3. Posterior expected utility (finite form)
+**7. Under which law is the almost-sure convergence in (12) evaluated?**
 
-The posterior expected utility for an action $\theta$ is
+::: {.callout-tip collapse="true"}
+## Answer
 
-$$ U_n(\theta) = \mathbb E_{f\sim\Pi_n}[u(f,\theta)] = \sum_{i=1}^3 \Pi_n(f_i)\,u(f_i,\theta). $$
+Under $P_0^\infty$, the infinite-product sampling law for an iid sequence from
+the fixed true density $f_0$. The exceptional set consists of infinite data
+sequences and must have $P_0^\infty$-probability zero; the statement is not
+evaluated under the prior $\Pi$.
+:::
 
-Equivalently,
+**8. Why does minimizing (13) give the ordinary posterior?**
 
-$$ U_n(\theta) = -\sum_{i=1}^3 \Pi_n(f_i)\,\mathrm{KL}\big(f_i\,\|\, f(\cdot;\theta)\big) = 
--0.25 \mathrm{KL}\big(f_1\,\|\, f(\cdot;\theta)\big) 
--0.35 \mathrm{KL}\big(f_2\,\|\, f(\cdot;\theta)\big)
--0.40 \mathrm{KL}\big(f_3\,\|\, f(\cdot;\theta)\big)$$
+::: {.callout-tip collapse="true"}
+## Answer
 
-The optimal decision is
+Bayes' rule lets the objective be rewritten as
 
-$$ \theta_n^* = \arg\max_{\theta\in\{\theta_A,\theta_B\}} U_n(\theta). $$
+$$
+\mathcal J_n(\mu)
+=D_{\mathrm{KL}}(\mu\|\Pi_n)-\log m_n.
+$$
 
+The second term is constant in $\mu$, and KL divergence is nonnegative with
+minimum zero at $\mu=\Pi_n$ (up to equality as probability measures). Hence the
+unique minimizer under the stated conditions is the ordinary posterior.
+:::
 
-### 4. Small numeric example (explicit values)
+**9. Which parts of Walker's “complete prior” argument are philosophical rather
+than measure-theoretic?**
 
-Fix the posterior weights (as above) and suppose the pairwise KL divergences are given by the following table (these numbers are illustrative):
+::: {.callout-tip collapse="true"}
+## Answer
 
-| true density $f_i$ | KL to $f(\cdot;\theta_A)$ | KL to $f(\cdot;\theta_B)$ |
-|---:|---:|---:|
-| $f_1$ | 0.20 | 0.45 |
-| $f_2$ | 0.30 | 0.25 |
-| $f_3$ | 0.10 | 0.50 |
+Measure theory establishes that a prior is a probability measure on model
+space, that a parametric prior induces such a measure, and that Bayes' rule
+reweights it by the likelihood. It does **not** prove the normative claims that
+an analyst must encode every acknowledged form of model uncertainty in one
+pre-data “complete” prior, that unmodeled post-data model selection cannot be
+interpreted as coherent personal belief, or that BNP is generally preferable
+whenever parametric shape is uncertain. Those are Walker's philosophical and
+workflow recommendations; their force depends on the intended interpretation
+of Bayesian inference.
+:::
 
-**Compute posterior expected utility** for each $\theta$ (remember utility is negative KL):
+**10. What does Doob's theorem fail to guarantee about a particular fixed
+truth $f_0$?**
 
-- For $\theta_A$:
+::: {.callout-tip collapse="true"}
+## Answer
 
-$$ U_n(\theta_A) = -\big(0.25\cdot 0.20 + 0.35\cdot 0.30 + 0.40\cdot 0.10\big). $$
-Compute inside the parentheses:
-
-- $0.25\cdot 0.20 = 0.050$
-- $0.35\cdot 0.30 = 0.105$
-- $0.40\cdot 0.10 = 0.040$
-
-Sum: $0.050 + 0.105 + 0.040 = 0.195$.
-
-Thus
-
-$$ U_n(\theta_A) = -0.195. $$
-
-- For $\theta_B$:
-
-$$ U_n(\theta_B) = -\big(0.25\cdot 0.45 + 0.35\cdot 0.25 + 0.40\cdot 0.50\big). $$
-Compute inside the parentheses:
-
-- $0.25\cdot 0.45 = 0.1125$
-- $0.35\cdot 0.25 = 0.0875$
-- $0.40\cdot 0.50 = 0.2000$
-
-Sum: $0.1125 + 0.0875 + 0.2000 = 0.4000$.
-
-Thus
-
-$$ U_n(\theta_B) = -0.400. $$
-
-**Decision:** compare utilities. Since $-0.195 > -0.400$, we prefer $\theta_A$. Therefore
-
-$$ \theta_n^* = \theta_A. $$
-
-Interpretation: although $f_2$ and $f_3$ give different KL behaviors, the posterior weights combined with their KL distances make $\theta_A$ the better parametric approximation on average.
-
-
+Its classical Bayesian consistency conclusion is prior-almost-everywhere: it
+can exclude a set of possible truths having prior probability zero. It
+therefore does not by itself guarantee consistency at every particular
+scientifically chosen $f_0$, and it does not state how quickly the posterior
+contracts. Fixed-truth consistency analysis supplies conditions directed at
+that named $f_0$.
+:::

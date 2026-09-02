@@ -1,145 +1,324 @@
 ---
 title: "Bayesian Bootstrap"
 author: "Hyejung Lee"
-date: "`r Sys.Date()`"
-summary: >
-  This is a surface level review of Rubin's 1981 The Bayesian Bootstrap paper 
+date: 2026-08-26
 description: >
-  This is a surface level review of Rubin's 1981 The Bayesian Bootstrap paper 
+  The Bayesian bootstrap as a posterior distribution on random probability weights,
+  with its relation to the empirical distribution, KL projection, and weighted likelihood bootstrap.
 categories:
   - bayesian
   - bootstrap
-status: draft         # draft | published | deprecated
-bibliography: ../../references/references.bib
-csl: ../../references/csl/vancouver.csl   # optional
+  - nonparametric
+  - measure-theory
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
 ---
 
+# The idea {.unnumbered}
 
-# Context
+## What this note assumes
 
-Used in [Walker's bayesian nonparametric motivation paper](bayes-nonpar-concept.qmd), it uses bayesian bootstrap idea for derivation. So I thought I'd study. If you just want to
-underestand simple idea of Bayesian bootstrap, just read the [summary](#summary) section.
+This note assumes familiarity with the ordinary nonparametric bootstrap and
+Dirichlet-distributed probability vectors. Read the
+[Dirac measure note](../Measure_Theory/dirac-measure-and-dirac-delta.qmd) and
+[KL divergence](../Other/km-divergence.qmd) first. The
+[Bayesian measure-notation guide](bayes-measure-d-concept.qmd) explains
+$\Pi(dF\mid X_{1:n})$. No advanced measure theory is otherwise assumed.
 
+Given observed values $X_1,\ldots,X_n$, the Bayesian bootstrap represents
+uncertainty about their population probabilities by assigning random weights
+[@rubin1981bayesianbootstrap]. A posterior draw is the probability measure
 
+$$
+F^{(b)}=\sum_{i=1}^nW_i^{(b)}\delta_{X_i},
+\qquad
+(W_1^{(b)},\ldots,W_n^{(b)})
+\sim\operatorname{Dirichlet}(1,\ldots,1).
+\tag{1}
+$$
 
+The notation in (1) matters:
 
+- $F^{(b)}$ is a probability measure;
+- $\delta_{X_i}$ is a Dirac point mass;
+- $F^{(b)}$ is not an ordinary density relative to Lebesgue measure.
 
+Dirichlet$(1,\ldots,1)$ is a continuous distribution over every nonnegative
+weight vector whose entries sum to one. With all parameters equal to one, it
+is uniform over that simplex; it is a modeling choice, not a consequence of
+measure notation.
 
-# Relevant point for Walker's paper
+The **simplex** is just the set of all such weight vectors. It is a line
+segment for two weights, a filled triangle for three, and the analogous
+higher-dimensional shape for more weights.
 
+# The random object {#bootstrap-random-object}
 
-Suppose I observe data: $X_1, \cdots, X_n$ 
+The observations are fixed after being observed. The weights are random:
 
+$$
+W_i\geq0,
+\qquad
+\sum_{i=1}^nW_i=1.
+$$
 
-Assumptions:
+Every weight draw gives an entire distribution supported on the observed data.
+The induced law of $F$ is the Bayesian-bootstrap posterior
+$\Pi(dF\mid X_{1:n})$.
 
-1. future data will look like the past data
-    - the true distribution $f$ puts probability mass on the observed points $X_1, ..., X_n$. 
-2. I don't know how frequently each observed value should reappear.
-    - weights of the observed points are unknown
+For a measurable function $h$,
 
+$$
+\int h(x)F^{(b)}(dx)
+=\sum_{i=1}^nW_i^{(b)}h(X_i).
+\tag{2}
+$$
 
-Estimate the posterior using **Bayesian bootstrap** :
+Equation (2) converts a distributional functional into a random weighted
+statistic.
 
-- simple
-- minimal assumptions (exchangeability)
-- estimate the parameter of interst (not approximating sampling distribution like a frequentist bootstrap)
+A **functional** is a rule whose input is an entire distribution. For example,
+the mean, median, variance, or a regression coefficient defined by an
+estimating equation can all be written as $T(F)$.
 
+# Repeated observed values
 
-That is 
+If the distinct observed values are $x_1^*,\ldots,x_K^*$ with counts
+$n_1,\ldots,n_K$, the equivalent combined representation is
 
-$$f = \sum_{i=1}^{n} W_i \delta_{X_i},$$
+$$
+F^{(b)}=\sum_{k=1}^KV_k^{(b)}\delta_{x_k^*},
+\qquad
+(V_1^{(b)},\ldots,V_K^{(b)})
+\sim\operatorname{Dirichlet}(n_1,\ldots,n_K).
+$$
 
-where:
+This follows because sums of components of a Dirichlet vector are again
+Dirichlet with the corresponding parameters added.
 
-- $\delta_{X_i}$ = point mass at $X_i$,
-- $W_1, \cdots, W_n$ = unknown weights
-- $W_i \geq 0$, $\sum W_i = 1$
+# Posterior mean distribution
 
-$f$ is already a nonparametric distribution.
+Because $E(W_i)=1/n$,
 
+$$
+\begin{aligned}
+\bar F_n(A)
+&=E\{F^{(b)}(A)\mid X_{1:n}\}\\
+&=\frac1n\sum_{i=1}^n\mathbf 1(X_i\in A).
+\end{aligned}
+$$
 
-# The Bayesian Bootstrap posterior
+Thus the posterior mean measure is the empirical distribution
 
-Given the data $X_1, ..., X_n$, the posterior distribution on the weights is 
+$$
+\widehat F_n=\frac1n\sum_{i=1}^n\delta_{X_i}.
+\tag{3}
+$$
 
+# Obtaining a posterior for a functional
 
-$$(W_1, \cdots, W_n) \sim Dirichlet (1, 1, \cdots, 1).$$
+Suppose the estimand is a functional $T(F)$, such as a mean, quantile, risk
+difference, or a parameter defined by an estimating equation. The algorithm is
 
-What does it mean intuitively?
+1. draw $W^{(b)}\sim\operatorname{Dirichlet}(1,\ldots,1)$;
+2. construct $F^{(b)}$ through (1);
+3. compute $T^{(b)}=T(F^{(b)})$;
+4. repeat to approximate the posterior distribution of $T(F)$.
 
-- All observed points get random probability weights.
-- No point is privileged a priori.
-- The randomness reflects uncertainty about the true distribution.
+For the mean,
 
-This is **not resampling** data like the frequentest bootstrap.
+$$
+T^{(b)}=\int xF^{(b)}(dx)
+=\sum_{i=1}^nW_i^{(b)}X_i.
+$$
 
-- Frequentist bootstrap: resample points
-- Bayesian bootstrap: resample probability weights
+For a population estimating equation
 
+$$
+\int\psi(x,\theta)F(dx)=0,
+$$
 
+each draw solves
 
-# Howe this gives a posterior over distributions
+$$
+\sum_{i=1}^nW_i^{(b)}\psi(X_i,\theta^{(b)})=0.
+$$
 
-Each draw from the posterior gives:
+# Frequentist bootstrap comparison
 
-$$f^{(b)}(x) = \sum_{i=1}^{n} W_i^{(b)} \delta_{X_i}(x), \quad (W^{(b)} \sim Dirichlet (1, \cdots, 1)).$$
+For one ordinary nonparametric-bootstrap resample,
 
+$$
+\widehat F_n^*
+=\sum_{i=1}^n\frac{N_i}{n}\delta_{X_i},
+\qquad
+(N_1,\ldots,N_n)
+\sim\operatorname{Multinomial}
+\left(n;\frac1n,\ldots,\frac1n\right).
+$$
 
-So:
+| Feature | Ordinary bootstrap | Bayesian bootstrap |
+|---|---|---|
+| Random weights | $N_i/n$, discrete multiples of $1/n$ | $W_i$, continuous Dirichlet weights |
+| Main interpretation | Approximate repeated-sampling distribution | Posterior uncertainty under the Bayesian-bootstrap model |
+| Resampled dataset | Yes, explicitly or through counts | No; random probability weights |
+| Support | Observed values | Observed values |
 
-- The posterior $\Pi(df \mid X)$ is represented by random discrete distributions supported on the data.
-- Expectations w.r.t. $\Pi(df \mid X)$ become expectations over Dirichlet weights.
+The two procedures can yield similar computations but have different
+inferential interpretations.
 
+# What assumptions are and are not being made
 
-This is exactly what Walker needs.
+Exchangeability helps motivate treating labels symmetrically, but
+exchangeability **alone** does not imply Dirichlet$(1,\ldots,1)$ weights. The
+Dirichlet law is an additional Bayesian-bootstrap modeling choice.
 
-- All observed points get random probability weights.
-- No point is privileged a priori.
-- The randomness reflects uncertainty about the true distribution.
+Exchangeability here means that relabeling observations does not change the
+joint probability model. It expresses label symmetry, not independence and
+not a unique prior distribution.
 
+The Bayesian bootstrap also places posterior mass only on distributions
+supported by observed values. Consequently, under the basic construction it
+assigns no predictive probability to a genuinely new support point. This can
+be reasonable for functionals of an unknown distribution but is not an
+innocuous model for every scientific problem.
 
+“Supported by observed values” means every posterior draw assigns probability
+one to the finite set $\{X_1,\ldots,X_n\}$. Any point outside that set receives
+probability zero.
 
-# Frequentist vs. Bayesian
+# Walker's decision-theory calculation {#bootstrap-walker-decision}
 
+Let $f_\theta$ be a parametric density used as an action, and score it by
+negative KL divergence from $F$ to $P_\theta$. For a Bayesian-bootstrap draw,
+the part of the utility that depends on $\theta$ is
 
+$$
+\int\log f_\theta(x)F^{(b)}(dx)
+=\sum_{i=1}^nW_i^{(b)}\log f_\theta(X_i).
+\tag{4}
+$$
 
-For observed data $x_1, ..., x_n$,
+## Collapsing uncertainty first
 
-For *frequentist*:
+If we maximize expected posterior utility, replace $F^{(b)}$ by its posterior
+mean (3):
 
-bootstrap replicate is generated by:
+$$
+\int\log f_\theta(x)\widehat F_n(dx)
+=\frac1n\sum_{i=1}^n\log f_\theta(X_i).
+$$
 
-- sampling $n$ times with replacement from $\{x_1, ..., x_n \}$
-- forming the empirical distribution of that resample
+The maximizer is the ordinary maximum likelihood estimator.
 
-Equivalently, one bootstrap replicate can be written as:
+## Preserving the full posterior uncertainty
 
-$$\hat{F}^* = \sum_{i=1}^{n} \frac{N_i}{n} \delta_{x_i} (x),$$
+Alternatively, for each Dirichlet draw solve
 
-where:
+$$
+\theta^{(b)}
+=\arg\max_\theta
+\sum_{i=1}^nW_i^{(b)}\log f_\theta(X_i).
+\tag{5}
+$$
 
-- $(N_1, ..., N_n) \sim$ Multinomial $(n; \, \frac{1}{n}, ..., \frac{1}{n})$,
-- $N_i = $ number of times $x_i$ appears in the resample.
-- the weights are discrete multiples of $1/n$
-- the randomness comes from resampling data points
-- the bootstrap distribution approximates the sampling distribution of an estimator, not a posteiror. 
+The empirical distribution of the $\theta^{(b)}$ values propagates uncertainty
+from the random $F$. Walker connects (5) to the weighted likelihood bootstrap
+of Newton and Raftery [@newton1994weighted].
 
+Expected utility and draw-by-draw decisions answer different questions:
 
-For *Bayesian*:
+- expected utility produces one Bayes action;
+- draw-by-draw optimization induces a distribution over projected parametric
+  actions.
 
-- sampling the distribution of the data
+# Common mistakes
 
-$$F = \sum_{i=1}^{n} W_i\delta_{x_i}, \quad (W_1, \cdots, W_n) \sim Dirichlet (1, \cdots, 1)$$
+1. Writing $f(x)=\sum_iW_i\delta_{X_i}(x)$ and calling it a Lebesgue density.
+   Use the measure $F=\sum_iW_i\delta_{X_i}$.
+2. Saying the Dirichlet weights follow from exchangeability alone.
+3. Forgetting to combine weights when observed values repeat.
+4. Claiming the Bayesian bootstrap estimates the full smooth data-generating
+   density. Its draws remain supported on observed values.
+5. Treating the ordinary and Bayesian bootstrap as identical because both use
+   random weights.
 
-- the weigts $W_i$ are continuous ranodm variables
-- they sum to 1 but are not constrained to multiples of $1/n$
-- the randomness represents Bayesian uncertainty about the true distribution
+# What to read next
 
+Continue to [posterior consistency](../Measure_Theory/posterior-consistency.qmd).
+After that, the [Walker synthesis](bayes-nonpar-concept.qmd) combines this
+Bayesian-bootstrap calculation with the chapter's random-distribution,
+decision-theoretic, and asymptotic arguments.
 
-| Frequenist bootstrap | Bayesian bootstrap |
-|-----------------|:---------:|
-| Randomness approximates sampling variability of an estimator | Randomness represents posterior uncertainty about the distribution | 
-| Data are treated as fixed | Distribution $F$ is treated as random |
-| Uses Multinomial weights | Uses Dirichlet weights |
-| Not Bayesian | Fully Bayesian under exchangeability |
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. What type of object is $F^{(b)}$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$F^{(b)}=\sum_iW_i^{(b)}\delta_{X_i}$ is a discrete probability measure on
+the observation space. It assigns mass $W_i^{(b)}$ to observed point $X_i$
+(with masses added when values repeat). It is not a Lebesgue density.
+:::
+
+**2. Why is its posterior mean the empirical distribution?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+For Dirichlet$(1,\ldots,1)$ weights, $E(W_i^{(b)})=1/n$. Therefore, for every
+measurable $A$,
+
+$$
+E\{F^{(b)}(A)\mid X_{1:n}\}
+=\frac1n\sum_{i=1}^n\mathbf 1(X_i\in A),
+$$
+
+which is exactly the empirical measure
+$\widehat F_n=n^{-1}\sum_i\delta_{X_i}$.
+:::
+
+**3. What changes when observations contain ties?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Weights attached to equal observed values are combined. If the distinct values
+$x_1^*,\ldots,x_K^*$ have counts $n_1,\ldots,n_K$, then
+
+$$
+F^{(b)}=\sum_{k=1}^KV_k^{(b)}\delta_{x_k^*},
+\qquad
+(V_1^{(b)},\ldots,V_K^{(b)})
+\sim\operatorname{Dirichlet}(n_1,\ldots,n_K).
+$$
+:::
+
+**4. Which choice produces the MLE: maximizing under each draw or maximizing
+posterior expected utility?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Maximizing **posterior expected utility** replaces $F^{(b)}$ by its posterior
+mean $\widehat F_n$ and maximizes
+$n^{-1}\sum_i\log f_\theta(X_i)$, so it produces the ordinary MLE. Maximizing
+separately under every draw instead produces many randomly weighted estimates
+$\theta^{(b)}$, a distribution of projected actions.
+:::
+
+**5. What modeling restriction follows from support only on observed points?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Every basic Bayesian-bootstrap posterior draw assigns probability one to
+$\{X_1,\ldots,X_n\}$. It assigns zero probability to every genuinely new
+support point. This can be suitable for uncertainty about functionals but is a
+strong restriction if prediction at unseen values or smooth density estimation
+is the scientific goal.
+:::

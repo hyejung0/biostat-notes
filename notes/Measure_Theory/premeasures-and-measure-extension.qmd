@@ -1,0 +1,452 @@
+---
+title: "Premeasures and Measure Extension"
+author: "Hyejung Lee"
+date: 2026-08-27
+description: >
+  A statistics-first explanation of rings, algebras, contents, premeasures,
+  outer measures, and the construction of probability and Lebesgue measures.
+categories:
+  - measure-theory
+  - probability
+  - statistics
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+# Why this note exists {.unnumbered}
+
+The definition of a measure assumes that a countably additive set function is
+already available on a sigma-field. In practice, measures are usually first
+specified on simple sets:
+
+- lengths of intervals;
+- probabilities of half-open intervals determined by a CDF;
+- products of probabilities on rectangles;
+- masses assigned to finitely many categories.
+
+The **measure-extension problem** is to turn those simple assignments into a
+genuine measure on the full sigma-field needed for probability and
+integration.
+
+This is general foundation material for a statistician. It is **not required
+to decode Walker's notation**. Walker uses measures that have already been
+constructed. Read this note when you want to understand where Lebesgue
+measure, product measures, and probability laws come from.
+
+## What this note assumes
+
+Read [Measure and probability foundations](measure-probability-foundations.qmd)
+first. The companion note
+[Generating sigma-fields and the pi-lambda method](generating-sigma-fields-and-pi-lambda.qmd)
+explains generators and uniqueness arguments. No real-analysis course is
+assumed.
+
+# The construction problem {#extension-problem}
+
+Suppose $\mathcal C$ is a simple collection of subsets of $\Omega$ and a set
+function $\mu_0$ has been proposed on $\mathcal C$. We want a measure $\mu$ on
+$\sigma(\mathcal C)$ such that
+
+$$
+\mu(A)=\mu_0(A)
+\quad\text{for every }A\in\mathcal C.
+$$
+
+Three issues must be separated:
+
+1. **compatibility:** the proposed values must obey the appropriate additivity
+   rules;
+2. **existence:** at least one measure must extend those values;
+3. **uniqueness:** no different measure should have the same starting values.
+
+The definitions below identify the compatibility needed for extension.
+
+# Rings and algebras of sets {#rings-and-algebras}
+
+A nonempty collection $\mathcal R$ of subsets of $\Omega$ is a **ring of
+sets** if
+
+1. $A,B\in\mathcal R$ implies $A\cup B\in\mathcal R$;
+2. $A,B\in\mathcal R$ implies $A\setminus B\in\mathcal R$.
+
+These rules imply $\emptyset\in\mathcal R$ and closure under finite
+intersections. A ring need not contain the whole space $\Omega$.
+
+An **algebra of sets** is a ring that contains $\Omega$. Because
+
+$$
+A^c=\Omega\setminus A,
+$$
+
+an algebra is closed under complements and finite unions. A sigma-field is an
+algebra that is additionally closed under countable unions.
+
+| Set class | Finite unions | Differences | Contains $\Omega$ | Countable unions |
+|---|---:|---:|---:|---:|
+| Ring | Yes | Yes | Not required | Not required |
+| Algebra | Yes | Yes | Yes | Not required |
+| Sigma-field | Yes | Yes | Yes | Yes |
+
+Finite unions of half-open intervals form a useful ring on $\mathbb R$. They
+are easy to measure by adding interval lengths, yet they do not contain every
+Borel set.
+
+# Content, premeasure, and measure {#content-premeasure-measure}
+
+Let $\mu_0$ be a nonnegative set function with $\mu_0(\emptyset)=0$.
+
+A **content** is finitely additive on a ring or algebra:
+
+$$
+\mu_0(A\cup B)=\mu_0(A)+\mu_0(B)
+\quad\text{when }A\cap B=\emptyset.
+$$
+
+A **premeasure** is countably additive whenever the disjoint sets and their
+union all belong to its ring or algebra. If $A_1,A_2,\ldots$ are pairwise
+disjoint and $\bigcup_nA_n$ is still in the domain, then
+
+$$
+\mu_0\left(\bigcup_{n=1}^{\infty}A_n\right)
+=\sum_{n=1}^{\infty}\mu_0(A_n).
+$$
+
+A **measure** is a countably additive set function whose domain is a
+sigma-field.
+
+The correct implication, when the domains are aligned, is
+
+$$
+\text{measure}\Longrightarrow\text{premeasure}
+\Longrightarrow\text{content}.
+$$
+
+This is a chain of increasingly strong requirements, not the reversed set
+inclusion sometimes suggested by informal diagrams. A measure has both a
+larger type of domain and the countable-additivity property.
+
+# Finite additivity is not enough {#finite-not-countable}
+
+Let $\Omega=\mathbb N$ and let $\mathcal A$ contain every finite subset of
+$\mathbb N$ and every cofinite subset, meaning a set whose complement is
+finite. Define
+
+$$
+\mu_0(A)=
+\begin{cases}
+0, & A\text{ is finite},\\
+1, & A\text{ is cofinite}.
+\end{cases}
+$$
+
+This is a finitely additive probability content on $\mathcal A$. However,
+each singleton has mass zero while
+
+$$
+\mathbb N=\bigcup_{n=1}^{\infty}\{n\}.
+$$
+
+Countable additivity would require
+
+$$
+1=\mu_0(\mathbb N)
+=\sum_{n=1}^{\infty}\mu_0(\{n\})=0,
+$$
+
+which is impossible. Thus finite additivity alone does not support the limit
+operations used throughout probability.
+
+# Continuity of a measure {#measure-continuity}
+
+Countable additivity implies two limit properties.
+
+## Continuity from below {#continuity-from-below}
+
+If
+
+$$
+A_1\subseteq A_2\subseteq\cdots,
+\qquad
+A=\bigcup_{n=1}^{\infty}A_n,
+$$
+
+then
+
+$$
+\mu(A_n)\longrightarrow\mu(A).
+$$
+
+To see the mechanism, split $A$ into disjoint increments:
+
+$$
+A=A_1\cup(A_2\setminus A_1)\cup(A_3\setminus A_2)\cup\cdots.
+$$
+
+Countable additivity turns the partial sums of increment masses into
+$\mu(A_n)$.
+
+## Continuity from above {#continuity-from-above}
+
+If
+
+$$
+A_1\supseteq A_2\supseteq\cdots,
+\qquad
+A=\bigcap_{n=1}^{\infty}A_n,
+$$
+
+and $\mu(A_1)<\infty$, then
+
+$$
+\mu(A_n)\longrightarrow\mu(A).
+$$
+
+The finite-mass condition prevents the undefined subtraction
+$\infty-\infty$. For a probability measure it holds automatically.
+
+For a finite content on an algebra, continuity at the empty set is a useful
+test for countable additivity: if $A_n\downarrow\emptyset$ always implies
+$\mu_0(A_n)\downarrow0$, then the content is a premeasure.
+
+# Outer measures {#outer-measures}
+
+An **outer measure** $\mu^*$ assigns a value in $[0,\infty]$ to **every**
+subset of $\Omega$ and satisfies
+
+1. $\mu^*(\emptyset)=0$;
+2. $A\subseteq B$ implies $\mu^*(A)\leq\mu^*(B)$;
+3. for arbitrary $A_1,A_2,\ldots$,
+
+$$
+\mu^*\left(\bigcup_{n=1}^{\infty}A_n\right)
+\leq\sum_{n=1}^{\infty}\mu^*(A_n).
+$$
+
+An outer measure need not be additive on all subsets. Its purpose is to give
+an upper size to every set by covering it with simple measurable pieces.
+
+Given a premeasure $\mu_0$ on a ring $\mathcal R$, define
+
+$$
+\mu^*(E)
+=\inf\left\{
+\sum_{n=1}^{\infty}\mu_0(A_n):
+E\subseteq\bigcup_{n=1}^{\infty}A_n,
+\ A_n\in\mathcal R
+\right\}.
+\tag{1}
+$$
+
+The infimum is the smallest achievable upper bound from countable covers. It
+plays the same role as taking the best approximation from outside.
+
+# Caratheodory-measurable sets {#caratheodory-measurable-sets}
+
+A subset $A\subseteq\Omega$ is **Caratheodory measurable** for $\mu^*$ if
+for every $E\subseteq\Omega$,
+
+$$
+\mu^*(E)
+=\mu^*(E\cap A)+\mu^*(E\setminus A).
+\tag{2}
+$$
+
+Equation (2) says that cutting any test set $E$ along $A$ causes no loss or
+overcounting of outer size.
+
+The Caratheodory-measurable sets form a sigma-field, and the restriction of
+$\mu^*$ to that sigma-field is a measure. This is the decisive step: outer
+measure is defined everywhere, while genuine additivity is retained on the
+subsets that pass criterion (2).
+
+The proof is important in a real-analysis course but is not needed to use the
+result in statistics.
+
+# The Caratheodory extension theorem {#caratheodory-extension}
+
+In a commonly used form, the theorem says:
+
+> A premeasure on an algebra extends to a measure on the sigma-field generated
+> by that algebra. If the premeasure is sigma-finite, the extension is unique.
+
+A premeasure $\mu_0$ is **sigma-finite** if the space can be covered by
+countably many domain sets of finite mass:
+
+$$
+\Omega=\bigcup_{n=1}^{\infty}E_n,
+\qquad
+\mu_0(E_n)<\infty.
+$$
+
+Probability premeasures are automatically finite and therefore sigma-finite.
+Lebesgue length on $\mathbb R$ is sigma-finite because
+
+$$
+\mathbb R=\bigcup_{n=1}^{\infty}[-n,n]
+$$
+
+and each interval has finite length.
+
+The theorem separates the jobs cleanly:
+
+- the premeasure records compatible values on simple sets;
+- the outer-measure construction supplies existence;
+- sigma-finiteness supplies the standard uniqueness guarantee.
+
+# Constructing Lebesgue measure {#constructing-lebesgue-measure}
+
+Start with half-open intervals and assign
+
+$$
+\lambda_0((a,b])=b-a.
+$$
+
+Extend this assignment additively to finite disjoint unions of such intervals.
+The resulting set function is a premeasure on a ring. The outer-measure
+construction (1) and Caratheodory criterion (2) produce Lebesgue measure
+$\lambda$ on a sigma-field containing all Borel sets.
+
+This explains why the familiar rule “interval length equals endpoint
+difference” legitimately extends to very complicated measurable subsets of
+the real line.
+
+The resulting Lebesgue sigma-field is larger than the Borel sigma-field
+because it also includes every subset of a Borel set of Lebesgue measure zero.
+For most statistical calculations, the distinction can remain in the
+background.
+
+# Constructing a probability law from a CDF {#constructing-law-from-cdf}
+
+Let $F$ be nondecreasing, right-continuous, and satisfy
+
+$$
+\lim_{x\to-\infty}F(x)=0,
+\qquad
+\lim_{x\to\infty}F(x)=1.
+$$
+
+On half-open intervals, propose
+
+$$
+P_0((a,b])=F(b)-F(a).
+$$
+
+These values extend to a probability premeasure on an interval algebra and
+then to a probability measure on $\mathcal B(\mathbb R)$. Conversely, that
+measure has CDF $F(t)=P\{(-\infty,t]\}$.
+
+The extension theorem supplies existence; the
+[pi-lambda argument](generating-sigma-fields-and-pi-lambda.qmd#cdf-determines-law)
+supplies an efficient uniqueness proof.
+
+# Why this matters in statistics {#extension-statistical-relevance}
+
+Measure extension sits behind familiar facts:
+
+- a valid CDF determines one probability law;
+- probabilities specified on rectangular events determine joint and product
+  laws;
+- interval length extends to Lebesgue measure and hence continuous densities;
+- consistent finite-dimensional laws can sometimes define a stochastic
+  process on an infinite product space.
+
+The last item requires an additional extension theorem for stochastic
+processes. The pattern is the same: specify compatible probabilities on a
+manageable class, then extend to a much larger event space.
+
+
+# What to read next
+
+Return to the
+[Lebesgue measure and integration note](lebesgue-measure-integration-and-densities.qmd)
+to see how the constructed measure supports densities and expectations. For
+Walker, return directly to the
+[Walker fast path](../Bayesian/bayes-nonpar-concept.qmd#walker-fast-path); the
+extension proof is not required there.
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. How does an algebra differ from a sigma-field?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Both contain the whole space and are closed under complements and finite
+unions. A sigma-field is additionally closed under **countable** unions. An
+algebra is often a manageable starting domain for a premeasure.
+:::
+
+**2. Which implication is correct among content, premeasure, and measure?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+On aligned domains,
+
+$$
+\text{measure}\Longrightarrow\text{premeasure}
+\Longrightarrow\text{content}.
+$$
+
+A measure is countably additive on a sigma-field. A premeasure has the needed
+countable additivity on its smaller ring or algebra, and every countably
+additive set function is finitely additive.
+:::
+
+**3. Why does the finite/cofinite example fail countable additivity?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Every singleton has mass zero, but their countable disjoint union is
+$\mathbb N$, which has mass one. Countable additivity would incorrectly force
+$1=\sum_n0=0$. The example is finitely additive but is not a premeasure.
+:::
+
+**4. Why is the finite-mass assumption needed for continuity from above?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The usual proof subtracts the limiting intersection from the first set. If
+$\mu(A_1)=\infty$, that can produce the undefined expression
+$\infty-\infty$. Probability measures always satisfy the assumption because
+$P(A_1)\leq1$.
+:::
+
+**5. What is the different role of an outer measure and a measure?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+An outer measure assigns an upper size to every subset and is only guaranteed
+to be countably subadditive. Its Caratheodory-measurable sets form a sigma-field
+on which the outer measure becomes countably additive and therefore a genuine
+measure.
+:::
+
+**6. What does sigma-finiteness contribute to the extension theorem?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+It supplies the standard uniqueness guarantee. If the space is a countable
+union of finite-measure pieces, two extensions agreeing with the same
+premeasure cannot differ on the generated sigma-field. Probability
+premeasures are automatically sigma-finite.
+:::
+
+**7. In constructing a probability law from a CDF, which steps provide
+existence and uniqueness?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The interval increments $F(b)-F(a)$ define a probability premeasure. The
+Caratheodory extension theorem extends it to a Borel probability measure,
+providing existence. Agreement on the generating half-lines, followed by the
+pi-lambda theorem, provides uniqueness.
+:::

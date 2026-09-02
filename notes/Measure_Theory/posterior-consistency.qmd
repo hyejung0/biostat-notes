@@ -1,0 +1,430 @@
+---
+title: "Posterior Consistency and Neighborhoods of a Distribution"
+author: "Hyejung Lee"
+date: 2026-08-26
+description: >
+  A notation-focused introduction to weak, L1, total-variation, Hellinger,
+  and KL neighborhoods and to almost-sure posterior consistency.
+categories:
+  - measure-theory
+  - bayesian
+  - nonparametric
+  - asymptotics
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+# The question {.unnumbered}
+
+## What this note assumes
+
+This is the most advanced supporting note, but it is written to explain the
+language rather than prove a consistency theorem. Read
+
+- [Lebesgue measure, null sets, and almost surely](lebesgue-measure-integration-and-densities.qmd);
+- [what $\Pi(df\mid X)$ means](../Bayesian/bayes-measure-d-concept.qmd);
+- [KL divergence](../Other/km-divergence.qmd)
+
+first. No prior course in topology or empirical-process theory is assumed.
+
+Suppose the observations really are iid from a fixed distribution $P_0$ with
+density $f_0$. The asymptotic question is whether, as $n$ grows, the posterior
+puts most of its mass near $f_0$.
+
+The word **near** needs a topology, metric, or divergence. Posterior consistency
+is therefore inseparable from how neighborhoods of distributions are defined.
+
+These terms play related but different roles:
+
+- a **metric** is a numerical distance satisfying symmetry and the triangle
+  inequality;
+- a **divergence** is a numerical discrepancy that may lack those properties,
+  as KL does;
+- a **topology** specifies which sets count as neighborhoods and therefore what
+  convergence means, even when no particular numerical distance is emphasized.
+
+For this note, you can think of a neighborhood as a declared meaning of “close
+to $f_0$.”
+
+# Two probability laws must be distinguished {#consistency-two-laws}
+
+## The Bayesian model
+
+The Bayesian hierarchy is
+
+$$
+f\sim\Pi,
+\qquad
+X_i\mid f\overset{\mathrm{iid}}\sim f.
+$$
+
+Integrating out $f$ gives the prior-predictive joint law
+
+$$
+m_n(x_{1:n})
+=\int\prod_{i=1}^nf(x_i)\Pi(df).
+$$
+
+## The sampling law used to study repeated data
+
+For frequentist evaluation of the Bayesian learning rule, fix a true density
+$f_0$ and assume
+
+$$
+X_1,X_2,\ldots\overset{\mathrm{iid}}\sim f_0.
+$$
+
+The probability law of the infinite data sequence is denoted
+
+$$
+P_0^\infty=\bigotimes_{i=1}^{\infty}P_0.
+$$
+
+The symbol $\bigotimes$ denotes a **product probability measure**, not ordinary
+multiplication. It is the one probability law governing the whole infinite
+sequence $(X_1,X_2,\ldots)$ when every coordinate has distribution $P_0$ and
+the coordinates are independent. For a finite rectangular event,
+
+$$
+P_0^\infty(X_1\in A_1,\ldots,X_n\in A_n)
+=\prod_{i=1}^nP_0(A_i).
+$$
+
+The infinite notation lets one make a single “almost sure as $n\to\infty$”
+statement about the entire sequence.
+
+The prior-predictive law and $P_0^\infty$ serve different purposes. We need not
+pretend that Nature sampled $f_0$ from our subjective prior in order to ask
+whether the resulting posterior learns under repeated data from $f_0$.
+
+# General consistency statement {#consistency-statement}
+
+Let $d$ be a distance or let $U_\varepsilon(f_0)$ be a chosen neighborhood.
+Posterior consistency at $f_0$ means that for every $\varepsilon>0$,
+
+$$
+\boxed{
+\Pi\{f:d(f,f_0)>\varepsilon\mid X_{1:n}\}
+\longrightarrow0
+}
+\quad P_0^\infty\text{-almost surely}.
+\tag{1}
+$$
+
+Equivalently,
+
+$$
+\Pi\{f:d(f,f_0)<\varepsilon\mid X_{1:n}\}
+\longrightarrow1.
+$$
+
+“$P_0^\infty$-almost surely” means that the convergence may fail for a set of
+infinite data sequences whose probability under repeated sampling from $P_0$
+is zero.
+
+This is the probability version of “almost everywhere.” It does not mean that
+$f_0$ was randomly sampled from the prior. The randomness in (1) comes from
+the repeated data sequence.
+
+# Common ways to define nearness
+
+Assume $f$ and $g$ are densities relative to a common measure $\nu$.
+
+## L1 distance
+
+$$
+d_1(f,g)=\int|f-g|\,d\nu.
+$$
+
+For probability densities, $0\leq d_1(f,g)\leq2$.
+
+## Total-variation distance
+
+$$
+d_{\mathrm{TV}}(P,Q)
+=\sup_A|P(A)-Q(A)|
+=\frac12\int|f-g|\,d\nu.
+$$
+
+Total variation controls the largest probability discrepancy over all
+measurable events.
+
+The supremum $\sup_A$ means the largest possible value as $A$ ranges over all
+measurable events. Thus total variation asks for the event on which $P$ and
+$Q$ disagree most strongly.
+
+## Hellinger distance
+
+One common convention is
+
+$$
+h^2(f,g)
+=\frac12\int\{\sqrt{f}-\sqrt{g}\}^2d\nu.
+\tag{2}
+$$
+
+Other authors omit the factor $1/2$. Always check the convention. Hellinger
+distance is popular in nonparametric asymptotics because it is bounded and
+interacts well with likelihood ratios and tests.
+
+## KL divergence
+
+$$
+D_{\mathrm{KL}}(f_0\|f)
+=\int f_0\log\frac{f_0}{f}\,d\nu.
+$$
+
+KL is not a metric, but KL neighborhoods are central support conditions.
+
+## Weak neighborhoods {#weak-neighborhoods}
+
+A sequence $P_n$ converges weakly to $P$ if
+
+$$
+\int\varphi\,dP_n\to\int\varphi\,dP
+$$
+
+for every bounded continuous $\varphi$. Weak convergence is weaker than total
+variation or Hellinger convergence. It controls smooth bounded summaries, not
+every event probability or density feature.
+
+“Bounded” means $|\varphi(x)|$ stays below some finite constant; “continuous”
+has its ordinary calculus meaning. Weak convergence therefore compares
+averages of a broad class of stable summaries. For example,
+$N(a,\sigma_n^2)$ distributions with $\sigma_n^2\to0$ converge weakly to a
+Dirac point mass at $a$, even though a continuous distribution and a point
+mass are very different in total variation.
+
+# Relationships worth remembering
+
+Under common domination and the convention in (2), inequalities such as
+
+$$
+h^2(P,Q)\leq d_{\mathrm{TV}}(P,Q)
+$$
+
+and Pinsker's inequality
+
+$$
+d_{\mathrm{TV}}(P,Q)
+\leq\sqrt{\frac12D_{\mathrm{KL}}(P\|Q)}
+$$
+
+show that small KL implies small total variation, which implies small
+Hellinger distance. Converses do not hold without additional conditions.
+
+The exact constants depend on the Hellinger convention.
+
+The inequalities are optional on a first reading. Their conceptual message is
+that the word “consistent” is incomplete unless the mode of closeness is
+specified; some modes demand substantially more than others.
+
+# Prior support {#prior-support}
+
+No posterior can learn a region that the prior rules out. A basic necessary
+idea is therefore that the prior put positive mass in every relevant
+neighborhood of $f_0$.
+
+## Topological support
+
+For a chosen metric $d$, $f_0$ lies in the support of $\Pi$ if
+
+$$
+\Pi\{f:d(f,f_0)<\varepsilon\}>0
+\quad\text{for every }\varepsilon>0.
+$$
+
+This does not require $\Pi(\{f_0\})>0$, which is usually zero for a continuous
+or infinite-dimensional prior. It requires positive prior probability in
+every nonzero-radius neighborhood around $f_0$.
+
+## KL support {#consistency-kl-support}
+
+$f_0$ lies in the KL support of $\Pi$ if
+
+$$
+\Pi\left\{f:
+D_{\mathrm{KL}}(f_0\|f)<\varepsilon
+\right\}>0
+\quad\text{for every }\varepsilon>0.
+\tag{3}
+$$
+
+KL support ensures that the prior includes models with expected log likelihood
+arbitrarily close to that of the truth.
+
+# Support is important but not the whole theorem {#support-is-important-but-not-the-whole-theorem}
+
+In infinite-dimensional problems, a prior may put positive mass near $f_0$ and
+also place too much mass on enormous collections of highly irregular models
+that track finite samples too closely. Standard consistency theorems therefore
+combine ingredients such as
+
+1. prior mass in KL neighborhoods of $f_0$;
+2. tests that separate $f_0$ from alternatives;
+3. sieve or entropy bounds controlling model complexity;
+4. small prior mass outside well-behaved sieves.
+
+At a nontechnical level:
+
+- a **test** is a data-based rule that can distinguish $f_0$ from a separated
+  collection of alternatives with errors that shrink as $n$ grows;
+- a **sieve** is a sequence of manageable subsets of the large model space,
+  allowed to grow with $n$;
+- **entropy** here is a complexity count—roughly, how many small balls are
+  needed to cover a model set—not Shannon entropy from information theory.
+
+A “ball” of radius $\varepsilon$ around $f$ simply means a neighborhood
+$\{g:d(f,g)<\varepsilon\}$ under the chosen metric.
+
+These objects belong to proofs. You need to know why they appear, but not how
+to construct them in order to read Walker's motivational chapter.
+
+The exact conditions depend on the topology and the model. “The prior has full
+support” is not a universal proof of posterior consistency.
+
+# Reading Walker's display {#consistency-walker-display}
+
+Walker writes the target in the form
+
+$$
+\Pi\{d(f,f_0)>\varepsilon\mid X_{1:n}\}
+\longrightarrow0
+\quad\text{a.s. }P_0^\infty.
+$$
+
+Read it in this order:
+
+1. fix the true $f_0$ and radius $\varepsilon$;
+2. identify the set of candidate densities outside that neighborhood;
+3. compute the posterior probability of that set after $n$ observations;
+4. view that posterior probability as a random variable because it depends on
+   the random data;
+5. ask whether that random variable converges to zero for almost every infinite
+   sequence generated by $f_0$.
+
+# Fractional or power posteriors {#consistency-fractional-posteriors}
+
+For $0<\alpha\leq1$, a fractional posterior has
+
+$$
+\Pi_{n,\alpha}(df)
+\propto L_n(f)^\alpha\Pi(df).
+$$
+
+Taking $\alpha<1$ reduces the data's weight relative to the prior. Walker
+discusses a consistency argument in which a fractional likelihood can require
+weaker support-related conditions than the ordinary $\alpha=1$ posterior
+[@walker2001consistency; @walker2010bnp]. This is a specific theoretical result,
+not a claim that every fractional posterior is automatically consistent.
+
+# Consistency versus contraction rate
+
+Consistency asks only whether posterior mass eventually enters every fixed
+neighborhood. A stronger question asks how quickly the neighborhood may shrink:
+
+$$
+\Pi\{f:d(f,f_0)>M\varepsilon_n\mid X_{1:n}\}
+\longrightarrow0,
+$$
+
+where $\varepsilon_n\downarrow0$. The sequence $\varepsilon_n$ is a posterior
+contraction rate. Two priors can both be consistent yet learn at very different
+rates.
+
+The notation $\varepsilon_n\downarrow0$ means that the positive sequence
+decreases toward zero. The radius $M\varepsilon_n$ is therefore allowed to
+shrink with sample size, unlike the fixed $\varepsilon$ in ordinary
+consistency.
+
+# What consistency does not say
+
+Posterior consistency does not by itself imply
+
+- good finite-sample calibration;
+- a fast contraction rate;
+- correct uncertainty quantification for every functional;
+- robustness to dependence when iid sampling was assumed;
+- computational convergence of an MCMC algorithm.
+
+It evaluates the learning rule, not every aspect of an analysis.
+
+A **functional** is a numerical or finite-dimensional feature of the full
+distribution, such as its mean, median, survival probability, or treatment
+contrast. Learning the entire distribution in one metric does not
+automatically calibrate every posterior credible interval for every such
+feature.
+
+# What to read next
+
+Continue to [Walker's motivation and ideas](../Bayesian/bayes-nonpar-concept.qmd).
+You now have the notation and supporting concepts for every section of the
+chapter.
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. With respect to which probability law is the almost-sure statement in (1)
+made?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+It is made under $P_0^\infty$, the product probability law for the entire
+infinite iid sequence generated from the fixed true distribution $P_0$. It is
+not an almost-sure statement under the prior $\Pi$.
+:::
+
+**2. Why is the posterior probability in (1) itself random?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+For fixed $n$, the posterior probability is a function of the random data
+$X_{1:n}$. A different sample generally produces a different posterior and
+hence a different amount of mass outside the neighborhood of $f_0$.
+:::
+
+**3. What is the difference between weak and total-variation consistency?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Weak consistency means the posterior concentrates in neighborhoods defined by
+agreement of integrals of bounded continuous functions. Total-variation
+consistency means concentration under
+
+$$
+d_{\mathrm{TV}}(P,Q)=\sup_A|P(A)-Q(A)|,
+$$
+
+which controls the largest discrepancy over all measurable events. Total
+variation is therefore a stronger notion: convergence in total variation
+implies weak convergence under the usual conditions, but not conversely.
+:::
+
+**4. Why can support alone be insufficient in an infinite-dimensional model?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Positive prior mass near $f_0$ prevents the prior from ruling out the truth, but
+the prior may also spread too much mass over vast collections of irregular
+alternatives that fit finite samples well. Consistency proofs commonly also
+need tests plus sieve, entropy, or tail-mass controls to keep that model
+complexity manageable.
+:::
+
+**5. What extra information does a contraction rate provide?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Ordinary consistency only says that posterior mass eventually enters every
+fixed neighborhood. A contraction rate $\varepsilon_n\downarrow0$ describes
+how quickly the posterior can concentrate inside a **shrinking** neighborhood,
+for example one of radius $M\varepsilon_n$. It therefore permits comparison of
+the learning speeds of two consistent priors.
+:::

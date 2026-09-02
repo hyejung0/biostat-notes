@@ -1,0 +1,664 @@
+---
+title: "Lebesgue Measure, Measure Integrals, and Statistical Densities"
+author: "Hyejung Lee"
+date: 2026-08-26
+description: >
+  A statistics-first explanation of Lebesgue measure, null sets, measure integration,
+  counting measure, absolute continuity, dominating measures, and Radon-Nikodym densities.
+categories:
+  - measure-theory
+  - probability
+  - foundations
+  - bayesian
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+# Purpose and assumed background {.unnumbered}
+
+This note assumes only basic calculus, familiar PMFs and PDFs, and the
+definition of a measure from
+[Measure and probability foundations](measure-probability-foundations.qmd).
+It does not assume real analysis.
+
+The goals are to explain precisely:
+
+- what **Lebesgue measure** is;
+- what $dx$ means in a measure integral;
+- why a density value is not a point probability;
+- how one integral covers discrete, continuous, and mixed distributions;
+- what $P\ll\nu$ and $dP/d\nu$ mean.
+
+# 1. Lebesgue measure is the usual notion of length
+
+Lebesgue measure on the real line is denoted by $\lambda$. Its basic defining
+behavior is
+
+$$
+\lambda((a,b))=b-a.
+$$
+
+The choice of open, closed, or half-open endpoints does not affect length:
+
+$$
+\lambda((a,b))
+=\lambda([a,b])
+=\lambda((a,b])
+=b-a.
+$$
+
+Lebesgue measure extends ordinary interval length to a large collection of more
+complicated subsets of $\mathbb R$ while preserving countable additivity.
+
+It is helpful to think of $\lambda$ as a standardized ruler:
+
+| Set | Lebesgue measure |
+|---|---:|
+| $(2,5)$ | 3 |
+| $(0,1)\cup(3,5)$ | 3 |
+| $\{7\}$ | 0 |
+| Any finite set | 0 |
+| Any countable set | 0 |
+| $\mathbb R$ | $\infty$ |
+
+Lebesgue measure is a measure, but it is not a probability measure on all of
+$\mathbb R$, because $\lambda(\mathbb R)=\infty$ rather than 1.
+
+## Why a point has length zero
+
+For every $\varepsilon>0$, the point $a$ lies inside
+
+$$
+\left(a-\frac\varepsilon2,a+\frac\varepsilon2\right),
+$$
+
+an interval of length $\varepsilon$. The only nonnegative length no greater
+than every positive $\varepsilon$ is zero. Thus
+
+$$
+\lambda(\{a\})=0.
+$$
+
+By countable additivity, any countable collection of points also has Lebesgue
+measure zero.
+
+This does **not** mean countable sets are empty. “Measure zero” means they take
+up no length according to $\lambda$.
+
+# 2. The subsets that receive Lebesgue length
+
+Lebesgue measure is defined on a sigma-field of **Lebesgue-measurable sets**.
+This collection includes all intervals, all open and closed sets, all countable
+sets, and all sets obtained from these through countable unions,
+intersections, and complements.
+
+The **Borel sigma-field** is
+
+$$
+\mathcal B(\mathbb R)=\sigma\{(a,b):a<b\}.
+$$
+
+Here $\sigma\{(a,b):a<b\}$ means:
+
+> the smallest sigma-field containing every open interval.
+
+The word “smallest” means the intersection of all sigma-fields that contain
+those intervals. You do not need to construct its members one at a time.
+
+Every Borel set is Lebesgue measurable. The Lebesgue sigma-field additionally
+contains subsets of Borel sets having Lebesgue measure zero. Most probability
+and statistical work on $\mathbb R$ uses Borel sets and does not require
+tracking this distinction explicitly.
+
+# 3. Restricting length creates a probability distribution
+
+Define
+
+$$
+P(A)=\lambda\{A\cap(0,1)\}.
+\tag{1}
+$$
+
+Equation (1) measures how much of $A$ lies inside $(0,1)$. Because that
+interval has length one,
+
+$$
+P(\mathbb R)=\lambda((0,1))=1.
+$$
+
+Therefore $P$ is a probability measure: the Uniform$(0,1)$ distribution.
+
+For example,
+
+$$
+P\{(0.2,0.5)\}=0.3,
+\qquad
+P(\{0.4\})=0.
+$$
+
+# 4. Integration with respect to a measure
+
+The notation
+
+$$
+\int h(x)\,\mu(dx)
+$$
+
+means “integrate the function $h$ using the sizes supplied by $\mu$.” The
+measure tells the integral how much weight different regions receive.
+
+## Start with an indicator
+
+For an indicator function,
+
+$$
+\boxed{
+\int\mathbf 1_A(x)\,\mu(dx)=\mu(A).
+}
+\tag{2}
+$$
+
+This is the fundamental connection between measuring sets and integrating
+functions.
+
+## Then use a step function
+
+Suppose $A_1,\ldots,A_K$ are disjoint and
+
+$$
+s(x)=\sum_{k=1}^Kc_k\mathbf 1_{A_k}(x),
+\qquad c_k\geq0.
+$$
+
+Then define
+
+$$
+\int s(x)\mu(dx)
+=\sum_{k=1}^Kc_k\mu(A_k).
+\tag{3}
+$$
+
+The integral is a weighted sum of the heights $c_k$, where the measure of each
+region supplies its weight.
+
+General nonnegative measurable functions are approximated from below by such
+step functions. A function that can be negative is separated into
+$h^+(x)=\max\{h(x),0\}$ and $h^-(x)=\max\{-h(x),0\}$, so that
+$h=h^+-h^-$. You do not need the construction proof to use the integral, but
+equations (2) and (3) explain what is being generalized.
+
+# 5. How this relates to the calculus integral
+
+When the integrating measure is Lebesgue measure,
+
+$$
+\int h(x)\,\lambda(dx)
+$$
+
+is normally abbreviated as
+
+$$
+\int h(x)\,dx.
+$$
+
+Thus the $dx$ in an ordinary continuous probability calculation can be read
+as “integrate with respect to length.”
+
+For well-behaved functions, the Riemann and Lebesgue integrals have the same
+value. Their constructions emphasize different things:
+
+- a Riemann sum partitions the input axis into small intervals;
+- a Lebesgue integral begins from the measure of sets and extends (3).
+
+Lebesgue integration handles limits and irregular functions more reliably,
+which is why modern probability uses it.
+
+# 6. A continuous density is relative to Lebesgue measure
+
+Suppose $p(x)\geq0$ and
+
+$$
+\int_{\mathbb R}p(x)\,dx=1.
+$$
+
+Define a probability measure by
+
+$$
+\boxed{
+P(A)=\int_Ap(x)\,\lambda(dx)=\int_Ap(x)\,dx.
+}
+\tag{4}
+$$
+
+Then $p$ is the density of $P$ **relative to Lebesgue measure**.
+
+The compact measure identity
+
+$$
+P(dx)=p(x)\lambda(dx)
+\tag{5}
+$$
+
+means exactly that (4) holds for every measurable set $A$. It is not a claim
+that an infinitesimal set called $dx$ exists.
+
+## Density height is not point probability
+
+For a continuous distribution,
+
+$$
+P(\{x\})=0
+$$
+
+even if $p(x)>0$ or $p(x)>1$. Probability comes from area over a set:
+
+$$
+P(a<X\leq b)=\int_a^bp(x)\,dx.
+$$
+
+For small positive $\Delta$ and a continuous density,
+
+$$
+P(x<X\leq x+\Delta)\approx p(x)\Delta.
+$$
+
+This approximation can motivate a density, but the exact object is (4), not a
+point probability $p(x)dx$.
+
+# 7. Counting measure makes a PMF a density
+
+For a countable set $\mathcal X$, define **counting measure** $\#$ by
+
+$$
+\#(A)=\text{number of points in }A,
+$$
+
+allowing the value $\infty$.
+
+If $p(x)$ is a PMF, then
+
+$$
+P(A)=\sum_{x\in A}p(x)
+=\int_Ap(x)\,\#(dx).
+\tag{6}
+$$
+
+Thus a PMF and a PDF are both densities. They differ in their reference
+measures:
+
+| Statistical object | Reference measure | Integral |
+|---|---|---|
+| PMF $p$ | Counting measure $\#$ | $\sum_xp(x)$ |
+| Continuous PDF $p$ | Lebesgue measure $\lambda$ | $\int p(x)dx$ |
+
+This is why the phrase “the density” is incomplete unless the reference
+measure is understood.
+
+# 8. Dirac measure represents a point mass
+
+The Dirac measure at $a$ is
+
+$$
+\delta_a(A)=\mathbf 1(a\in A).
+$$
+
+It gives the point $a$ probability one. Consequently,
+
+$$
+\int h(x)\delta_a(dx)=h(a).
+$$
+
+It has no density relative to Lebesgue measure because
+
+$$
+\lambda(\{a\})=0
+\quad\text{but}\quad
+\delta_a(\{a\})=1.
+$$
+
+The dedicated [Dirac note](dirac-measure-and-dirac-delta.qmd) explains the
+difference between this measure and the generalized “delta function.”
+
+# 9. Null sets, almost everywhere, and almost surely
+
+A set $N$ is **$\mu$-null** if $\mu(N)=0$.
+
+A statement holds **$\mu$-almost everywhere**, abbreviated $\mu$-a.e., if it
+may fail on a $\mu$-null set but holds everywhere else.
+
+For example, the two functions
+
+$$
+f(x)=0
+$$
+
+and
+
+$$
+g(x)=\mathbf 1_{\{0\}}(x)
+$$
+
+are equal Lebesgue-almost everywhere. They differ at $0$, but $\{0\}$ has
+Lebesgue measure zero. Therefore their Lebesgue integrals are identical.
+
+When the relevant measure is a probability measure $P$, “$P$-almost
+everywhere” is usually called **$P$-almost surely**, abbreviated $P$-a.s.
+
+Thus
+
+$$
+Y_n\to Y\quad P\text{-almost surely}
+$$
+
+means convergence for every elementary outcome except possibly outcomes in an
+event having probability zero.
+
+Probability zero does not mean logically impossible. For a Uniform$(0,1)$
+variable, every particular point has probability zero, but some value must be
+observed.
+
+# 10. Absolute continuity is a relationship between measures
+
+Let $P$ and $\nu$ be measures on the same measurable space. We say that $P$ is
+**absolutely continuous with respect to** $\nu$, written
+
+$$
+P\ll\nu,
+$$
+
+if
+
+$$
+\boxed{
+\nu(A)=0\quad\Longrightarrow\quad P(A)=0
+}
+\tag{7}
+$$
+
+for every measurable $A$.
+
+Plain-language reading:
+
+> $P$ does not place positive mass on any set that $\nu$ considers negligible.
+
+Examples:
+
+- A normal distribution is absolutely continuous with respect to Lebesgue
+  measure.
+- A discrete distribution is absolutely continuous with respect to counting
+  measure.
+- $\delta_a$ is not absolutely continuous with respect to Lebesgue measure.
+
+The direction matters. For example, a Uniform$(0,1)$ probability measure is
+absolutely continuous with respect to Lebesgue measure, but Lebesgue measure on
+all of $\mathbb R$ is not absolutely continuous with respect to that uniform
+law: the set $(2,3)$ has uniform probability zero but Lebesgue measure one.
+
+# 11. The Radon-Nikodym derivative is a measure-level density
+
+The Radon-Nikodym theorem says, under conditions satisfied by the standard
+probability models and reference measures used in these notes, that if
+$P\ll\nu$, then there is a measurable function $p$ such that
+
+$$
+P(A)=\int_Ap\,d\nu
+\quad\text{for every measurable }A.
+\tag{8}
+$$
+
+That function is written
+
+$$
+\boxed{
+p=\frac{dP}{d\nu}
+}
+\tag{9}
+$$
+
+and is called the **Radon-Nikodym derivative** of $P$ with respect to $\nu$.
+
+A common sufficient condition is that the measures be **sigma-finite**.
+Sigma-finite means that the whole space can be covered by countably many
+measurable sets, each having finite measure. Probability measures are finite
+and hence sigma-finite. Lebesgue measure on $\mathbb R$ is sigma-finite because
+$\mathbb R=\bigcup_{m=1}^{\infty}[-m,m]$, and each interval has finite length.
+Counting measure on a countable space is also sigma-finite. These are the
+reference measures used in the examples here.
+
+You do not need the proof for Walker. Operationally, (9) means that $p$ is the
+weighting function that converts integration under $\nu$ into integration
+under $P$, for every suitable integrand $h$:
+
+$$
+\int h\,dP
+=\int h\frac{dP}{d\nu}\,d\nu.
+\tag{10}
+$$
+
+Equation (9) generalizes both PDFs and PMFs:
+
+$$
+\text{PDF}=\frac{dP}{d\lambda},
+\qquad
+\text{PMF}=\frac{dP}{d\#}.
+$$
+
+The derivative is unique only up to $\nu$-null sets. Changing its value at one
+Lebesgue-null point does not change the probability measure.
+
+# 12. Dominating measures
+
+If every distribution $P_\theta$ in a statistical model satisfies
+
+$$
+P_\theta\ll\nu,
+$$
+
+then $\nu$ is a **common dominating measure**. Each model distribution has a
+density
+
+$$
+p_\theta=\frac{dP_\theta}{d\nu}.
+$$
+
+The familiar likelihood
+
+$$
+L(\theta;x)=p_\theta(x)
+$$
+
+is a density value relative to this shared reference measure. Common choices
+are Lebesgue measure for continuous models and counting measure for discrete
+models.
+
+# 13. Mixed distributions also fit the framework
+
+Consider
+
+$$
+P=0.2\delta_0+0.8\operatorname{Uniform}(0,1).
+$$
+
+This distribution has a point mass at zero and a continuous component. It has
+no density relative to Lebesgue measure alone because of the atom.
+
+An **atom** is a point receiving positive probability; here
+$P(\{0\})=0.2$.
+
+Choose instead
+
+$$
+\nu=\delta_0+\lambda.
+$$
+
+Then $P\ll\nu$ and one version of its density is
+
+$$
+\frac{dP}{d\nu}(x)
+=0.2\mathbf 1_{\{0\}}(x)
++0.8\mathbf 1_{(0,1)}(x).
+$$
+
+For any measurable $A$,
+
+$$
+\int_A\frac{dP}{d\nu}\,d\nu
+=0.2\mathbf 1(0\in A)
++0.8\lambda\{A\cap(0,1)\}.
+$$
+
+This example shows why measure notation is more general than the artificial
+choice between “PMF” and “PDF.”
+
+# 14. Expectation is integration under a probability measure
+
+If $X$ has distribution $P_X$, then
+
+$$
+E\{h(X)\}=\int h(x)P_X(dx).
+$$
+
+This becomes
+
+$$
+\sum_xh(x)p(x)
+$$
+
+in the discrete case and
+
+$$
+\int h(x)p(x)dx
+$$
+
+in the continuous case. These are not two unrelated definitions; they are two
+forms of the same measure integral.
+
+# 15. When two integrals appear
+
+Bayesian nonparametrics often contains an integral over data values inside an
+integral over possible distributions. For example,
+
+$$
+\int_{\mathcal D}
+\left\{\int_{\mathcal X}h(x,f)P_f(dx)\right\}\Pi(df).
+$$
+
+Changing the order of integration is not merely typographical. Tonelli's
+theorem permits it for nonnegative measurable $h$; Fubini's theorem permits it
+when the absolute integral is finite. Later notes say “under conditions that
+permit exchanging the order” rather than proving these theorems.
+
+# A compact dictionary
+
+| Notation | Meaning |
+|---|---|
+| $\lambda$ | Lebesgue length measure |
+| $dx$ | Usually shorthand for $\lambda(dx)$ |
+| $\#$ | Counting measure |
+| $P(dx)$ | Integrate with respect to probability measure $P$ |
+| $P(dx)=p(x)\nu(dx)$ | $p$ is a density of $P$ relative to $\nu$ |
+| $P\ll\nu$ | Every $\nu$-null set is also $P$-null |
+| $dP/d\nu$ | Radon-Nikodym density of $P$ relative to $\nu$ |
+| $\mu$-a.e. | Except possibly on a set having $\mu$-measure zero |
+| $P$-a.s. | Except possibly on an event having probability zero |
+| dominating measure | One reference measure relative to which all model distributions have densities |
+
+# What to read next
+
+Choose the next branch by purpose:
+
+- for Bayesian conditional and posterior notation, read
+  [What $dx$, $P(dx)$, and $\Pi(df)$ mean](../Bayesian/bayes-measure-d-concept.qmd);
+- for the construction of Lebesgue measure from interval length, read
+  [Premeasures and measure extension](premeasures-and-measure-extension.qmd#constructing-lebesgue-measure);
+- for generators and uniqueness proofs, read
+  [Generating sigma-fields and the pi-lambda method](generating-sigma-fields-and-pi-lambda.qmd);
+- for Walker, use the
+  [Walker fast path](../Bayesian/bayes-nonpar-concept.qmd#walker-fast-path).
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. What is $\lambda((2,7))$? What is $\lambda(\{2\})$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Lebesgue measure agrees with ordinary interval length, so
+$\lambda((2,7))=7-2=5$. A singleton has zero length, so
+$\lambda(\{2\})=0$.
+:::
+
+**2. Why can $p(2)>0$ while $P(\{2\})=0$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$p(2)$ is a density **height**, not probability mass at the point 2. For a
+Lebesgue density,
+
+$$
+P(\{2\})=\int_{\{2\}}p(x)\,\lambda(dx)=0
+$$
+
+because the singleton has Lebesgue measure zero, even if $p(2)$ is positive or
+very large.
+:::
+
+**3. With respect to which measure is a PMF a density?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Counting measure on the discrete support. Integration against counting measure
+is summation, so $P(A)=\sum_{x\in A}p(x)$.
+:::
+
+**4. Translate $P\ll\nu$ into a sentence about null sets.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$P$ is absolutely continuous with respect to $\nu$: every $\nu$-null set is
+also $P$-null. In symbols, $\nu(A)=0$ implies $P(A)=0$ for every measurable
+$A$.
+:::
+
+**5. Why is $\delta_0\not\ll\lambda$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Take $A=\{0\}$. Lebesgue measure gives $\lambda(A)=0$, but the Dirac measure
+gives $\delta_0(A)=1$. Thus a $\lambda$-null set need not be $\delta_0$-null,
+which violates the definition of $\delta_0\ll\lambda$.
+:::
+
+**6. What equation defines $dP/d\nu$ operationally?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The Radon--Nikodym derivative $p=dP/d\nu$ is the function satisfying
+
+$$
+P(A)=\int_A p\,d\nu
+$$
+
+for every measurable set $A$. This integral identity—not an infinitesimal
+quotient—is its operational meaning.
+:::
+
+**7. What is the difference between “almost surely” and “surely for every
+possible outcome”?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+“Almost surely” allows exceptions, but the set of exceptional outcomes must
+have probability zero. “For every possible outcome” allows no exceptions at
+all. A probability-zero outcome can still belong to the sample space, so the
+two statements are not logically identical.
+:::

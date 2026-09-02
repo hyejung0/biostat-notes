@@ -16,3 +16,6 @@ _freeze/
 docs/
 
 /.quarto/
+
+# Temporary folder. Don't knit it.
+_scratch/

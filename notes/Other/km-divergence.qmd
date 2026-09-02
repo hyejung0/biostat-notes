@@ -1,215 +1,461 @@
 ---
-title: "Kullback-Leibler (KL) divergence"
+title: "Kullback-Leibler (KL) Divergence"
 author: "Hyejung Lee"
-date: today
-summary: >
-  Understanding Kullback-Leibler (KL) divergence using entopy and information theory
+date: 2026-08-26
 description: >
-  Understanding Kullback-Leibler (KL) divergence using entopy and information theory
-categories: 
+  KL divergence from discrete probabilities to general probability measures,
+  with connections to log score, model misspecification, prior support, and Walker's decision theory.
+categories:
   - distance
   - information-theory
+  - measure-theory
+  - bayesian
 status: draft
-bibliography: ../../references/references.bib
+bibliography: ../../references/bnp-foundations.bib
 csl: ../../references/csl/vancouver.csl
 ---
-  
-# Context
 
-Trying to understand the Kullback-Leibler (KL) divergence used in
-Walker's (2010) paper on Bayesian nonparmaetric methods: motivation and
-ideas
+# Why this note exists {.unnumbered}
 
-# Information
+## What this note assumes
 
-To understand how information is measured in information theory, please
-refer to this
-[YouTube](https://youtu.be/X40ft1Lt1f0?si=AjuXowib4VfU1WXd) video.
+This note assumes familiar logarithms, expectations, PMFs, and PDFs. Before
+the general measure definition, read
 
-$$ s^n = \text{all distinguishable sequence}$$
+- [Measure and probability foundations](../Measure_Theory/measure-probability-foundations.qmd);
+- [Lebesgue measure, absolute continuity, and Radon-Nikodym densities](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd).
 
-where
+If equation (1) still looks abstract, read the discrete formula and Bernoulli
+example first, then return to it. The general equation says exactly the same
+thing without restricting the distributions to be discrete or continuous.
 
--   $n=$ number of selections
--   $s =$ number of choices for each selection
+Walker uses Kullback-Leibler divergence in two different spaces:
 
-Information is proportional to the number of selections
-@hartley1928transmission.
+1. between a true sampling distribution and a candidate sampling model;
+2. between two belief distributions on a space of candidate models.
 
-So we should bring down the power $n$. =\> use log.
+The same measure-theoretic definition covers both [@kullback1951information].
 
-$$n log (s) = log(\text{all distinguishable sequence})$$ 
+# General definition {#kl-general-definition}
 
-
-Treat the $log(s)$ as fixed constant $K$. Them
-
-$$ n \cdot K = H,$$
-
-where $H$ is the amount of information
-($log(\text{all distinguishable sequence})$).
-
-
-# Entropy
-
-The KM divergence measures how much an approximating probability
-distribution $Q$ is different from a true probability distribution $P$.
-Mathematically, it is defiend as
-
-$$D_{KL} (P || Q) = \sum_{x \in \mathcal{X}} P(x) \; log \frac{P(x)}{Q(x)}.$$
-
-A simple interpretation of the KL divergence of $P$ from $Q$ is the
-expected excess "surprisal" from using the approximation $Q$ instead of
-$P$, when the actual is $P$. It is a measure of how different two
-distributions are, so a distance, but it is not actually a metric.
-
-To understand fully, we need to know "surprise" and entropy.
-
-# Surprise and Entropy
-
-This part is taken from Tsachy Weissman's information theory lecture
-notes from Stanford Univeristy.
-
-## Notation
-
-A quick summary of notation
-
-1.  Discrete Random Variable: $U$
-2.  Alphabet: $\mathcal{U} = \{u_1, u_2, \cdots , u_M\}$ (An alphabet of
-    size M)
-3.  Specific Value: $u$, $u_1$, etc.
-
-For discrete random variables, we will write (interchangeably) $P(U=u)$,
-$P_U(u)$ or most often, just $p(u)$. Similarly, for a pair of random
-variables $X$, $Y$, we write $P(X=x | Y=y)$, $P_{X|Y}(x|y)$ or $p(x|y)$.
-
-## Entropy
-
-**Definition 1.** *"Surprise" function*:
-
-$$S(u) \triangleq log \frac{1}{p(u)}$$ A lower probability of $u$
-translates to a greater "surprise" that it occurs. Note here that we use
-$log$ to mean $log_2$ by default, rather than the natural log $ln$, as
-is typical in some other contexts. This is true throughout these notes:
-$log$ is assumed to be $log_2$ unless otherwise indicated.
-
-**Definition 2. Entropy**: *Let* $U$ *a discrete random variable taking
-values in alphabet* $\mathcal{U}$. *The* **entropy** *of* $U$ *is given
-by*:
+Let $P$ and $Q$ be probability measures on the same measurable space. If
+$P$ is absolutely continuous with respect to $Q$, written $P\ll Q$, then the
+Radon-Nikodym derivative $dP/dQ$ exists and
 
 $$
-H(U) \triangleq \mathbb{E}[S(U)] = 
-\mathbb{E} \left[ log\left(\frac{1}{p(U)}\right) \right] = 
-\mathbb{E} [-log(p(U))] =
--\sum_u p(u) log(p(u))
+\boxed{
+D_{\mathrm{KL}}(P\|Q)
+=\int \log\left(\frac{dP}{dQ}\right)dP
+}.
+\tag{1}
 $$
 
-*Where* $U$ *represents all* $u$ *values possible to the variable.*
-
-The entropy is a property of the underlying distribution $P_U(u)$,
-$u \in \mathcal{U}$ that measures the amount of randomness or surprise
-in the random variable.
-
-**Lemma 3. Jensen's Inequality**: Let $Q$ denote a function on a random
-variable $X$. Jensen's inequality states that for every $Q$ that are
-convex:
-
-$$\mathbb{E} [Q(X)] \geq Q(\mathbb{E}[X]).$$
-
-Further, if $Q$ is strictly convex, equality holds iff $X$ is
-deterministic. Conversely, if $Q$ is a concave function, then
-
-$$\mathbb{E} [Q(X)] \leq Q(\mathbb{E}[X]).$$
-
-Proof:
-
-If $Q$ is a convex function then its graph
-$\{(X, Q(X)) : X\in \mathbb{R}\}$ can be seen as a n upper bound on the
-set of affine functions that lie below it. Written more concretely,
+If $P\not\ll Q$, define
 
 $$
-Q(X) =  \underset{L \in \mathcal{L}}{\mathrm{sup}} L(X),
+D_{\mathrm{KL}}(P\|Q)=+\infty.
 $$
 
-where
+The order matters. Equation (1) averages under $P$, so it asks how costly it is
+to use $Q$ when outcomes actually follow $P$.
+
+“On the same measurable space” means that $P$ and $Q$ describe the same
+possible outcomes and measurable events. The condition $P\ll Q$ means that
+$Q(A)=0$ implies $P(A)=0$: $Q$ cannot declare impossible an event that remains
+possible under $P$. The function $dP/dQ$ is the relative density explained in
+the [Radon-Nikodym section](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd#the-radon-nikodym-derivative-is-a-measure-level-density).
+
+Throughout this note, $\log$ is the natural logarithm. Using base 2 changes
+the numerical units from nats to bits but only multiplies KL by a positive
+constant.
+
+# Discrete formula
+
+If $P$ and $Q$ have PMFs $p$ and $q$ on a countable set,
 
 $$
-\mathcal{L} = \{ L : L(u) = au + b \leq Q(u) \text{ for all } -\infty < u < \infty \}.
+D_{\mathrm{KL}}(P\|Q)
+=\sum_x p(x)\log\frac{p(x)}{q(x)}.
+\tag{2}
 $$
 
-Thus, by linearity:
+Use the conventions
 
-``` math
+$$
+0\log\frac0q=0,
+\qquad
+p\log\frac p0=+\infty\quad(p>0).
+$$
+
+The second convention expresses a support failure: $Q$ declares an event
+impossible even though $P$ can generate it.
+
+## A Bernoulli example
+
+Let $P(X=1)=0.8$ and $Q(X=1)=0.5$. Then
+
+$$
 \begin{aligned}
-\mathbb{E} [Q(X)] 
-  &= \mathbb{E} [\underset{L \in \mathcal{L}}{\mathrm{sup}} L(x)] \\
-  &\geq \underset{L \in \mathcal{L}}{\mathrm{sup}} L(\mathbb{E} [X] ) \; \text{by monotonicity of } \mathbb{E}. \\
-  &= Q(\mathbb{E} [X])
+D_{\mathrm{KL}}(P\|Q)
+&=0.8\log(0.8/0.5)+0.2\log(0.2/0.5)\\
+&\approx0.193.
 \end{aligned}
-```
+$$
 
-The same argument for concave functions can be done using the infimum
-instead of supremum.
+Reversing the arguments gives a different value:
 
-### Properties of Entropy
+$$
+D_{\mathrm{KL}}(Q\|P)
+=0.5\log(0.5/0.8)+0.5\log(0.5/0.2)
+\approx0.223.
+$$
 
-Suppose $\mathcal{U} = \{u_1, u_2, \cdots, u_M \}$
+# Density formula
 
-1.  $H(U) \leq log(M)$, with equality iff $U$ is uniformly distributed
-    i.e. $p(u)  = \frac{1}{M}$ for all $u$.
+Suppose both measures are dominated by the same measure $\nu$, with
 
-    proof:
+$$
+p=\frac{dP}{d\nu},
+\qquad
+q=\frac{dQ}{d\nu}.
+$$
 
-    $$
-      \begin{aligned}
-        H(U)
-        &= \mathbb{E} \left[log \frac{1}{p(U)} \right] \\
-        &\leq log \mathbb{E} \left[ \frac{1}{p(U)} \right] \; \text{by Jensen's inequality because log is concave} \\
-        &= log \sum_u p(u) \cdot \frac{1}{p(u)}  \\
-        &= log M
-      \end{aligned}
-    $$
+Then
 
-2.  $H(U) \geq 0$, with equality iff $U$ is deterministic.
+$$
+D_{\mathrm{KL}}(P\|Q)
+=\int p(x)\log\frac{p(x)}{q(x)}\,\nu(dx),
+\tag{3}
+$$
 
-    proof:
+provided $P\ll Q$. For ordinary continuous densities, $\nu$ is usually
+Lebesgue measure. For PMFs, $\nu$ is counting measure. The value in (3) does
+not depend on which common dominating measure is used.
 
-    $$H(U) = \mathbb{E} \left[log \frac{1}{p(U)} \right] \geq 0 \; \text{ because } \; log \frac{1}{p(U)} \geq 0.$$
+## Normal example
 
-    The equality occurs iff $log \frac{1}{p(u)} = 0$ with probability 1
-    so $U$ must be deterministic.
+For $P=N(\mu_0,\sigma_0^2)$ and $Q=N(\mu_1,\sigma_1^2)$,
 
-3.  For a PMF $q$, define
-    $$H_q(U) \triangleq \mathbb{E} \left[ log \frac{1}{q(U)} \right] = \sum_{u \in \mathcal{U}} p(u) \, log \frac{1}{q(u)}.$$
+$$
+D_{\mathrm{KL}}(P\|Q)
+=\log\frac{\sigma_1}{\sigma_0}
++\frac{\sigma_0^2+(\mu_0-\mu_1)^2}{2\sigma_1^2}
+-\frac12.
+$$
 
-    Then: $$H(U) \leq H_q(U),$$ with equality iff $p=q$.
+The asymmetry is visible: the variance of $Q$ appears in the denominator of
+the mismatch term.
 
-    Proof:
+# Main properties
 
-    ``` math
-      \begin{aligned}
-        H(U) - H_q(U) 
-        &= \mathbb{E} \left[log \frac{1}{p(U)} \right]  - \mathbb{E} \left[log \frac{1}{q(U)} \right] \\
-        &= \mathbb{E} \left[log \frac{q(U)}{p(U)} \right]  \\
-        &\leq log \mathbb{E}\left[ \frac{q(U)}{p(U)} \right]  \\
-        &= log \sum_u p(u) \; \cdot   \frac{q(u)}{p(u)}  \\
-        &= log \sum_u q(u)\\
-        &= log 1 \\
-        &= 0
-      \end{aligned}
-    ```
+For probability measures $P$ and $Q$,
 
-    Thus, $H(U) - H_q(U) \leq 0$. Equality only holds when
-    $\frac{q(u)}{p(u)}$ is deterministic, which occurs when $q=p$.
+1. $D_{\mathrm{KL}}(P\|Q)\geq0$;
+2. $D_{\mathrm{KL}}(P\|Q)=0$ if and only if $P=Q$ as measures;
+3. KL is generally not symmetric;
+4. KL does not obey a triangle inequality;
+5. KL can be infinite.
 
-**Definition 4. Relative Entropy (a.k.a. KL divergence)**: A measure of
-distance between probability distribution is relative entropy:
+Therefore KL is a **divergence**, not a metric.
 
-$$ D(p || q) \triangleq \sum_{u \in \mathcal{U}} p(u) \; log \frac{p(u)}{q(u)} = \mathbb{E} \left[ log \frac{p(u)}{q(u)} \right].$$
+In the dominated case, nonnegativity follows from Jensen's inequality:
 
-Note that because of property 3, the relative entropy is always greater
-than or equal to 0, with equality iff $p=q$. The relative entropy can be
-thought of as a measure of discrepancy between two probability
-distributions. This is also known as **Kullback-Leibler (KL)
-divergence**.
+$$
+\begin{aligned}
+-D_{\mathrm{KL}}(P\|Q)
+&=E_P\left\{\log\frac{q(X)}{p(X)}\right\}\\
+&\leq
+\log E_P\left\{\frac{q(X)}{p(X)}\right\}\\
+&\leq\log 1=0.
+\end{aligned}
+$$
 
-## References 
+The second inequality allows for $Q$-mass outside the support of $P$.
+
+This proof is optional. Jensen's inequality says that applying a concave
+(downward-curving) function such as $\log$ after averaging gives at least as
+large a value as averaging after applying the function. The practical
+conclusion needed later is simply $D_{\mathrm{KL}}(P\|Q)\geq0$, with equality
+only when the measures agree.
+
+# Expected log score: the statistical interpretation {#kl-expected-log-score}
+
+Suppose future data are generated from $P$ with density $p$, but we report
+$Q$ with density $q$. The expected log score under the truth is
+
+$$
+E_P\{\log q(X)\}=\int p(x)\log q(x)\,d\nu(x).
+$$
+
+Expanding KL gives
+
+$$
+D_{\mathrm{KL}}(P\|Q)
+=\int p\log p\,d\nu
+-\int p\log q\,d\nu.
+\tag{4}
+$$
+
+For fixed $P$, the first term does not depend on $Q$. Therefore
+
+$$
+\arg\min_QD_{\mathrm{KL}}(P\|Q)
+=\arg\max_QE_P\{\log q(X)\}.
+\tag{5}
+$$
+
+This—not the entropy prehistory—is the key identity for Walker.
+
+# Parametric projection under misspecification {#kl-parametric-projection}
+
+Let the true density be $f_0$ and let
+$\{f_\theta:\theta\in\Theta\}$ be a parametric family. The KL projection is
+
+$$
+\theta^*
+=\arg\min_{\theta\in\Theta}
+D_{\mathrm{KL}}(f_0\|f_\theta).
+$$
+
+Using (4),
+
+$$
+\theta^*
+=\arg\max_{\theta\in\Theta}
+E_{f_0}\{\log f_\theta(X)\}.
+$$
+
+Under suitable regularity conditions, maximum likelihood estimation in a
+misspecified family targets this KL-best approximation. This does not make the
+family true; it identifies its best member under the log score.
+
+# Walker's posterior decision problem {#kl-walker-decision}
+
+Let $f$ denote a possible true density and $f_\theta$ a lower-dimensional
+parametric action. Use utility
+
+$$
+u(f,\theta)=-D_{\mathrm{KL}}(f\|f_\theta).
+\tag{6}
+$$
+
+After observing data, maximize posterior expected utility:
+
+$$
+U_n(\theta)
+=\int u(f,\theta)\Pi(df\mid X_{1:n}).
+$$
+
+By (4), the terms involving $\log f$ do not depend on $\theta$. Therefore the
+same decision maximizes
+
+$$
+\widetilde U_n(\theta)
+=\int\log f_\theta(x)\,P_n^{\mathrm{pred}}(dx),
+\tag{7}
+$$
+
+where
+
+$$
+P_n^{\mathrm{pred}}(A)
+=\int P_f(A)\Pi(df\mid X_{1:n})
+$$
+
+is the posterior predictive distribution.
+
+There is a notation issue worth making explicit. On page 26, Walker first
+prints the order $d(f_\theta,f)$, but the subsequent result (7) follows from
+$D_{\mathrm{KL}}(f\|f_\theta)$, the order used in (6). The derivation, rather
+than the preceding order of symbols, determines the required orientation.
+
+# KL support in posterior consistency {#kl-support}
+
+For a true density $f_0$, its KL neighborhood of radius $\varepsilon$ is
+
+$$
+K_\varepsilon(f_0)
+=\left\{f:
+\int f_0(x)\log\frac{f_0(x)}{f(x)}\,d\nu(x)
+<\varepsilon
+\right\}.
+$$
+
+The statement that $f_0$ is in the **KL support** of the prior $\Pi$ means
+
+$$
+\Pi\{K_\varepsilon(f_0)\}>0
+\quad\text{for every }\varepsilon>0.
+\tag{8}
+$$
+
+Equation (8) says that the prior does not exclude every density that predicts
+nearly like $f_0$ in expected log score. It is a support condition, not by
+itself a universal guarantee of strong posterior consistency; additional
+testing, complexity, or sieve conditions commonly enter consistency theorems.
+Those proof terms are translated in the
+[posterior-consistency note](../Measure_Theory/posterior-consistency.qmd#support-is-important-but-not-the-whole-theorem).
+
+# KL between belief distributions {#kl-belief-distributions}
+
+Walker later compares a proposed posterior belief measure $\mu$ with a prior
+belief measure $\Pi$. These measures live on the model space, not the data
+space. If $\mu\ll\Pi$, define
+
+$$
+D_{\mathrm{KL}}(\mu\|\Pi)
+=\int\log\left(\frac{d\mu}{d\Pi}(f)\right)\mu(df).
+\tag{9}
+$$
+
+The functional
+
+$$
+\mathcal L(\mu)
+=-\int\log L_n(f)\mu(df)
++D_{\mathrm{KL}}(\mu\|\Pi)
+\tag{10}
+$$
+
+balances fit to data against departure from prior beliefs. Let
+
+$$
+\frac{d\Pi_n}{d\Pi}(f)
+=\frac{L_n(f)}{\int L_n(g)\Pi(dg)}.
+$$
+
+Then direct algebra gives
+
+$$
+\mathcal L(\mu)
+=D_{\mathrm{KL}}(\mu\|\Pi_n)-\log m_n,
+$$
+
+so (10) is uniquely minimized at the ordinary Bayesian posterior $\mu=\Pi_n$.
+This is the variational argument developed in Walker's final section and later
+generalized by Bissiri, Holmes, and Walker [@bissiri2016general].
+
+Here a **functional** is a rule whose input is an entire probability measure
+$\mu$ and whose output is a number. “Variational” means that the optimization
+ranges over candidate distributions $\mu$, rather than only over a finite
+parameter vector.
+
+# Entropy is optional background
+
+For a discrete distribution,
+
+$$
+H(P)=-\sum_xp(x)\log p(x)
+$$
+
+is entropy and
+
+$$
+H(P,Q)=-\sum_xp(x)\log q(x)
+$$
+
+is cross-entropy. Whenever the quantities are well defined,
+
+$$
+D_{\mathrm{KL}}(P\|Q)=H(P,Q)-H(P).
+$$
+
+This identity is useful, but entropy is not a prerequisite for using KL in
+Walker. Expected log score and the Radon-Nikodym definition are the more direct
+routes for statistical work.
+
+# Common mistakes
+
+1. Calling KL a distance without noting that it is not a metric.
+2. Reversing $P$ and $Q$ without changing the interpretation.
+3. Ignoring support mismatch and silently dividing by zero.
+4. Comparing density formulas defined relative to incompatible reference
+   measures.
+5. Assuming small KL in one direction implies equally small reverse KL.
+6. Treating KL support as sufficient for every type of posterior consistency.
+
+# What to read next
+
+Continue to the [Bayesian bootstrap](../Bayesian/bayes-boots.qmd), where KL
+projection produces maximum likelihood and the weighted likelihood bootstrap.
+Then read [posterior consistency](../Measure_Theory/posterior-consistency.qmd)
+before the full Walker synthesis.
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. When is $D_{\mathrm{KL}}(P\|Q)$ infinite because of support?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+It is infinite from support mismatch when $P$ puts positive probability where
+$Q$ puts zero probability. Equivalently, $P\not\ll Q$: there is a measurable
+set $A$ with $P(A)>0$ but $Q(A)=0$. With densities, this occurs when $p>0$ and
+$q=0$ on a set having positive $P$-probability.
+:::
+
+**2. Under which distribution is the logarithmic ratio averaged?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Under the **first** distribution, $P$:
+
+$$
+D_{\mathrm{KL}}(P\|Q)
+=\int\log\left(\frac{dP}{dQ}\right)dP.
+$$
+
+When both have densities relative to $\nu$, this is
+$\int p\log(p/q)\,d\nu$. This asymmetry is why reversing $P$ and $Q$ changes
+the decision problem.
+:::
+
+**3. Why does minimizing $D_{\mathrm{KL}}(P\|Q)$ maximize expected log score?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+If $Q$ has candidate density $q$, then
+
+$$
+D_{\mathrm{KL}}(P\|Q)
+=\int p\log p\,d\nu-\int p\log q\,d\nu.
+$$
+
+The first term does not depend on $q$. Minimizing KL over $q$ is therefore
+equivalent to maximizing $E_P\{\log q(X)\}$.
+:::
+
+**4. Which KL orientation produces Walker's posterior-predictive log-score
+decision?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Use $D_{\mathrm{KL}}(f\|q_\theta)$: the unknown candidate density $f$ is first
+and the action density $q_\theta$ is second. Averaging
+$-D_{\mathrm{KL}}(f\|q_\theta)$ under the posterior leaves the
+$\theta$-dependent criterion
+
+$$
+\int\log q_\theta(x)P_n^{\mathrm{pred}}(dx).
+$$
+
+The reverse orientation generally does not reduce to this posterior-predictive
+expected log score.
+:::
+
+**5. In (9), do $\mu$ and $\Pi$ live on data space or model space?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+They both live on **model space**: they are probability measures on the
+measurable space of candidate densities or distributions. In
+$D_{\mathrm{KL}}(\mu\|\Pi)$, the first measure is a candidate updated belief
+distribution and the second is the prior. The observed data enter through the
+likelihood term, not as the points integrated over in this KL divergence.
+:::

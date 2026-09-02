@@ -1,0 +1,384 @@
+---
+title: "Dirac Measure, Point Mass, and Dirac Delta"
+author: "Hyejung Lee"
+date: 2026-08-26
+description: >
+  A rigorous and practical distinction between a Dirac probability measure,
+  the generalized Dirac delta, and an ordinary probability density.
+categories:
+  - measure-theory
+  - probability
+  - bayesian
+  - nonparametric
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+# The short answer {.unnumbered}
+
+## What this note assumes
+
+In the full learning path, read
+[Measure and probability foundations](measure-probability-foundations.qmd),
+[Lebesgue measure and absolute continuity](lebesgue-measure-integration-and-densities.qmd),
+and [the Bayesian measure-notation guide](../Bayesian/bayes-measure-d-concept.qmd)
+first. The core Dirac definition needs only the first two. No knowledge of
+generalized functions or functional analysis is assumed; the physics notation
+is translated below.
+
+The **Dirac measure** at a point $a$ is the probability measure
+
+$$
+\delta_a(A)=
+\begin{cases}
+1,&a\in A,\\
+0,&a\notin A.
+\end{cases}
+$$
+
+It puts all probability at $a$.
+
+The **Dirac delta function** $\delta(x-a)$ is not an ordinary real-valued
+function. It is a generalized function, or distribution, used to express the
+same point-evaluation operation in calculus and physics notation.
+
+In probability and Bayesian nonparametrics, the measure notation
+$\delta_a(dx)$ is usually the safest notation.
+
+# The Dirac probability measure {#the-dirac-probability-measure}
+
+Let $(\mathcal X,\mathscr X)$ be a measurable space and let $a\in\mathcal X$.
+Define
+
+$$
+\delta_a:\mathscr X\to[0,1],
+\qquad
+\delta_a(A)=\mathbf 1(a\in A).
+$$
+
+It is a probability measure because
+
+- $\delta_a(\emptyset)=0$;
+- $\delta_a(\mathcal X)=1$;
+- for pairwise disjoint $A_1,A_2,\ldots$, the point $a$ belongs to at most one
+  set, so countable additivity holds.
+
+Names used for the same object include
+
+- Dirac measure at $a$;
+- unit point mass at $a$;
+- degenerate distribution concentrated at $a$.
+
+# Its defining integration property {#dirac-integration-property}
+
+For every measurable integrable function $h$,
+
+$$
+\boxed{
+\int_{\mathcal X}h(x)\delta_a(dx)=h(a)
+}.
+\tag{1}
+$$
+
+This follows first for indicator functions:
+
+$$
+\int \mathbf 1_A(x)\delta_a(dx)
+=\delta_a(A)
+=\mathbf 1_A(a),
+$$
+
+and then extends to simple functions and general integrable functions.
+
+“Measurable” means the function is compatible with the sigma-fields, so its
+level-set events are measurable. “Integrable” means the integral of its
+absolute value is finite. A **simple function** takes only finitely many
+values and can be written as a finite sum of weighted indicators. These terms
+are developed in the [measure-integration note](lebesgue-measure-integration-and-densities.qmd#integration-with-respect-to-a-measure).
+
+Equation (1) says that integration against $\delta_a$ evaluates the integrand
+at $a$.
+
+# Discrete distributions are sums of Dirac measures {#dirac-discrete-laws}
+
+If $X$ takes values $x_1,x_2,\ldots$ with probabilities $p_1,p_2,\ldots$, its
+distribution can be written
+
+$$
+P_X=\sum_jp_j\delta_{x_j}.
+$$
+
+For any measurable $A$,
+
+$$
+P_X(A)=\sum_jp_j\delta_{x_j}(A)
+=\sum_jp_j\mathbf 1(x_j\in A),
+$$
+
+and for any integrable $h$,
+
+$$
+\int h(x)P_X(dx)=\sum_jp_jh(x_j).
+$$
+
+This is the usual discrete expectation written as a measure integral.
+
+# Why a Dirac measure has no ordinary Lebesgue density {#dirac-not-lebesgue-density}
+
+Let $\lambda$ be Lebesgue measure on $\mathbb R$. If $\delta_a$ had a density
+$q=d\delta_a/d\lambda$, then $\delta_a$ would be absolutely continuous with
+respect to $\lambda$:
+
+$$
+\lambda(A)=0\implies\delta_a(A)=0.
+$$
+
+But
+
+$$
+\lambda(\{a\})=0
+\quad\text{while}\quad
+\delta_a(\{a\})=1.
+$$
+
+Therefore
+
+$$
+\delta_a\not\ll\lambda
+$$
+
+and no ordinary Lebesgue density $d\delta_a/d\lambda$ exists. The Dirac measure
+is singular with respect to Lebesgue measure.
+
+In this example, **singular** means that all of $\delta_a$'s mass is
+concentrated on the set $\{a\}$, which has Lebesgue measure zero.
+
+This is why no ordinary function can simultaneously be zero away from $a$,
+have a finite or infinite value only at $a$, and integrate to one under
+Lebesgue integration. A value at one Lebesgue-null point contributes zero to an
+ordinary integral.
+
+# What the “Dirac delta function” means {#dirac-delta-generalized-function}
+
+This section is optional for reading Walker. It is included so that physics
+and engineering notation will not be confused with an ordinary PDF.
+
+In generalized-function theory, $\delta_a$ acts on a sufficiently smooth test
+function $\varphi$ by
+
+$$
+\langle\delta_a,\varphi\rangle=\varphi(a).
+$$
+
+Physics notation often writes this as
+
+$$
+\int_{-\infty}^{\infty}
+\varphi(x)\delta(x-a)\,dx
+=\varphi(a).
+\tag{2}
+$$
+
+Equation (2) is valid when interpreted as the action of a generalized function
+or, equivalently here, as integration with respect to the Dirac measure. It
+does not make $\delta(x-a)$ an ordinary probability density.
+
+A **test function** is simply a well-behaved input function—usually smooth and
+zero outside a bounded region—against which a generalized function is
+evaluated. A generalized function is defined through what it does to all such
+inputs, rather than through a finite value at every point. For probability
+work, the measure identity (1) is sufficient; no generalized-function theory
+is required.
+
+The informal picture of an infinitely tall, zero-width spike with area one can
+aid memory, but it is not a definition.
+
+# Notation guide
+
+| Notation | Recommended interpretation |
+|---|---|
+| $\delta_a$ | Dirac probability measure at $a$ |
+| $\delta_a(A)$ | $1$ if $a\in A$, otherwise $0$ |
+| $\delta_a(dx)$ | Integrate with respect to the Dirac measure |
+| $\delta_a(x)$ | Context-dependent shorthand; avoid if it suggests an ordinary function |
+| $\delta(x-a)$ | Generalized-function notation common in physics |
+
+In probability notes, write
+
+$$
+F(dx)=\sum_jp_j\delta_{x_j}(dx)
+$$
+
+rather than calling
+$\sum_jp_j\delta_{x_j}(x)$ an ordinary density.
+
+# Bayesian bootstrap {#dirac-bayesian-bootstrap}
+
+Given observations $X_1,\ldots,X_n$, a Bayesian-bootstrap draw is the random
+probability measure
+
+$$
+F^{(b)}=\sum_{i=1}^nW_i^{(b)}\delta_{X_i},
+\qquad
+(W_1^{(b)},\ldots,W_n^{(b)})
+\sim\operatorname{Dirichlet}(1,\ldots,1).
+\tag{3}
+$$
+
+For a function $h$,
+
+$$
+\int h(x)F^{(b)}(dx)
+=\sum_{i=1}^nW_i^{(b)}h(X_i).
+$$
+
+If some observed values are equal, (3) may list the same Dirac measure more
+than once. Combining equal locations gives the same $F^{(b)}$ with their
+weights added.
+
+Because $E(W_i)=1/n$, the posterior mean measure is the empirical distribution:
+
+$$
+E\{F^{(b)}(A)\mid X_{1:n}\}
+=\frac1n\sum_{i=1}^n\mathbf 1(X_i\in A).
+$$
+
+This object has atoms at the observed values. It is not a Lebesgue density.
+
+An **atom** is a point receiving positive probability. Here $X_i$ is an atom
+whenever its combined random weight is positive.
+
+# Dirichlet-process draws and mixtures {#dirac-dp-draws-mixtures}
+
+A stick-breaking representation of a Dirichlet-process draw has the form
+
+$$
+G=\sum_{j=1}^{\infty}W_j\delta_{\Theta_j}.
+$$
+
+The random measure $G$ is discrete. If it is used as a mixing measure with a
+continuous kernel $k$, however,
+
+$$
+f_G(x)=\int k(x\mid\theta)G(d\theta)
+=\sum_{j=1}^{\infty}W_jk(x\mid\Theta_j)
+$$
+
+can be a smooth density. The Dirac measures live on the **parameter space**;
+the kernels generate a density on the **data space**.
+
+# Dirac measure versus indicator function
+
+These two expressions are related but have different types:
+
+$$
+\delta_a(A)=\mathbf 1_A(a).
+$$
+
+- $\delta_a$ takes a measurable set $A$ as input and returns its probability;
+- $\mathbf 1_A$ takes a point $a$ as input and reports membership.
+
+Confusing their inputs is a common source of notation errors.
+
+# Common mistakes
+
+1. **Calling a point mass an ordinary continuous density.**
+   It has no density relative to Lebesgue measure.
+2. **Writing $\delta_a(a)=1$ as the definition.**
+   The measure is defined on sets: $\delta_a(A)=\mathbf 1(a\in A)$.
+3. **Saying a DP mixture is discrete because its mixing distribution is
+   discrete.**
+   The induced sampling density may be continuous.
+4. **Treating a Dirac measure as a small-variance normal distribution.**
+   $N(a,\sigma^2)$ converges weakly to $\delta_a$ as $\sigma\downarrow0$, but
+   no fixed positive $\sigma$ gives the same measure.
+
+Here **weak convergence** means that
+
+$$
+\int h(x)N(a,\sigma^2)(dx)\longrightarrow h(a)
+$$
+
+for every bounded continuous $h$. This definition is sufficient for the
+statement; the [consistency note](posterior-consistency.qmd#weak-neighborhoods)
+compares weak convergence with stronger notions.
+
+# What to read next
+
+Continue to [Random probability measures](random-probability-measures.qmd).
+That note uses Dirac measures to build finite random distributions and
+Dirichlet-process draws. The
+[Bayesian bootstrap](../Bayesian/bayes-boots.qmd) and
+[applied Dirichlet-process mixture](../Bayesian/bayes-nonpar-concept-applied.qmd)
+then reuse the same notation.
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. What is $\delta_a(A)$ when $a\notin A$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$\delta_a(A)=0$. A Dirac measure at $a$ assigns mass one to a set exactly when
+that set contains $a$; otherwise it assigns mass zero.
+:::
+
+**2. Why does $\delta_a$ not have a Lebesgue density?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The singleton $\{a\}$ has Lebesgue measure zero but
+$\delta_a(\{a\})=1$. Therefore $\delta_a\not\ll\lambda$, so no
+Radon--Nikodym derivative $d\delta_a/d\lambda$ exists. An ordinary function
+integrated over a zero-length singleton could not produce mass one there.
+:::
+
+**3. Evaluate $\int x^2\delta_3(dx)$.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+A Dirac measure evaluates the integrand at its atom:
+
+$$
+\int x^2\delta_3(dx)=3^2=9.
+$$
+:::
+
+**4. Is $\sum_iW_i\delta_{X_i}$ a function, a probability measure, or both?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+When $W_i\geq0$ and $\sum_iW_i=1$, it is a probability measure. Like every
+measure, it is technically a set function:
+
+$$
+A\longmapsto\sum_iW_i\mathbf 1(X_i\in A).
+$$
+
+It is **not** an ordinary pointwise density with respect to Lebesgue measure.
+Calling it a function without naming its set-valued input can obscure that
+distinction.
+:::
+
+**5. How can a discrete DP draw generate a continuous mixture density?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+If $G=\sum_jW_j\delta_{\Theta_j}$ is discrete on parameter space, then mixing
+continuous kernels gives
+
+$$
+f_G(x)=\int k(x\mid\theta)G(d\theta)
+=\sum_jW_jk(x\mid\Theta_j).
+$$
+
+The atoms choose kernel parameters; each kernel spreads mass over observation
+space. Thus discreteness of $G$ does not imply discreteness of $f_G$.
+:::

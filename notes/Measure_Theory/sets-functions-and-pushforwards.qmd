@@ -1,0 +1,541 @@
+---
+title: "Sets, Functions, Inverse Images, and Pushforward Distributions"
+author: "Hyejung Lee"
+date: 2026-08-26
+description: >
+  A no-measure-theory prerequisite explaining set notation, functions, inverse images,
+  measurability, indicators, composition, and the formula P_X = P composed with X inverse.
+categories:
+  - measure-theory
+  - probability
+  - foundations
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
+---
+
+# Purpose and assumed background {.unnumbered}
+
+This is the first note in the sequence. It assumes only familiar probability,
+algebra, and basic calculus. It does **not** assume measure theory, real
+analysis, topology, or abstract algebra.
+
+Its main purpose is to make the formula
+
+$$
+P_X=P\circ X^{-1}
+$$
+
+completely readable. The symbol $\circ$ is pronounced “composed with.” The
+symbol $X^{-1}$ means an **inverse image of a set** here; it does not require
+the random variable $X$ to have an inverse function.
+
+# 1. Sets are collections of objects
+
+A **set** is a collection of objects. Braces list its members. For example,
+
+$$
+A=\{1,3,5\}.
+$$
+
+Basic notation is:
+
+| Notation | Read it as | Meaning |
+|---|---|---|
+| $x\in A$ | $x$ is in $A$ | $x$ is a member of $A$ |
+| $x\notin A$ | $x$ is not in $A$ | $x$ is not a member of $A$ |
+| $A\subseteq B$ | $A$ is a subset of $B$ | Every member of $A$ is also in $B$ |
+| $A=B$ | $A$ equals $B$ | The two sets have exactly the same members |
+| $\emptyset$ | the empty set | The set with no members |
+| $\{x\}$ | the singleton containing $x$ | A set containing one object |
+
+The order in which elements are listed does not matter, and repeated listings
+do not create new elements:
+
+$$
+\{1,3,5\}=\{5,1,3\}=\{1,1,3,5\}.
+$$
+
+## The underlying or sample set
+
+In probability, $\Omega$ denotes the set of all elementary outcomes. If an
+experiment consists of tossing a coin twice, one possible choice is
+
+$$
+\Omega=\{HH,HT,TH,TT\}.
+$$
+
+An **event** is a subset of $\Omega$. For example,
+
+$$
+A=\{HH,HT,TH\}
+$$
+
+is the event “at least one head occurs.”
+
+## The power set
+
+The **power set** $\mathcal P(\Omega)$ is the set of all subsets of $\Omega$.
+For $\Omega=\{H,T\}$,
+
+$$
+\mathcal P(\Omega)
+=\{\emptyset,\{H\},\{T\},\{H,T\}\}.
+$$
+
+The notation is one level higher than it first appears:
+
+- $H$ is an outcome;
+- $\{H\}$ is a set of outcomes, hence an event;
+- $\mathcal P(\Omega)$ is a set whose members are events.
+
+Later, a sigma-field $\mathcal F$ will be a selected collection of events, so
+$\mathcal F\subseteq\mathcal P(\Omega)$.
+
+One notation warning: $\mathcal P(\Omega)$ conventionally means the power set
+in elementary set theory. Bayesian nonparametric writing also often uses
+$\mathcal P(\mathcal X)$ for the **set of probability measures** on
+$\mathcal X$. Those are different collections; the surrounding definition
+determines which meaning is intended.
+
+# 2. Operations on sets
+
+Let $A$ and $B$ be subsets of $\Omega$.
+
+| Operation | Notation | Membership rule |
+|---|---|---|
+| Union | $A\cup B$ | In $A$, in $B$, or in both |
+| Intersection | $A\cap B$ | In both $A$ and $B$ |
+| Complement | $A^c$ | In $\Omega$ but not in $A$ |
+| Difference | $A\setminus B$ | In $A$ but not in $B$ |
+
+For
+
+$$
+\Omega=\{1,2,3,4\},\qquad
+A=\{1,2,3\},\qquad B=\{3,4\},
+$$
+
+we have
+
+$$
+\begin{aligned}
+A\cup B&=\{1,2,3,4\},\\
+A\cap B&=\{3\},\\
+A^c&=\{4\},\\
+A\setminus B&=\{1,2\}.
+\end{aligned}
+$$
+
+Sets $A$ and $B$ are **disjoint** if $A\cap B=\emptyset$. They cannot both
+occur.
+
+## Indexed collections
+
+The notation $A_1,A_2,\ldots$ describes a sequence of sets. Then
+
+$$
+\bigcup_{j=1}^{\infty}A_j
+$$
+
+means all points belonging to at least one $A_j$, while
+
+$$
+\bigcap_{j=1}^{\infty}A_j
+$$
+
+means all points belonging to every $A_j$.
+
+“Countable” means that the objects can be placed in a finite or infinite list
+indexed by $1,2,3,\ldots$. The integers are countable; the real line is
+uncountable.
+
+# 3. Functions map inputs to outputs
+
+A function written
+
+$$
+X:\Omega\longrightarrow\mathcal X
+$$
+
+takes each input $\omega\in\Omega$ and assigns exactly one output
+$X(\omega)\in\mathcal X$.
+
+- $\Omega$ is the **domain**, the set of allowed inputs.
+- $\mathcal X$ is the **codomain**, the set in which outputs take values.
+- $X(\omega)$ is the output associated with input $\omega$.
+
+The function need not be one-to-one. Several inputs may have the same output.
+
+## Example: number of heads
+
+Let
+
+$$
+\Omega=\{HH,HT,TH,TT\}
+$$
+
+and define $X$ to be the number of heads. Then
+
+| $\omega$ | $X(\omega)$ |
+|---|---:|
+| $HH$ | 2 |
+| $HT$ | 1 |
+| $TH$ | 1 |
+| $TT$ | 0 |
+
+Thus $X:\Omega\to\{0,1,2\}$. Notice that $HT$ and $TH$ both map to 1.
+
+# 4. The inverse image of a set
+
+Suppose $B$ is a set of possible outputs, $B\subseteq\mathcal X$. The
+**inverse image** or **preimage** of $B$ under $X$ is
+
+$$
+\boxed{
+X^{-1}(B)=\{\omega\in\Omega:X(\omega)\in B\}.
+}
+\tag{1}
+$$
+
+It is the set of inputs whose outputs land in $B$.
+
+In the coin example, let $B=\{1,2\}$. Then
+
+> Which elementary outcomes would make $X$ fall in $B$?
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Check the table one elementary outcome at a time and retain the outcomes for
+which $X(\omega)\in\{1,2\}$. This gives
+
+$$
+X^{-1}(B)=\{HH,HT,TH\},
+$$
+
+because those are exactly the outcomes producing at least one head. The outcome
+$TT$ is excluded because $X(TT)=0\notin B$.
+:::
+
+## This is not an inverse function
+
+An inverse function would take one output and recover one unique input. That is
+impossible here because both $HT$ and $TH$ produce $X=1$.
+
+An inverse **image**, however, always makes sense:
+
+$$
+X^{-1}(\{1\})=\{HT,TH\}.
+$$
+
+Therefore the notation $X^{-1}(B)$ in probability does not claim that $X$ is
+invertible. It asks for all inputs whose outputs belong to the specified set.
+
+## Useful inverse-image rules
+
+Inverse images preserve the set operations needed in probability:
+
+$$
+\begin{aligned}
+X^{-1}(B^c)&=\bigl[X^{-1}(B)\bigr]^c,\\
+X^{-1}\left(\bigcup_jB_j\right)&=\bigcup_jX^{-1}(B_j),\\
+X^{-1}\left(\bigcap_jB_j\right)&=\bigcap_jX^{-1}(B_j).
+\end{aligned}
+$$
+
+This is why inverse images, rather than ordinary images, appear in the
+definition of a measurable random variable.
+
+# 5. A random variable is a function with a probability-compatible property
+
+A probability measure $P$ assigns probabilities to events in a sigma-field
+$\mathcal F$ on $\Omega$. Suppose $\mathscr X$ is the collection of events we
+want to discuss in the output space $\mathcal X$.
+
+For the moment, read “sigma-field” as the declared collection of allowable
+events. The next note gives its three formal closure rules.
+
+The function $X:\Omega\to\mathcal X$ is **measurable** when
+
+$$
+B\in\mathscr X
+\quad\Longrightarrow\quad
+X^{-1}(B)\in\mathcal F.
+\tag{2}
+$$
+
+Equation (2) says that every output-space question we permit can be translated
+back into an input-space event to which $P$ can assign a probability.
+
+In elementary statistics this condition is usually invisible because familiar
+functions on familiar spaces are measurable. Its purpose is to rule out
+pathological functions for which $P\{X\in B\}$ would not be defined.
+
+# 6. From the probability of outcomes to the distribution of X
+
+The underlying measure $P$ knows probabilities of events in $\Omega$. We want
+a measure $P_X$ that knows probabilities of events in the value space
+$\mathcal X$.
+
+For $B\subseteq\mathcal X$, define
+
+$$
+\boxed{
+P_X(B)=P\bigl(X^{-1}(B)\bigr)=P(X\in B).
+}
+\tag{3}
+$$
+
+This $P_X$ is the **distribution** or **law** of $X$.
+
+In the fair-coin example,
+
+$$
+\begin{aligned}
+P_X(\{1\})
+&=P\bigl(X^{-1}(\{1\})\bigr)\\
+&=P(\{HT,TH\})\\
+&=\frac12.
+\end{aligned}
+$$
+
+Similarly,
+
+$$
+P_X(\{0\})=\frac14,
+\qquad
+P_X(\{2\})=\frac14.
+$$
+
+# 7. Decoding the composition formula
+
+Equation (3) is abbreviated as
+
+$$
+\boxed{P_X=P\circ X^{-1}.}
+\tag{4}
+$$
+
+Function composition is normally defined by
+
+$$
+(g\circ f)(z)=g\bigl(f(z)\bigr).
+$$
+
+Read it from right to left: first apply $f$, then apply $g$.
+
+In (4), the input is a set $B$ in the value space:
+
+$$
+\begin{aligned}
+(P\circ X^{-1})(B)
+&=P\bigl(X^{-1}(B)\bigr).
+\end{aligned}
+$$
+
+The two stages are:
+
+1. $X^{-1}$ turns the output event $B$ into an event in $\Omega$.
+2. $P$ assigns a probability to that event.
+
+Thus $P\circ X^{-1}$ is not multiplication, and $P$ is not being evaluated at
+a number. The composition creates a new set function on the value space.
+
+# 8. Why it is called a pushforward
+
+The measure $P_X$ is called the **pushforward** of $P$ through $X$. One writes
+
+$$
+P_X=X_{\#}P
+$$
+
+in some texts; $P\circ X^{-1}$ is more common in probability.
+
+The name describes a change of viewpoint:
+
+| Level | Objects receiving probability |
+|---|---|
+| $P$ on $\Omega$ | Elementary outcomes $\omega$ |
+| $P_X$ on $\mathcal X$ | Values $x=X(\omega)$ |
+
+Probability mass is not physically moved. The same uncertainty is being
+reported in terms of the derived quantity $X$ rather than the hidden outcome
+$\omega$.
+
+## The familiar CDF is built from the pushforward
+
+For a real-valued random variable,
+
+$$
+F_X(x)
+=P(X\leq x)
+=P_X\bigl((-\infty,x]\bigr).
+$$
+
+Therefore the CDF, PMF, and PDF you already use describe the pushforward
+distribution $P_X$, usually without mentioning the underlying $\Omega$.
+
+# 9. Indicator functions translate membership into numbers
+
+For a set $A$, its **indicator function** is
+
+$$
+\mathbf 1_A(x)
+=
+\begin{cases}
+1,&x\in A,\\
+0,&x\notin A.
+\end{cases}
+$$
+
+Equivalent notations include $I(x\in A)$ and $\mathbf 1(x\in A)$.
+
+Indicators connect events with expectations:
+
+$$
+E\{\mathbf 1_A(X)\}=P(X\in A).
+$$
+
+They also connect sets with integration. For any measure $\mu$,
+
+$$
+\int\mathbf 1_A(x)\,\mu(dx)=\mu(A).
+$$
+
+The later measure and integration notes develop this identity.
+
+# 10. Points, functions, and functionals
+
+The input to an ordinary function may be a number:
+
+$$
+h:\mathbb R\to\mathbb R,\qquad h(x)=x^2.
+$$
+
+The input can also be an entire function or probability distribution. A
+function whose input is itself a function or distribution is often called a
+**functional**.
+
+Examples include
+
+$$
+T(F)=\int xF(dx)
+$$
+
+for the mean of distribution $F$, and
+
+$$
+H(f)=\int f(x)^2dx
+$$
+
+for an integrated feature of density $f$.
+
+The integrals are only examples of the input-output type; the following notes
+explain $F(dx)$ and $dx$ themselves. At this stage, the key point is that one
+entire $F$ or $f$, rather than a single number, is supplied as the input.
+
+This terminology matters in Bayesian nonparametrics because the “points” in
+the model space may be entire distributions. A prior can then assign
+probability to sets of such points.
+
+# 11. A notation ladder
+
+| Expression | Type of object | Plain-language reading |
+|---|---|---|
+| $\omega$ | Point in $\Omega$ | One elementary outcome |
+| $A\subseteq\Omega$ | Set | An event |
+| $P(A)$ | Number | Probability of the event |
+| $X(\omega)$ | Point in $\mathcal X$ | Observed value produced by $\omega$ |
+| $B\subseteq\mathcal X$ | Set | A set of possible observed values |
+| $X^{-1}(B)$ | Set in $\Omega$ | Outcomes that produce a value in $B$ |
+| $P_X(B)$ | Number | Probability that $X$ falls in $B$ |
+| $P_X=P\circ X^{-1}$ | Equality of measures | The law of $X$ is the pushforward of $P$ |
+
+# What to read next
+
+Continue to [Measure and probability foundations](measure-probability-foundations.qmd).
+That note introduces sigma-fields and measures. Return here whenever an inverse
+image or pushforward appears in a later note.
+
+# Check your understanding
+
+For the two-coin example, answer the following before continuing.
+
+Select each **Answer** box after working out the question yourself.
+
+**1. What are the domain and codomain of $X$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The domain is the elementary-outcome space
+$\Omega=\{HH,HT,TH,TT\}$. The codomain used in this example is
+$\mathcal X=\{0,1,2\}$, the possible numbers of heads. Thus
+$X:\Omega\to\mathcal X$.
+:::
+
+**2. Find $X^{-1}(\{0,2\})$.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$X(TT)=0$ and $X(HH)=2$, while the other two outcomes map to 1. Therefore
+
+$$
+X^{-1}(\{0,2\})=\{TT,HH\}.
+$$
+:::
+
+**3. Why does $X^{-1}$ make sense even though $X$ is not one-to-one?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+Here $X^{-1}(B)$ is an **inverse image of a set**, not an inverse function. It
+collects every input $\omega$ satisfying $X(\omega)\in B$. Several inputs may
+therefore appear in the same inverse image; uniqueness is not required.
+:::
+
+**4. Expand $(P\circ X^{-1})(\{1\})$ into two steps.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+First take the inverse image,
+
+$$
+X^{-1}(\{1\})=\{HT,TH\}.
+$$
+
+Then apply $P$. For two fair, independent coin tosses,
+
+$$
+(P\circ X^{-1})(\{1\})=P(\{HT,TH\})=\frac12.
+$$
+:::
+
+**5. What is the difference between $P$ and $P_X$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$P$ assigns probabilities to events in the elementary-outcome space $\Omega$.
+$P_X$ assigns probabilities to sets of values in $\mathcal X$. They are linked
+by $P_X(B)=P\{X^{-1}(B)\}$.
+:::
+
+**6. Evaluate $E\{\mathbf 1_{\{1,2\}}(X)\}$ for fair coins.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+An indicator's expectation is the probability of its event, so
+
+$$
+E\{\mathbf 1_{\{1,2\}}(X)\}
+=P(X\in\{1,2\})
+=P(\{HH,HT,TH\})
+=\frac34.
+$$
+:::

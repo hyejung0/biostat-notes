@@ -1,226 +1,654 @@
 ---
-title: "Measure theory notation d for Bayesian Nonparametric Methods"
+title: "What dx, P(dx), and Pi(df) Mean in Bayesian Statistics"
 author: "Hyejung Lee"
-date: "`r Sys.Date()`"
-summary: >
-  This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
+date: 2026-08-26
 description: >
-  This is a sidenote produced for bayes-nonpar-concept.Rmd note, for $\pi(dF)$ and $F(dX_i)$ notations.
+  A careful guide to measure-integration notation, conditional probability kernels,
+  Radon-Nikodym derivatives, and the posterior notation Pi(df | X).
 categories:
   - bayesian
   - nonparametric
   - measure-theory
-status: draft         # draft | published | deprecated
-bibliography: ../../references/references.bib
-csl: ../../references/csl/vancouver.csl   # optional
+status: draft
+bibliography: ../../references/bnp-foundations.bib
+csl: ../../references/csl/vancouver.csl
 ---
 
+# The equation we want to read {.unnumbered}
 
-# Context {-}
+## What this note assumes
 
-This is to help people understand the following equation
+This note assumes familiar likelihood and ordinary Bayes' rule, but no measure
+theory. Read these notes first, in order:
 
-$$
-\Pi(df \mid X_{1:n}) = \frac{ \prod_{i=1}^n f(X_i) \,  \cdot \Pi(df)}{\int \prod_{i=1}^n f(X_i) \, \Pi(df)}
-$$
+1. [Sets, functions, inverse images, and pushforwards](../Measure_Theory/sets-functions-and-pushforwards.qmd)
+2. [Measure and probability foundations](../Measure_Theory/measure-probability-foundations.qmd)
+3. [Lebesgue measure, integration, and densities](../Measure_Theory/lebesgue-measure-integration-and-densities.qmd)
 
-that appears in bayes-nonpar-concept.Rmd file.
+In particular, the third note explains null sets, absolute continuity,
+dominating measures, and Radon-Nikodym derivatives with discrete, continuous,
+and mixed examples.
 
-
----
-
-# The Meaning of "d" in Basic Integration
-
-You may have seen integrals like:
-
-$$
-\int f(x)\, dx
-$$
-
-Here:
-
-- $f(x)$ is the function being integrated
-- $dx$ tells us **what measure we are integrating with respect to**
-
-Important point:
-
-> The symbol **"d" is not a variable and not a derivative**.  
-> It indicates the *measuring rule* being used.
-
-When we write $dx$, we mean **Lebesgue measure** (ordinary length on the real line).
-
----
-
-# Replacing $dx$ with a Probability Distribution
-
-A probability distribution $F$ is itself a *measure* — it assigns probability mass to sets.
-
-So instead of integrating with respect to length, we can integrate with respect to probability:
+Walker writes a posterior on a space of density functions in the form
 
 $$
-\int g(x)\, dF(x)
+\Pi(df\mid X_{1:n})
+=
+\frac{\left\{\prod_{i=1}^n f(X_i)\right\}\Pi(df)}
+{\int_{\mathcal D}\left\{\prod_{i=1}^n g(X_i)\right\}\Pi(dg)}.
+\tag{1}
 $$
 
-This means:
+The $d$ in $\Pi(df)$ is not “differentiate $\Pi$ with respect to $f$.”
+Equation (1) is compact notation for a relationship between probability
+measures. The fully explicit version appears below.
 
-> Add up values of $g(x)$, weighted by how much probability $F$ assigns to different regions.
+# Four appearances of d that should not be conflated
 
-> $dF(x)$ represents the "probability mass" assigned to an infinitesimal interval (d) around $x$.
+## 1. An ordinary calculus derivative
 
-
-
----
-
-# What Does $dF(x)$ Mean?
-
-This notation appears in likelihoods.
-
-## Conceptual Meaning
+If $r(x)=x^2$, then
 
 $$
-dF(x)
+\frac{dr}{dx}(x)=2x.
 $$
 
-means:
+This derivative describes the local rate of change of one function relative to
+its input.
 
-> The probability mass (or density contribution) that the distribution $F$ assigns 
-to the infinitesimal interval (d) around $x$.
+## 2. The dx in a Riemann integral
 
-
----
-
-## Discrete Example
-
-If $F$ is discrete and
+In elementary calculus,
 
 $$
-P_F(X = 3) = 0.2,
+\int_a^b h(x)\,dx
 $$
 
-then observing $X_i = 3$ gives:
+is introduced as the limit of sums $\sum_j h(x_j)\Delta x_j$. The $dx$
+reminds us that interval widths are being used.
+
+## 3. Integration with respect to a measure
+
+Measure theory writes
 
 $$
-F(dX_i) = F(\{3\}) = 0.2.
+\int h(x)\,\mu(dx)
+\quad\text{or}\quad
+\int h\,d\mu.
 $$
 
----
+These mean “integrate $h$ with respect to the measure $\mu$.” The expression
+$\mu(dx)$ is a notational marker for the integrator. It is not, by itself, the
+measure of a literal infinitesimal interval around $x$.
 
-## Continuous Example
-
-If $F$ has density $f$, then:
-
-$$
-dF(X_i) \approx f(X_i)\, dX.
-$$
-
-This is exactly why:
+Lebesgue integration makes the elementary notation precise:
 
 $$
-\int x\, dF(x) = \mathbb{E}_F[X].
+\int h(x)\,dx
+=\int h(x)\,\lambda(dx),
 $$
 
+where $\lambda$ is Lebesgue measure.
 
+## 4. A derivative of one measure with respect to another
 
-
-
-
----
-
-# Why This Notation Is Used
-
-The notation $dF(X_i)$ works **universally**:
-
-- Discrete distributions
-- Continuous distributions
-- Mixed distributions
-
-This avoids assuming a density exists.
-
----
-
-# What Does $\pi(df)$ Mean?
-
-Now we move one level higher.
-
-## What Is Random Here?
-
-In Bayesian nonparametrics:
-
-- The unknown object is the **distribution itself**, denoted $f$
-- We model $f$ as a random object
-
-So we introduce a prior probability law $\pi$ whose outcomes are *distributions*.
-
-
----
-
-## The component $\Pi$: The "Rule" or "Bag"
-
-$\Pi$ represents the **Prior Probability Measure**. It is the "God's eye view" 
-distribution that governs which $f$ (which curve) is likely to be the truth.
-
-The Bag Analogy: Imagine a giant bag containing every possible probability 
-density function that could ever exist. Some are smooth, some are jagged, 
-some are normal, some are exponential.
- 
-- The Weighting: $\Pi$ is the rule that tells you how likely you are to pick a 
-specific type of curve from this bag.
-   - If $\Pi$ is a parametric prior (like Normal), it assigns $100 \%$ of the 
-   probability mass to the subset of curves that are perfect bell curves.
-    - If $\Pi$ is a nonparametric prior (like the Dirichlet Process), 
-    it spreads the probability mass out over all possible shapes.
-    
----
-
-## Interpreting $\Pi(df)$
-
-The symbol:
+If $P$ is absolutely continuous with respect to $\nu$, written $P\ll\nu$, the
+Radon-Nikodym theorem gives a measurable function
 
 $$
-\Pi(df)
+p(x)=\frac{dP}{d\nu}(x)
 $$
 
-means:
-
-"The probability mass assigned by the rule $\Pi$ to a tiny, infinitestimal neighborhood around the specific function $f$."
-
-
-> why not just $\Pi(f)$? : In standard statistics, we write $p(x)dx$ where 
-$p(x)$ is the density height and $dx$ is the width.
-
-> In infinite dimensions, "width" ($df$) doesn't really exist in a standard way, 
-and "height" ($p(f)$) is often impossible to define because the space is too big. 
-
-> So, instead of separating them into "height × width," we keep them combined 
-as a single unit: $\Pi(df)$. This represents the "chunk" of probability weight 
-located at $f$.
-
-
-
----
-
-# The Posterior Formula, Explained
-
-The Bayesian nonparametric posterior is written:
+such that
 
 $$
-\pi(df \mid X_{1}, X_2, \cdots, X_{n}) = \frac{ \text{likelihood } \cdot \text{ prior}}{ \text{marginal density of } X_i's} \propto \prod_{i=1}^n f(X_i) \, \cdot \Pi(df)
+P(A)=\int_A p(x)\,\nu(dx)
+\quad\text{for every measurable }A.
+\tag{2}
 $$
 
-Read in words:
+Here $dP/d\nu$ really is a derivative at the level of measures. A statistical
+density is a Radon-Nikodym derivative.
 
-The posterior probability assigned to distributions near $f$ is proportional to  
-how well $F$ explains the observed data and how plausible $f$ was under the prior.
+The condition $P\ll\nu$ means
 
----
+$$
+\nu(A)=0\implies P(A)=0.
+$$
 
+Thus $P$ does not put positive mass where the reference measure $\nu$ sees a
+null set. The theorem says that, under standard conditions, this is precisely
+what allows $P$ to be represented by a weighting function relative to $\nu$.
+No proof of the theorem is needed to interpret Walker's notation.
 
-# Why This Notation Is Unavoidable
+# How P(dx) covers discrete and continuous distributions
 
-Bayesian nonparametrics allows:
+Let $P$ be a probability measure on $(\mathcal X,\mathscr X)$.
 
-- Discrete distributions
-- Continuous distributions
-- Mixtures of both
+## Discrete case
 
-The "d" notation is the **only way** to write Bayes’ rule in a form that applies universally.
+If $P$ puts mass $p_j$ at $x_j$, then
+
+$$
+P=\sum_j p_j\delta_{x_j}
+$$
+
+and
+
+$$
+\int h(x)P(dx)=\sum_j p_jh(x_j).
+$$
+
+In this case $P(\{x_j\})=p_j$.
+
+## Continuous case
+
+If $P$ has density $p=dP/d\lambda$ relative to Lebesgue measure, then the
+precise measure identity is
+
+$$
+P(dx)=p(x)\lambda(dx),
+\tag{3}
+$$
+
+meaning that both sides give the same integral for every suitable integrand:
+
+$$
+\int h(x)P(dx)=\int h(x)p(x)\,dx.
+$$
+
+Do not read (3) as saying that $P$ assigns probability $p(x)dx$ to an actual
+infinitesimal set. For a continuous distribution,
+
+$$
+P(\{x\})=0
+$$
+
+for every point $x$, even when $p(x)>0$.
+
+## Mixed case
+
+A distribution may contain both parts. For example,
+
+$$
+P(dx)=0.2\,\delta_0(dx)+0.8\,p_c(x)\lambda(dx).
+$$
+
+Then
+
+$$
+\int h(x)P(dx)=0.2h(0)+0.8\int h(x)p_c(x)\,dx.
+$$
+
+This is one reason measure notation is more general than writing only a PMF or
+only a Lebesgue density.
+
+# Conditional probability measures and kernels {#notation-probability-kernels}
+
+Bayesian hierarchies often contain notation such as
+
+$$
+P(dx\mid\theta),
+\qquad
+\pi(d\theta\mid x),
+\qquad
+\Pi(df\mid x_{1:n}).
+$$
+
+The vertical bar changes **which probability measure is being used**. It does
+not change $dx$, $d\theta$, or $df$ into a quotient.
+
+For example, suppose $\theta$ is a parameter and $P_\theta$ is the sampling
+distribution at that parameter value. Then
+
+$$
+P(dx\mid\theta)=P_\theta(dx)
+$$
+
+means “integrate over possible data values $x$ using the sampling distribution
+selected by the fixed value $\theta$.” If the model is dominated by $\nu$,
+then
+
+$$
+P(dx\mid\theta)=p(x\mid\theta)\nu(dx).
+$$
+
+Here $p(x\mid\theta)$ is a density in $x$ for each fixed $\theta$.
+
+## A probability kernel {#notation-kernel-definition}
+
+The family $\{P_\theta:\theta\in\Theta\}$ can be represented by
+
+$$
+K(\theta,A)=P_\theta(A).
+$$
+
+It is called a **probability kernel** (or Markov kernel) when
+
+1. for each fixed $\theta$, the map $A\mapsto K(\theta,A)$ is a probability
+   measure on data space;
+2. for each fixed measurable event $A$, the map
+   $\theta\mapsto K(\theta,A)$ is measurable.
+
+The second condition makes it legitimate to average $P_\theta(A)$ over a
+prior for $\theta$. This use of “kernel” is broader than a **density kernel**
+such as a normal density in a mixture model: a probability kernel is a family
+of whole probability measures and need not possess densities.
+
+## Prior, joint law, and marginal law {#notation-joint-marginal}
+
+Suppose
+
+$$
+\theta\sim\pi,
+\qquad
+X\mid\theta\sim P_\theta.
+$$
+
+The prior $\pi$ and sampling kernel determine the joint probability law. For
+measurable sets $B$ in parameter space and $A$ in data space,
+
+$$
+P(\theta\in B,X\in A)
+=\int_B P_\theta(A)\pi(d\theta).
+$$
+
+The shorthand $P_\theta(dx)\pi(d\theta)$ refers to this joint construction;
+it is not ordinary multiplication of two numbers. Integrating out $\theta$
+gives the prior predictive, or marginal, distribution
+
+$$
+m(A)=\int_\Theta P_\theta(A)\pi(d\theta).
+$$
+
+In a dominated model its density is
+
+$$
+m(x)=\int_\Theta p(x\mid\theta)\pi(d\theta).
+$$
+
+For a fixed observed $x$ with $0<m(x)<\infty$, Bayes' rule gives the posterior
+measure
+
+$$
+\pi(d\theta\mid x)
+=\frac{p(x\mid\theta)\pi(d\theta)}
+{\int_\Theta p(x\mid\vartheta)\pi(d\vartheta)}.
+$$
+
+This is the ordinary parametric template for Walker's formula. Replace the
+parameter $\theta$ by an entire density $f$, replace $\pi$ by $\Pi$, and use
+$P_f$ as the sampling kernel.
+
+## Conditioning on an exact continuous value {#notation-regular-conditionals}
+
+When $X$ is continuous, $P(X=x)=0$, so this formula is **not** obtained by
+dividing
+$P(\theta\in B,X=x)$ by $P(X=x)$. Instead, it is a version of a
+**regular conditional distribution**: a measurable family of probability
+measures indexed by the possible observed value $x$.
+
+The existence of such conditional laws is a technical theorem for the
+well-behaved spaces normally used in statistics, including countable spaces
+and Euclidean spaces. Two versions may differ at $x$ values belonging to a
+set of marginal probability zero, just as two densities may differ on a
+Lebesgue-null set. The density formula above selects the standard version
+used for Bayesian inference wherever $m(x)>0$; values on the remaining
+marginal-null set can be defined arbitrarily to complete a version.
+
+Exactly the same reading applies to Walker's notation. For each fixed dataset
+$x_{1:n}$,
+
+$$
+A\longmapsto\Pi(A\mid x_{1:n})
+$$
+
+is a probability measure on the model space. In $\Pi(df\mid x_{1:n})$, the
+symbol $df$ still indicates that the generic model-space point is an entire
+density $f$; the conditioning bar selects the posterior measure appropriate
+to the observed dataset.
+
+Authors often use uppercase $X_{1:n}$ when the data are still random and
+lowercase $x_{1:n}$ for their realized values. Thus
+$\Pi(\,\cdot\mid X_{1:n})$ is a random posterior measure before the sample is
+known, while $\Pi(\,\cdot\mid x_{1:n})$ is the fixed posterior measure obtained
+after the observed values are inserted.
+
+The reusable parametric-to-nonparametric translation is:
+
+| Role | Ordinary parametric Bayes | Walker's density-space Bayes |
+|---|---|---|
+| Unknown object | $\theta$ | Entire density $f$ |
+| Prior measure | $\pi(d\theta)$ | $\Pi(df)$ |
+| Conditional sampling law | $P_\theta(dx)=P(dx\mid\theta)$ | $P_f(dx)=P(dx\mid f)$ |
+| Dominated iid likelihood | $\prod_i p(X_i\mid\theta)$ | $\prod_i f(X_i)$ |
+| Posterior measure | $\pi(d\theta\mid X_{1:n})$ | $\Pi(df\mid X_{1:n})$ |
+| Predictive probability of $A$ | $\int P_\theta(A)\pi(d\theta\mid X_{1:n})$ | $\int P_f(A)\Pi(df\mid X_{1:n})$ |
+
+# A warning about likelihood notation {#notation-likelihood}
+
+For a continuous model, $P_f(X=x)=0$. The contribution $f(x)$ to a likelihood
+is a **density value relative to a chosen dominating measure**, not the
+probability of observing the exact point.
+
+Suppose every sampling distribution $P_f$ is dominated by the same measure
+$\lambda$ and
+
+$$
+f=\frac{dP_f}{d\lambda}.
+$$
+
+For iid data, the likelihood is
+
+$$
+L_n(f)=\prod_{i=1}^n f(X_i).
+$$
+
+An expression such as $\prod_i P_f(dX_i)$ can be useful shorthand in advanced
+work, but it should not be justified by calling $P_f(dX_i)$ an infinitesimal
+point probability. Walker avoids this problem by working with densities
+$f(X_i)$.
+
+# Moving one level higher: a prior on densities {#notation-prior-on-densities}
+
+Let
+
+- $(\mathcal X,\mathscr X,\lambda)$ be the data space with a dominating
+  measure;
+- $\mathcal D$ be a set of candidate densities relative to $\lambda$;
+- $\mathscr G$ be a sigma-field on $\mathcal D$;
+- $\Pi$ be a probability measure on $(\mathcal D,\mathscr G)$.
+
+Then $\Pi$ is the prior. For a measurable set $A\subseteq\mathcal D$,
+
+$$
+\Pi(A)
+=P(\text{the unknown density }f\text{ belongs to }A).
+$$
+
+The notation
+
+$$
+\int_{\mathcal D}H(f)\,\Pi(df)
+$$
+
+means the expectation of a functional $H$ under that prior.
+
+A **functional** is simply a function whose input is itself a function or
+distribution. Examples are the mean $H(F)=\int xF(dx)$ and the evaluation
+$H(f)=f(0)$. Here $H(f)$ produces one number from the entire candidate density
+$f$.
+
+The symbol $\Pi(df)$ should be read as
+
+> integration with respect to the probability measure $\Pi$, whose generic
+> point is the entire function $f$.
+
+It does **not** assert that $\Pi$ has a density relative to an
+infinite-dimensional “Lebesgue measure.” Such a reference measure generally
+does not exist in the way it does on $\mathbb R^k$.
+
+# Bayes' rule on the function space {#notation-bayes-function-space}
+
+Let $x_{1:n}$ be the observed data and define
+
+$$
+L_n(f)=\prod_{i=1}^n f(x_i),
+\qquad
+m_n(x_{1:n})=\int_{\mathcal D}L_n(g)\,\Pi(dg).
+$$
+
+Also assume that $f\mapsto L_n(f)$ is measurable on the model space. This
+ensures that the prior integrals are defined. In a density-space model this is
+usually built in by choosing $\mathscr G$ so the required evaluation maps
+$f\mapsto f(x_i)$ are measurable.
+
+Assume $0<m_n(x_{1:n})<\infty$. The posterior probability of a measurable set
+$A\in\mathscr G$ is
+
+$$
+\Pi_n(A)
+=\Pi(A\mid x_{1:n})
+=\frac{\int_A L_n(f)\,\Pi(df)}
+{\int_{\mathcal D}L_n(g)\,\Pi(dg)}.
+\tag{4}
+$$
+
+Equation (4) is the rigorous statement. The shorthand
+
+$$
+\Pi_n(df)
+=\frac{L_n(f)\Pi(df)}{m_n(x_{1:n})}
+\tag{5}
+$$
+
+means that the posterior is absolutely continuous with respect to the prior
+and has Radon-Nikodym derivative
+
+$$
+\boxed{
+\frac{d\Pi_n}{d\Pi}(f)
+=\frac{L_n(f)}{m_n(x_{1:n})}
+}.
+\tag{6}
+$$
+
+Equation (6) is the genuine “derivative at a distribution level” in this
+discussion. The normalized likelihood tells us how much Bayes' rule reweights
+each region of the prior measure.
+
+## The reason for a different letter in the denominator
+
+In
+
+$$
+\int_{\mathcal D}L_n(g)\Pi(dg),
+$$
+
+$g$ is a dummy integration variable. Using $g$ there makes clear that the
+denominator ranges over all candidate densities, while $f$ in the numerator is
+the candidate being reweighted.
+
+# The finite case makes the notation transparent {#notation-finite-case}
+
+Suppose
+
+$$
+\mathcal D=\{f_1,f_2,f_3\},
+\qquad
+\Pi(\{f_j\})=w_j.
+$$
+
+Then (4) becomes ordinary discrete Bayes:
+
+$$
+\Pi_n(\{f_j\})
+=\frac{L_n(f_j)w_j}{\sum_{k=1}^3 L_n(f_k)w_k}.
+$$
+
+The notation $\Pi(df)$ is the infinite- or general-space analog of summing over
+the candidates $f_j$ with weights $w_j$.
+
+# Relation to an ordinary parametric prior {#notation-parametric-case}
+
+Suppose $f=f_\theta$ and $\theta\in\mathbb R^p$ has a prior density
+$\pi(\theta)$ relative to Lebesgue measure. Then
+
+$$
+\Pi(d\theta)=\pi(\theta)d\theta
+$$
+
+and ordinary Bayes gives
+
+$$
+\Pi_n(d\theta)
+\propto L_n(\theta)\Pi(d\theta)
+=L_n(\theta)\pi(\theta)d\theta.
+$$
+
+The BNP expression is structurally the same. The difference is that the
+unknown point may now be an entire density, distribution, regression function,
+or hazard function rather than a fixed finite-dimensional vector.
+
+# Notation dictionary
+
+| Notation | Safe reading |
+|---|---|
+| $dx$ | Integration with respect to Lebesgue measure in the present context |
+| $P(dx)$ | Integration with respect to probability measure $P$ |
+| $dP/d\nu$ | Radon-Nikodym derivative: a density of $P$ relative to $\nu$ |
+| $P(dx\mid\theta)$ | Conditional sampling measure in $x$ selected by $\theta$; a probability kernel as $\theta$ varies |
+| $\pi(d\theta\mid x)$ | Posterior measure on parameter space after observing $x$ |
+| $\Pi(df)$ | Integration with respect to prior measure $\Pi$ on a space whose generic point is $f$ |
+| $\Pi(df\mid X)$ | Posterior measure on that same model space after conditioning on $X$ |
+| $d\Pi_n/d\Pi$ | Posterior density relative to the prior; normalized likelihood |
+
+# What to read next
+
+Continue to
+[Dirac measure and Dirac delta](../Measure_Theory/dirac-measure-and-dirac-delta.qmd).
+After that, the
+[random-probability-measure note](../Measure_Theory/random-probability-measures.qmd)
+uses the same prior--kernel--posterior pattern when the unknown object is an
+entire distribution.
+
+# Check your understanding
+
+Select each **Answer** box after working out the question yourself.
+
+**1. In $\Pi(df)$, is $f$ a real number, a variable in the data space, or an
+entire candidate density?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$f$ is an entire candidate density—a single point in the model space
+$\mathcal D$. The notation $\Pi(df)$ says that integration ranges over those
+candidate densities under the prior probability measure $\Pi$.
+:::
+
+**2. Why is $P(\{x\})$ not equal to $p(x)$ for a continuous model?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+$p(x)$ is density height relative to Lebesgue measure, whereas $P(\{x\})$ is
+the probability of a singleton. For an absolutely continuous model,
+
+$$
+P(\{x\})=\int_{\{x\}}p(t)\,dt=0
+$$
+
+even when $p(x)>0$.
+:::
+
+**3. What assumption is required before $dP/d\nu$ exists?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The essential condition is absolute continuity: $P\ll\nu$, meaning every
+$\nu$-null set is also $P$-null. Under the usual Radon--Nikodym conditions
+(satisfied here when $P$ is a probability measure and $\nu$ is sigma-finite),
+this guarantees a density $dP/d\nu$, unique $\nu$-almost everywhere.
+:::
+
+**4. Rewrite (5) as a formula for $\Pi_n(A)$.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+For every measurable $A\subseteq\mathcal D$,
+
+$$
+\Pi_n(A)
+=\int_A\frac{d\Pi_n}{d\Pi}(f)\Pi(df)
+=\frac{\int_A L_n(f)\Pi(df)}
+{\int_{\mathcal D}L_n(g)\Pi(dg)}.
+$$
+
+This setwise statement is what the shorthand posterior formula means.
+:::
+
+**5. Which expression in this note is genuinely a derivative of one measure
+with respect to another?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+In the Bayesian update, it is the Radon--Nikodym derivative
+
+$$
+\frac{d\Pi_n}{d\Pi}(f)=\frac{L_n(f)}{m_n(x_{1:n})}.
+$$
+
+It is the posterior measure's density relative to the prior measure. The
+earlier $dP/d\nu$ is the same kind of measure-level derivative; by contrast,
+$\Pi(df)$ itself is integration notation, not a derivative.
+:::
+
+**6. In $P(dx\mid\theta)$, which symbol varies during integration, and what
+role does $\theta$ play?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+The integration variable is the possible data value $x$. For each fixed
+$\theta$, the parameter selects one probability measure $P_\theta$ on data
+space:
+
+$$
+\int h(x)P(dx\mid\theta)
+=\int h(x)P_\theta(dx).
+$$
+
+As $\theta$ changes, the selected sampling distribution changes.
+:::
+
+**7. What two properties make $K(\theta,A)$ a probability kernel?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+First, for each fixed $\theta$, $A\mapsto K(\theta,A)$ must be a probability
+measure. Second, for each fixed measurable $A$,
+$\theta\mapsto K(\theta,A)$ must be measurable. The first property supplies a
+valid conditional distribution; the second allows it to be integrated over a
+prior or posterior for $\theta$.
+:::
+
+**8. Write the prior predictive measure for
+$\theta\sim\pi$, $X\mid\theta\sim P_\theta$.**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+For every measurable data-space event $A$,
+
+$$
+m(A)=\int_\Theta P_\theta(A)\pi(d\theta).
+$$
+
+The prior predictive averages the conditional sampling probabilities under
+the prior. If every $P_\theta$ has density $p(x\mid\theta)$ relative to the
+same $\nu$, then $m(x)=\int p(x\mid\theta)\pi(d\theta)$ is its density.
+:::
+
+**9. Why can $\pi(d\theta\mid x)$ be meaningful when a continuous model has
+$P(X=x)=0$?**
+
+::: {.callout-tip collapse="true"}
+## Answer
+
+It is a regular conditional distribution, not the elementary ratio
+$P(\theta\in B,X=x)/P(X=x)$. In a dominated model, Bayes' density formula
+defines a version of the conditional probability measure:
+
+$$
+\pi(d\theta\mid x)
+=\frac{p(x\mid\theta)\pi(d\theta)}{m(x)}.
+$$
+
+Regular conditional distributions are determined only up to sets of marginal
+probability zero, just as densities are determined only up to null sets.
+:::
